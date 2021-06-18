@@ -1,6 +1,6 @@
 import React from "react";
 import AddProductModal from "../components/AddProductModal/AddProductModal";
-import ShowProductModal from '../components/ShowProductModal/ShowProductModal'
+import ShowProductModal from '../components/ShowProductModal/ShowProductModal';
 import useModal from "../hooks/useModal";
 
 function Products() {
@@ -49,13 +49,13 @@ function Products() {
       <AddProductModal
         isOpen={isAddProductOpenModal}
         closeModal={closeAddProductModal}
-        title="Formulario"
+        title="Crear Nueva Solicitud de Envío"
       />
 
       <ShowProductModal
         isOpen={isShowProductOpenModal}
         closeModal={closeShowProductModal}
-        title="Producto"
+        title="Detalles del Envío"
       />
     </div>
   );
