@@ -5,7 +5,7 @@ function ShowProductModal(props) {
   return (
     <Modal {...props}>
       <form action="">
-        <label htmlFor="product">Nombre del producto</label>
+        <label htmlFor="product">Nombre del paquete a enviar</label>
         <input type="text" name="product" />
 
         <label htmlFor="date">Fecha</label>

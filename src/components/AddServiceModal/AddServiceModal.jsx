@@ -7,12 +7,12 @@ function AddServiceModal(props) {
       <form action="">
         <h3 htmlFor="vehicle">Medio de Transporte</h3>
         <div id="vehicle">
-          <label for="car">Carro</label>
           <input type="radio" id="car" name="vehicle" value="car" />
-          <label for="truck">Camion</label>
+          <label for="car">Carro</label>
           <input type="radio" id="truck" name="vehicle" value="truck" />
-          <label for="other">Otro</label>
+          <label for="truck">Camion</label>
           <input type="radio" id="other" name="vehicle" value="other" />
+          <label for="other">Otro</label>
         </div>
 
         <h3 htmlFor="areas">Areas de Operativas</h3>

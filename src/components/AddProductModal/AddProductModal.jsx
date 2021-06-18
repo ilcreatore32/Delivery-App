@@ -24,6 +24,7 @@ function AddProductModal(props) {
 
         <label htmlFor="destiny">Dirección Destino</label>
         <input type="text" name="destiny" />
+        <button type="submit">Publicar Envío</button>
       </form>
     </Modal>
   );

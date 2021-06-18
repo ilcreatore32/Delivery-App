@@ -10,10 +10,12 @@ function Modal({ isOpen, closeModal, title, children }) {
     return (
         <div className={`modal ${isOpen && 'modal-open'}`} onClick={closeModal}>
             <div className="modal-body" onClick={handleModalBodyClick}>
-                <h2> { title } </h2>
-                <button onClick={closeModal}>
-                    close
-                </button>
+                <div className="buttons">
+                  <h2> { title } </h2>
+                  <button className="button-close" onClick={closeModal}>
+                    X
+                  </button>
+                </div>
                 {children}
             </div>
         </div>

@@ -15,8 +15,60 @@
     background-color: #EDF2F4;
     padding: 20px;
     border-radius: 15px;
+    max-width: 600px;
 }
 
 .modal-open {
     display: grid;
+}
+
+input {
+  width: 100%;
+  border-radius: 15px;
+  padding: 12px;
+  font-size: 13px;
+  border: 1px solid rgba(119, 119, 119, 0.44);
+  margin: 7px 0;
+}
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-bottom: 30px;
+  resize: vertical;
+  font-style: 13px;
+  height: 190px;
+}
+input[type=checkbox], input[type=radio] {
+  width: 30%;
+  padding: 12px;
+  font-size: 13px;
+}
+.buttons{
+  display: -ms-flexbox; /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap; /* IE10 */
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+button {
+  border: none;
+  color: #FFFFFF;
+  padding: 12px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 12px;
+  background-color: var(--red);
+}
+.button-edit, button[type=submit]{
+  background-color: var(--dark-color);
+}
+.button-close{
+  border-radius: 30px;
+  padding: 6px 15px;
 }
