@@ -1,14 +1,8 @@
-# Proyecto Frontend (parte 2): Maquetación y React.js.
+# Delivery App
 
 # Pre-visualización
 
-## Mockups
-
-![Mockups Preview](/Docs/mockups-preview.png?raw=true "Preview Image")
-
-## React App
-
-![React App Preview](/Docs/react-app-preview.png?raw=true "Preview Image")
+![Delivery App Preview](/Docs/preview.png?raw=true "Preview Image")
 
 # Instalación del Proyecto
 
