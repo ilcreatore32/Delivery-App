@@ -2,26 +2,48 @@ import { v4 as uuid } from 'uuid';
 import pool from "../database";
 
 
-export const addArea = async (req, res) => {
+export const addShippingRequest = async (req, res) => {
+
   try {
     //get all data
-    const { estado, municipio = null, ciudad, parroquia = null } = req.body;
-    //generate id
-    const idAreaOperaciones = uuid()
-    //new object to save
-    const newArea = {
-      idAreaOperaciones,
+    const {
+      descripcion,
+      fecha,
+      status,
       estado,
       municipio,
       ciudad,
-      parroquia
+      parroquia,
+      avenida	= null,
+      calle	= null,
+      edificio = null,
+      piso = null,
+      referencia_extra = null
+    } = req.body;
+    //generate id
+    const idSolicitudEnvio = uuid()
+    //new object to save
+    const newShippingRequest = {
+      idSolicitudEnvio,
+      descripcion,
+      fecha,
+      status,
+      estado,
+      municipio,
+      ciudad,
+      parroquia,
+      avenida,
+      calle,
+      edificio,
+      piso,
+      referencia_extra
     };
     //query to insert new data
-    await pool.query('INSERT INTO areaoperaciones set ?', [newArea], function (error, results, fields) {
+    await pool.query('INSERT INTO solicitudesenvioproductos set ?', [newShippingRequest], function (error, results, fields) {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //all correct
-      res.json( { message: 'Añadida el área de operaciones' } )
+      res.json( { message: 'Añadida la solicitud de envío de productos' } )
     });
   } catch (err) {
     //error in the server
@@ -30,14 +52,14 @@ export const addArea = async (req, res) => {
   }
 };
 
-export const getAllAreas = async (req, res) => {
+export const getAllShippingRequests = async (req, res) => {
   try {
     //query to get all data
-    await pool.query('SELECT * FROM areaoperaciones', function (error, results) {
+    await pool.query('SELECT * FROM solicitudesenvioproductos', function (error, results) {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
-      if (results.length === 0) return res.status(404).json({message: "No posee área de operaciones"})
+      if (results.length === 0) return res.status(404).json({message: "No posee solicitud de envío de productos"})
       //send result
       res.json( results )
     });
@@ -53,19 +75,19 @@ export const getAllAreas = async (req, res) => {
 // if (isnum) {
 //   console.log('Solo numeros han ingresado');
 // }
-export const getOneArea = async (req, res) => {
+export const getOneShippingRequest = async (req, res) => {
   try {
 
     //get id
     const { id } = req.params;
     //query to get one row
-    await pool.query('SELECT * FROM areaoperaciones WHERE idAreaOperaciones = ?', id, function (error, results) {
+    await pool.query('SELECT * FROM solicitudesenvioproductos WHERE idSolicitudEnvio = ?', id, function (error, results) {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
-      if (results.length === 0) return res.status(404).json({message: "Área de operaciones no encontrada"})
+      if (results.length === 0) return res.status(404).json({message: "Solicitud de envío de productos no encontrada"})
       //send result
-      res.json({ area: results[0] })
+      res.json({ servicio: results[0] })
     });
 
   } catch (err) {
@@ -75,30 +97,46 @@ export const getOneArea = async (req, res) => {
   }
 };
 
-export const updateArea = async (req, res) => {
+export const updateShippingRequest = async (req, res) => {
   try {
     //get id
     const { id } = req.params;
     //get all data
     const {
+      descripcion,
+      fecha,
+      status,
       estado,
       municipio,
       ciudad,
-      parroquia
+      parroquia,
+      avenida	= null,
+      calle	= null,
+      edificio = null,
+      piso = null,
+      referencia_extra = null
     } = req.body;
     //new object to save
-    const newArea = {
+    const newShippingRequest = {
+      descripcion,
+      fecha,
+      status,
       estado,
       municipio,
       ciudad,
-      parroquia
+      parroquia,
+      avenida,
+      calle,
+      edificio,
+      piso,
+      referencia_extra
     };
     //query to update one row
-    await pool.query("UPDATE areaoperaciones set ? WHERE idAreaOperaciones = ?", [newArea, id], function (error, results, fields) {
+    await pool.query("UPDATE solicitudesenvioproductos set ? WHERE idSolicitudEnvio = ?", [newShippingRequest, id], function (error, results, fields) {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //send result
-      res.json({ message: 'Area Actualizada' })
+      res.json({ message: 'Solicitud de envío de productos actualizada' })
     });
 
   } catch (err) {
@@ -108,12 +146,12 @@ export const updateArea = async (req, res) => {
   }
 };
 
-export const deleteArea = async (req, res) => {
+export const deleteShippingRequest = async (req, res) => {
   try {
     //get id
     const { id } = req.params;
     //query to delete one row
-    await pool.query("DELETE FROM areaoperaciones WHERE idAreaOperaciones = ?", id, function (error, results, fields) {
+    await pool.query("DELETE FROM solicitudesenvioproductos WHERE idSolicitudEnvio = ?", id, function (error, results, fields) {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al eliminar en la base de datos"})
       //send result

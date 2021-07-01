@@ -40,9 +40,9 @@ export const areaValidationRules = () => {
       .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
 
     body('municipio')
-      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
       .isString().withMessage('Formato invalido').bail()
-      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail()
+      .optional({ nullable: true }),
 
     body('ciudad')
       .notEmpty().withMessage('El campo no puede estar vacío.').bail()
@@ -50,9 +50,9 @@ export const areaValidationRules = () => {
       .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
 
     body('parroquia')
-      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
       .isString().withMessage('Formato invalido').bail()
-      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail()
+      .optional({ nullable: true }),
   ]
 }
 
@@ -87,6 +87,64 @@ export const serviceValidationRules = () => {
   ]
 }
 
+//Requests camps rules
+export const shippingRequestsValidationRules = () => {
+  return [
+    body('descripcion')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isLength({ max: 500 }).withMessage('Descripción corta de máximo 500 caracteres.').bail(),
+
+    body('fecha')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isDate().withMessage('Fecha invalida').bail(),
+
+    body('status')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('estado')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('municipio')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('ciudad')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('parroquia')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('avenida')
+      .isString().withMessage('Formato invalido').bail()
+      .optional({ nullable: true }),
+
+    body('calle')
+      .isString().withMessage('Formato invalido').bail()
+      .optional({ nullable: true }),
+
+    body('edificio')
+      .isString().withMessage('Formato invalido').bail()
+      .optional({ nullable: true }),
+
+    body('piso')
+      .isString().withMessage('Formato invalido').bail()
+      .optional({ nullable: true }),
+
+    body('referencia_extra')
+      .isString().withMessage('Formato invalido').bail()
+      .optional({ nullable: true }),
+  ]
+}
 //function to check the rules
 
 export const validate = (req, res, next) => {
