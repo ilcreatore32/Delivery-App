@@ -31,6 +31,62 @@ export const vehicleValidationRules = () => {
   ]
 }
 
+//Area camps rules
+export const areaValidationRules = () => {
+  return [
+    body('estado')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('municipio')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('ciudad')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('parroquia')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+  ]
+}
+
+//Service camps rules
+export const serviceValidationRules = () => {
+  return [
+    body('medio_de_transporte')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('inicio_de_horario')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .matches(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/).withMessage('Hora invalida.').bail(),
+
+    body('fin_de_horario')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .matches(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/).withMessage('Hora invalida.').bail(),
+
+    body('coste_por_kilometros')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isFloat({
+        min: 0,
+        locale: 'en-US'}
+        ).withMessage('Coste invalido').bail(),
+
+    body('disponibilidad')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isBoolean().withMessage('Valor invalido').bail(),
+  ]
+}
+
 //function to check the rules
 
 export const validate = (req, res, next) => {
