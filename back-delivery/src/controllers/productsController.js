@@ -69,7 +69,7 @@ export const getOneProduct = async (req, res) => {
       //if there is no data
       if (results.length === 0) return res.status(404).json({error: "Producto no encontrado"})
       //send result
-      res.status(200).json({ results[0] })
+      res.status(200).json(results[0])
     });
 
   } catch (err) {

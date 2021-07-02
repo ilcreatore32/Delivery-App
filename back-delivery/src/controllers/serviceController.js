@@ -11,26 +11,35 @@ export const addService = async (req, res) => {
       inicio_de_horario,
       fin_de_horario,
       coste_por_kilometros,
-      disponibilidad
+      disponibilidad,
+      idVehiculos
     } = req.body;
-    //generate id
-    const idServicioTransporte = uuid()
-    //new object to save
-    const newService = {
-      idServicioTransporte,
-      medio_de_transporte,
-      inicio_de_horario,
-      fin_de_horario,
-      coste_por_kilometros,
-      disponibilidad
-    };
-    //query to insert new data
-    await pool.query('INSERT INTO ofertasserviciotransporte set ?', [newService], function (error, results, fields) {
+    await pool.query('SELECT EXISTS(SELECT 1 FROM vehiculos WHERE idVehiculos = ?)',
+    [idVehiculos], async function (error, results, fields) {
       //if error in the query
-      if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
-      //all correct
-      res.status(200).json( { message: 'Añadido el servicio de transporte' } )
-    });
+      if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
+      //if there is no values
+      if ( Object.values(results[0])[0] !== 1 ) return res.status(404).json({ error: "Vehiculo no encontrado" })
+      //generate id
+      const idServicioTransporte = uuid()
+      //new object to save
+      const newService = {
+        idServicioTransporte,
+        medio_de_transporte,
+        inicio_de_horario,
+        fin_de_horario,
+        coste_por_kilometros,
+        disponibilidad,
+        idVehiculos
+      };
+      //query to insert new data
+      await pool.query('INSERT INTO ofertasserviciotransporte set ?', [newService], function (error, results, fields) {
+        //if error in the query
+        if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
+        //all correct
+        res.status(200).json( { message: 'Añadido el servicio de transporte' } )
+      });
+    })
   } catch (err) {
     //error in the server
     console.log(err);
@@ -69,7 +78,7 @@ export const getOneService = async (req, res) => {
       //if there is no data
       if (results.length === 0) return res.status(404).json({error: "Servicio de transporte no encontrada"})
       //send result
-      res.status(200).json({ results[0] })
+      res.status(200).json(results[0])
     });
 
   } catch (err) {
@@ -89,23 +98,32 @@ export const updateService = async (req, res) => {
       inicio_de_horario,
       fin_de_horario,
       coste_por_kilometros,
-      disponibilidad
+      disponibilidad,
+      idVehiculos
     } = req.body;
-    //new object to save
-    const newService = {
-      medio_de_transporte,
-      inicio_de_horario,
-      fin_de_horario,
-      coste_por_kilometros,
-      disponibilidad
-    };
-    //query to update one row
-    await pool.query("UPDATE ofertasserviciotransporte set ? WHERE idServicioTransporte = ?", [newService, id], function (error, results, fields) {
-      //if error in the query or no row affected
-      if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
-      //send result
-      res.status(200).json({ message: 'Servicio de transporte actualizado' })
-    });
+    await pool.query('SELECT EXISTS(SELECT 1 FROM vehiculos WHERE idVehiculos = ?)',
+    [idVehiculos], async function (error, results, fields) {
+      //if error in the query
+      if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
+      //if there is no values
+      if ( Object.values(results[0])[0] !== 1 ) return res.status(404).json({ error: "Vehiculo no encontrado" })
+      //new object to save
+      const newService = {
+        medio_de_transporte,
+        inicio_de_horario,
+        fin_de_horario,
+        coste_por_kilometros,
+        disponibilidad,
+        idVehiculos
+      };
+      //query to update one row
+      await pool.query("UPDATE ofertasserviciotransporte set ? WHERE idServicioTransporte = ?", [newService, id], function (error, results, fields) {
+        //if error in the query or no row affected
+        if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
+        //send result
+        res.status(200).json({ message: 'Servicio de transporte actualizado' })
+      });
+    })
 
   } catch (err) {
     //error in the server

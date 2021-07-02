@@ -5,24 +5,38 @@ import pool from "../database";
 export const addArea = async (req, res) => {
   try {
     //get all data
-    const { estado, municipio = null, ciudad, parroquia = null } = req.body;
-    //generate id
-    const idAreaOperaciones = uuid()
-    //new object to save
-    const newArea = {
-      idAreaOperaciones,
+    const {
       estado,
-      municipio,
+      municipio = null,
       ciudad,
-      parroquia
-    };
-    //query to insert new data
-    await pool.query('INSERT INTO areaoperaciones set ?', [newArea], function (error, results, fields) {
+      parroquia = null,
+      idServicioTransporte
+    } = req.body;
+    await pool.query('SELECT EXISTS(SELECT 1 FROM ofertasserviciotransporte WHERE idServicioTransporte = ?)',
+    [idServicioTransporte], async function (error, results, fields) {
       //if error in the query
-      if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
-      //all correct
-      res.status(200).json( { message: 'Añadida el área de operaciones' } )
-    });
+      if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
+      //if there is no values
+      if ( Object.values(results[0])[0] !== 1 ) return res.status(404).json({ error: "Servicio de transporte no encontrado" })
+      //generate id
+      const idAreaOperaciones = uuid()
+      //new object to save
+      const newArea = {
+        idAreaOperaciones,
+        estado,
+        municipio,
+        ciudad,
+        parroquia,
+        idServicioTransporte
+      };
+      //query to insert new data
+      await pool.query('INSERT INTO areaoperaciones set ?', [newArea], function (error, results, fields) {
+        //if error in the query
+        if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
+        //all correct
+        res.status(200).json( { message: 'Añadida el área de operaciones' } )
+      });
+    })
   } catch (err) {
     //error in the server
     console.log(err);
@@ -61,7 +75,7 @@ export const getOneArea = async (req, res) => {
       //if there is no data
       if (results.length === 0) return res.status(404).json({error: "Área de operaciones no encontrada"})
       //send result
-      res.status(200).json({ results[0] })
+      res.status(200).json(results[0])
     });
 
   } catch (err) {
@@ -80,22 +94,31 @@ export const updateArea = async (req, res) => {
       estado,
       municipio,
       ciudad,
-      parroquia
+      parroquia,
+      idServicioTransporte
     } = req.body;
-    //new object to save
-    const newArea = {
-      estado,
-      municipio,
-      ciudad,
-      parroquia
-    };
-    //query to update one row
-    await pool.query("UPDATE areaoperaciones set ? WHERE idAreaOperaciones = ?", [newArea, id], function (error, results, fields) {
-      //if error in the query or no row affected
-      if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
-      //send result
-      res.status(200).json({ message: 'Area Actualizada' })
-    });
+    await pool.query('SELECT EXISTS(SELECT 1 FROM ofertasserviciotransporte WHERE idServicioTransporte = ?)',
+    [idServicioTransporte], async function (error, results, fields) {
+      //if error in the query
+      if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
+      //if there is no values
+      if ( Object.values(results[0])[0] !== 1 ) return res.status(404).json({ error: "Servicio de transporte no encontrado" })
+      //new object to save
+      const newArea = {
+        estado,
+        municipio,
+        ciudad,
+        parroquia,
+        idServicioTransporte
+      };
+      //query to update one row
+      await pool.query("UPDATE areaoperaciones set ? WHERE idAreaOperaciones = ?", [newArea, id], function (error, results, fields) {
+        //if error in the query or no row affected
+        if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
+        //send result
+        res.status(200).json({ message: 'Area Actualizada' })
+      });
+    })
 
   } catch (err) {
     //error in the server

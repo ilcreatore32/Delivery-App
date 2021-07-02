@@ -83,7 +83,7 @@ export const getOneShippingRequest = async (req, res) => {
       //if there is no data
       if (results.length === 0) return res.status(404).json({error: "Solicitud de envío de productos no encontrada"})
       //send result
-      res.status(200).json({ results[0] })
+      res.status(200).json(results[0])
     });
 
   } catch (err) {

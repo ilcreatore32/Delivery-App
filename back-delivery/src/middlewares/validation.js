@@ -53,6 +53,9 @@ export const areaValidationRules = () => {
       .isString().withMessage('Formato invalido').bail()
       .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail()
       .optional({ nullable: true }),
+
+    body('idServicioTransporte')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail(),
   ]
 }
 
@@ -84,6 +87,9 @@ export const serviceValidationRules = () => {
     body('disponibilidad')
       .notEmpty().withMessage('El campo no puede estar vacío.').bail()
       .isBoolean().withMessage('Valor invalido').bail(),
+
+    body('idVehiculos')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail(),
   ]
 }
 
@@ -208,7 +214,7 @@ export const validate = (req, res, next) => {
   const extractedErrors = []
   errors.array().map(err => extractedErrors.push({ [err.param]: err.msg }))
   //response
-  return res.status(422).json({
-    errorsValidation: extractedErrors,
-  })
+  return res.status(422).json(
+    extractedErrors
+  )
 }
