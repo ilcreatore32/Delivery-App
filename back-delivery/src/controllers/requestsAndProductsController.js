@@ -74,9 +74,9 @@ export const getOneRequestProduct = async (req, res) => {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
-      if (results.length === 0) return res.status(404).json({message: "No encontrado"})
+      if (results.length === 0) return res.status(404).json({error: "No encontrado"})
       //send result
-      res.json( results[0] )
+      res.status(200).json( results[0] )
     });
 
   } catch (err) {
@@ -111,7 +111,7 @@ export const getAllRequestOrProductPerID = async (req, res) => {
           //if there is no data
           if (results.length === 0) return res.status(404).json({error: "No se encuentran solicitudes de envío para este producto"})
           //send result
-          res.json( results )
+          res.status(200).json( results )
         });
 
         break ;
@@ -131,7 +131,7 @@ export const getAllRequestOrProductPerID = async (req, res) => {
           //if there is no data
           if (results.length === 0) return res.status(404).json({error: "No se encuentran productos asociados a esta solicitud de envío"})
           //send result
-          res.json( results )
+          res.status(200).json( results )
         });
         break ;
       case "relationByRequest":
@@ -143,7 +143,7 @@ export const getAllRequestOrProductPerID = async (req, res) => {
           //if there is no data
           if (results.length === 0) return res.status(404).json({error: "No se encuentra ningún producto asociado a esta solicitud de envío"})
           //send result
-          res.json( results )
+          res.status(200).json( results )
         });
         break;
       case "relationByProduct":
@@ -154,7 +154,7 @@ export const getAllRequestOrProductPerID = async (req, res) => {
           //if there is no data
           if (results.length === 0) return res.status(404).json({error: "No se encuentra ninguna solicitud de envío asociada a este producto"})
           //send result
-          res.json( results )
+          res.status(200).json( results )
         });
         break;
       default:
@@ -189,7 +189,7 @@ export const updateRequestProduct = async (req, res) => {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //send result
-      res.json({ message: 'Actualizado Correctamente' })
+      res.status(200).json({ message: 'Actualizado Correctamente' })
     });
 
   } catch (err) {
@@ -208,7 +208,7 @@ export const deleteRequestProduct = async (req, res) => {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al eliminar en la base de datos"})
       //send result
-      res.json({ message: 'Exito al eliminar' })
+      res.status(200).json({ message: 'Exito al eliminar' })
     });
   } catch (err) {
     //error in the server

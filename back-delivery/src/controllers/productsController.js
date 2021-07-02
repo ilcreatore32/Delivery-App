@@ -29,7 +29,7 @@ export const addProduct = async (req, res) => {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //all correct
-      res.json( { message: 'Añadido el producto' } )
+      res.status(200).json( { message: 'Añadido el producto' } )
     });
   } catch (err) {
     //error in the server
@@ -45,9 +45,9 @@ export const getAllProducts = async (req, res) => {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
-      if (results.length === 0) return res.status(404).json({message: "No posee productos"})
+      if (results.length === 0) return res.status(404).json({error: "No posee productos"})
       //send result
-      res.json( results )
+      res.status(200).json( results )
     });
 
   } catch (err) {
@@ -56,11 +56,7 @@ export const getAllProducts = async (req, res) => {
     res.status(500).send('Error en el servidor')
   }
 };
-// in case id is numeric
-//let isnum = /^\d+$/.test(id)
-// if (isnum) {
-//   console.log('Solo numeros han ingresado');
-// }
+
 export const getOneProduct = async (req, res) => {
   try {
 
@@ -71,9 +67,9 @@ export const getOneProduct = async (req, res) => {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
-      if (results.length === 0) return res.status(404).json({message: "Producto no encontrado"})
+      if (results.length === 0) return res.status(404).json({error: "Producto no encontrado"})
       //send result
-      res.json({ product: results[0] })
+      res.status(200).json({ results[0] })
     });
 
   } catch (err) {
@@ -108,7 +104,7 @@ export const updateProduct = async (req, res) => {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //send result
-      res.json({ message: 'Solicitud producto actualizado' })
+      res.status(200).json({ message: 'Solicitud producto actualizado' })
     });
 
   } catch (err) {
@@ -127,7 +123,7 @@ export const deleteProduct = async (req, res) => {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al eliminar en la base de datos"})
       //send result
-      res.json({ message: 'Exito al eliminar' })
+      res.status(200).json({ message: 'Exito al eliminar' })
     });
   } catch (err) {
     //error in the server

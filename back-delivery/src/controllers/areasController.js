@@ -21,7 +21,7 @@ export const addArea = async (req, res) => {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //all correct
-      res.json( { message: 'Añadida el área de operaciones' } )
+      res.status(200).json( { message: 'Añadida el área de operaciones' } )
     });
   } catch (err) {
     //error in the server
@@ -37,9 +37,9 @@ export const getAllAreas = async (req, res) => {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
-      if (results.length === 0) return res.status(404).json({message: "No posee área de operaciones"})
+      if (results.length === 0) return res.status(404).json({error: "No posee área de operaciones"})
       //send result
-      res.json( results )
+      res.status(200).json( results )
     });
 
   } catch (err) {
@@ -48,11 +48,7 @@ export const getAllAreas = async (req, res) => {
     res.status(500).send('Error en el servidor')
   }
 };
-// in case id is numeric
-//let isnum = /^\d+$/.test(id)
-// if (isnum) {
-//   console.log('Solo numeros han ingresado');
-// }
+
 export const getOneArea = async (req, res) => {
   try {
 
@@ -63,9 +59,9 @@ export const getOneArea = async (req, res) => {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
-      if (results.length === 0) return res.status(404).json({message: "Área de operaciones no encontrada"})
+      if (results.length === 0) return res.status(404).json({error: "Área de operaciones no encontrada"})
       //send result
-      res.json({ area: results[0] })
+      res.status(200).json({ results[0] })
     });
 
   } catch (err) {
@@ -98,7 +94,7 @@ export const updateArea = async (req, res) => {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //send result
-      res.json({ message: 'Area Actualizada' })
+      res.status(200).json({ message: 'Area Actualizada' })
     });
 
   } catch (err) {
@@ -117,7 +113,7 @@ export const deleteArea = async (req, res) => {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al eliminar en la base de datos"})
       //send result
-      res.json({ message: 'Exito al eliminar' })
+      res.status(200).json({ message: 'Exito al eliminar' })
     });
   } catch (err) {
     //error in the server
