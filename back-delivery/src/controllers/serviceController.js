@@ -73,7 +73,7 @@ export const getOneService = async (req, res) => {
       //if there is no data
       if (results.length === 0) return res.status(404).json({message: "Servicio de transporte no encontrada"})
       //send result
-      res.json({ servicio: results[0] })
+      res.json({ service: results[0] })
     });
 
   } catch (err) {

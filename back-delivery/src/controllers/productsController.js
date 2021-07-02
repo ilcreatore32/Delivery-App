@@ -2,48 +2,34 @@ import { v4 as uuid } from 'uuid';
 import pool from "../database";
 
 
-export const addShippingRequest = async (req, res) => {
+export const addProduct = async (req, res) => {
 
   try {
     //get all data
     const {
-      descripcion,
-      fecha,
-      status,
-      estado,
-      municipio,
-      ciudad,
-      parroquia,
-      avenida	= null,
-      calle	= null,
-      edificio = null,
-      piso = null,
-      referencia_extra = null
+      nombre_producto,
+      tipo_producto,
+      tamaño,
+      peso,
+      precio
     } = req.body;
     //generate id
-    const idSolicitudEnvio = uuid()
+    const idProductos = uuid()
     //new object to save
-    const newShippingRequest = {
-      idSolicitudEnvio,
-      descripcion,
-      fecha,
-      status,
-      estado,
-      municipio,
-      ciudad,
-      parroquia,
-      avenida,
-      calle,
-      edificio,
-      piso,
-      referencia_extra
+    const newProduct = {
+      idProductos,
+      nombre_producto,
+      tipo_producto,
+      tamaño,
+      peso,
+      precio
     };
     //query to insert new data
-    await pool.query('INSERT INTO solicitudesenvioproductos set ?', [newShippingRequest], function (error, results, fields) {
+    await pool.query('INSERT INTO productos set ?', [newProduct], function (error, results, fields) {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //all correct
-      res.json( { message: 'Añadida la solicitud de envío de productos' } )
+      res.json( { message: 'Añadido el producto' } )
     });
   } catch (err) {
     //error in the server
@@ -52,14 +38,14 @@ export const addShippingRequest = async (req, res) => {
   }
 };
 
-export const getAllShippingRequests = async (req, res) => {
+export const getAllProducts = async (req, res) => {
   try {
     //query to get all data
-    await pool.query('SELECT * FROM solicitudesenvioproductos', function (error, results) {
+    await pool.query('SELECT * FROM productos', function (error, results) {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
-      if (results.length === 0) return res.status(404).json({message: "No posee solicitud de envío de productos"})
+      if (results.length === 0) return res.status(404).json({message: "No posee productos"})
       //send result
       res.json( results )
     });
@@ -75,19 +61,19 @@ export const getAllShippingRequests = async (req, res) => {
 // if (isnum) {
 //   console.log('Solo numeros han ingresado');
 // }
-export const getOneShippingRequest = async (req, res) => {
+export const getOneProduct = async (req, res) => {
   try {
 
     //get id
     const { id } = req.params;
     //query to get one row
-    await pool.query('SELECT * FROM solicitudesenvioproductos WHERE idSolicitudEnvio = ?', id, function (error, results) {
+    await pool.query('SELECT * FROM productos WHERE idProductos = ?', id, function (error, results) {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
-      if (results.length === 0) return res.status(404).json({message: "Solicitud de envío de productos no encontrada"})
+      if (results.length === 0) return res.status(404).json({message: "Producto no encontrado"})
       //send result
-      res.json({ shippingRequest: results[0] })
+      res.json({ product: results[0] })
     });
 
   } catch (err) {
@@ -97,46 +83,32 @@ export const getOneShippingRequest = async (req, res) => {
   }
 };
 
-export const updateShippingRequest = async (req, res) => {
+export const updateProduct = async (req, res) => {
   try {
     //get id
     const { id } = req.params;
     //get all data
     const {
-      descripcion,
-      fecha,
-      status,
-      estado,
-      municipio,
-      ciudad,
-      parroquia,
-      avenida	= null,
-      calle	= null,
-      edificio = null,
-      piso = null,
-      referencia_extra = null
+      nombre_producto,
+      tipo_producto,
+      tamaño,
+      peso,
+      precio
     } = req.body;
     //new object to save
-    const newShippingRequest = {
-      descripcion,
-      fecha,
-      status,
-      estado,
-      municipio,
-      ciudad,
-      parroquia,
-      avenida,
-      calle,
-      edificio,
-      piso,
-      referencia_extra
+    const newProduct = {
+      nombre_producto,
+      tipo_producto,
+      tamaño,
+      peso,
+      precio
     };
     //query to update one row
-    await pool.query("UPDATE solicitudesenvioproductos set ? WHERE idSolicitudEnvio = ?", [newShippingRequest, id], function (error, results, fields) {
+    await pool.query("UPDATE productos set ? WHERE idProductos = ?", [newProduct, id], function (error, results, fields) {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //send result
-      res.json({ message: 'Solicitud de envío de productos actualizada' })
+      res.json({ message: 'Solicitud producto actualizado' })
     });
 
   } catch (err) {
@@ -146,12 +118,12 @@ export const updateShippingRequest = async (req, res) => {
   }
 };
 
-export const deleteShippingRequest = async (req, res) => {
+export const deleteProduct = async (req, res) => {
   try {
     //get id
     const { id } = req.params;
     //query to delete one row
-    await pool.query("DELETE FROM solicitudesenvioproductos WHERE idSolicitudEnvio = ?", id, function (error, results, fields) {
+    await pool.query("DELETE FROM productos WHERE idProductos = ?", id, function (error, results, fields) {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al eliminar en la base de datos"})
       //send result

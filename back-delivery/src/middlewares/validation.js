@@ -145,6 +145,46 @@ export const shippingRequestsValidationRules = () => {
       .optional({ nullable: true }),
   ]
 }
+
+//products camps rules
+export const productValidationRules = () => {
+  return [
+    body('nombre_producto')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail(),
+
+    body('tipo_producto')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail()
+      .isAlpha('es-ES', {ignore: ' '}).withMessage('Ingrese solo letras.').bail(),
+
+    body('tamaño')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isFloat({ min: 0, locale: 'en-US'}).withMessage('Tamaño invalido.').bail(),
+
+    body('peso')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isFloat({ min: 0, locale: 'en-US'}).withMessage('Peso invalido.').bail(),
+
+    body('precio')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isFloat({ min: 0, locale: 'en-US'}).withMessage('Precio invalido.').bail(),
+  ]
+}
+
+//Services and requests relation camps rules
+export const requestServiceValidationRules = () => {
+  return [
+    body('status')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isString().withMessage('Formato invalido').bail(),
+
+    body('mensaje_status')
+      .isString().withMessage('Formato invalido').bail()
+      .optional({ nullable: true }),
+      
+  ]
+}
 //function to check the rules
 
 export const validate = (req, res, next) => {
