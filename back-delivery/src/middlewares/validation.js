@@ -182,9 +182,19 @@ export const requestServiceValidationRules = () => {
     body('mensaje_status')
       .isString().withMessage('Formato invalido').bail()
       .optional({ nullable: true }),
-      
+
   ]
 }
+
+//Products and requests relation camps rules
+export const productsRequestValidationRules = () => {
+  return [
+    body('cantidad')
+      .notEmpty().withMessage('El campo no puede estar vacío.').bail()
+      .isInt({ min: 1 }).withMessage('Cantidad invalida').bail(),
+  ]
+}
+
 //function to check the rules
 
 export const validate = (req, res, next) => {

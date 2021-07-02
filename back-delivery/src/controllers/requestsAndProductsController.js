@@ -2,57 +2,55 @@ import { v4 as uuid } from 'uuid';
 import pool from "../database";
 
 
-export const addServicesRequests = async (req, res) => {
+export const addRequestProduct = async (req, res) => {
 
   try {
     //get all data
     const {
-      status,
-      mensaje_status,
-      idSolicitudEnvio,
-      idServicioTransporte
+      cantidad,
+      idProductos,
+      idSolicitudEnvio
     } = req.body;
     //new object to save
-    const newServicesRequests = {
-      status,
-      mensaje_status,
-      idSolicitudEnvio,
-      idServicioTransporte
+    const newRequestProduct = {
+      cantidad,
+      idProductos,
+      idSolicitudEnvio
     };
     /* Search for Product Requests */
 
-    await pool.query('SELECT EXISTS(SELECT 1 FROM solicitudesenvioproductos WHERE idSolicitudEnvio = ?)',
-    [idSolicitudEnvio], async function (error, results, fields) {
+    await pool.query('SELECT EXISTS(SELECT 1 FROM productos WHERE idProductos = ?)',
+    [idProductos], async function (error, results, fields) {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no values
-      if ( Object.values(results[0])[0] !== 1 ) return res.status(404).json({ error: "Solicitud no encontrada" })
+      if ( Object.values(results[0])[0] !== 1 ) return res.status(404).json({ error: "Producto no encontrada" })
 
       /* Search for Services */
 
-      await pool.query('SELECT EXISTS(SELECT 1 FROM ofertasserviciotransporte WHERE idServicioTransporte = ?)',
-      [idServicioTransporte], async function (error, results, fields) {
+      await pool.query('SELECT EXISTS(SELECT 1 FROM solicitudesenvioproductos WHERE idSolicitudEnvio = ?)',
+      [idSolicitudEnvio], async function (error, results, fields) {
         //if error in the query
         if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
         //if there is no values
-        if ( Object.values(results[0])[0] !== 1 ) return res.status(404).json({ error: "Servicio no encontrado" })
+        if ( Object.values(results[0])[0] !== 1 ) return res.status(404).json({ error: "Solicitud de envío de producto no encontrada" })
 
         /* Validate if services and requests are not in the same row already */
 
-        await pool.query('SELECT EXISTS(SELECT 1 FROM servicios_por_solicitudes WHERE idSolicitudEnvio = ? AND idServicioTransporte = ?)',
-        [idSolicitudEnvio, idServicioTransporte], async function (error, results, fields) {
+        await pool.query('SELECT EXISTS(SELECT 1 FROM productos_por_solicitudes_envio WHERE idProductos = ? AND idSolicitudEnvio = ?)',
+        [idProductos, idSolicitudEnvio], async function (error, results, fields) {
             //if error in the query
             if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
             //if the row exits
-            if ( Object.values(results[0])[0] === 1 ) return res.status(400).json({ error: "Servicio y solicitud ya enlazados" })
+            if ( Object.values(results[0])[0] === 1 ) return res.status(400).json({ error: "Solicitud y producto ya enlazados" })
 
             /* query to insert new data */
 
-            await pool.query('INSERT INTO servicios_por_solicitudes set ?', [newServicesRequests], function (error, results, fields) {
+            await pool.query('INSERT INTO productos_por_solicitudes_envio set ?', [newRequestProduct], function (error, results, fields) {
               //if error in the query
               if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
               //all correct
-              res.status(200).json( { message: 'Solicitud y Servicio relacionados satisfactoriamente' } )
+              res.status(200).json( { message: 'Solicitud y producto relacionados satisfactoriamente' } )
             });
         });
       });
@@ -65,13 +63,14 @@ export const addServicesRequests = async (req, res) => {
   }
 };
 
-export const getOneServicesRequests = async (req, res) => {
+export const getOneRequestProduct = async (req, res) => {
   try {
     //get ids
-    const { request, service } = req.params;
+    const { product, request } = req.params;
 
     //query to get all data
-    await pool.query('SELECT * FROM servicios_por_solicitudes WHERE idSolicitudEnvio = ? AND idServicioTransporte = ?', [ request, service ] , function (error, results) {
+    await pool.query('SELECT * FROM productos_por_solicitudes_envio WHERE idProductos = ? AND idSolicitudEnvio = ?', [ product, request ],
+    function (error, results) {
       //if error in the query
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no data
@@ -86,77 +85,74 @@ export const getOneServicesRequests = async (req, res) => {
     res.status(500).send('Error en el servidor')
   }
 };
-// in case id is numeric
-//let isnum = /^\d+$/.test(id)
-// if (isnum) {
-//   console.log('Solo numeros han ingresado');
-// }
-export const getAllServicesOrRequestsPerID = async (req, res) => {
+
+export const getAllRequestOrProductPerID = async (req, res) => {
   try {
 
     //get id
     const { id } = req.params;
     const { option } = req.query;
+
     //cases option in /:id?option=OptionInURL
     switch (option) {
-      case "allservices":
-        //query to get all services associated to a request
-        await pool.query(`SELECT *
-          FROM ofertasserviciotransporte
-          WHERE EXISTS
-            (
-            SELECT  NULL
-            FROM servicios_por_solicitudes
-            WHERE idSolicitudEnvio = ?
-            AND servicios_por_solicitudes.idServicioTransporte = ofertasserviciotransporte.idServicioTransporte
-            )`, id, function (error, results) {
-          //if error in the query
-          if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
-          //if there is no data
-          if (results.length === 0) return res.status(404).json({error: "No se encuentran servicios de transporte"})
-          //send result
-          res.json( results )
-        });
-
-        break ;
       case "allrequests":
-        //query to get all requests associated to a service
+        //query to get all requests associated to a product
         await pool.query(`SELECT *
           FROM solicitudesenvioproductos
           WHERE EXISTS
             (
             SELECT  NULL
-            FROM servicios_por_solicitudes
-            WHERE idServicioTransporte = ?
-            AND servicios_por_solicitudes.idSolicitudEnvio = solicitudesenvioproductos.idSolicitudEnvio
+            FROM productos_por_solicitudes_envio
+            WHERE idProductos = ?
+            AND productos_por_solicitudes_envio.idSolicitudEnvio = solicitudesenvioproductos.idSolicitudEnvio
             )`, id, function (error, results) {
           //if error in the query
           if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
           //if there is no data
-          if (results.length === 0) return res.status(404).json({error: "No se encuentran solicitudes de envío"})
+          if (results.length === 0) return res.status(404).json({error: "No se encuentran solicitudes de envío para este producto"})
+          //send result
+          res.json( results )
+        });
+
+        break ;
+      case "allproducts":
+        //query to get all products associated to a request
+        await pool.query(`SELECT *
+          FROM productos
+          WHERE EXISTS
+            (
+            SELECT  NULL
+            FROM productos_por_solicitudes_envio
+            WHERE idSolicitudEnvio = ?
+            AND productos_por_solicitudes_envio.idProductos = productos.idProductos
+            )`, id, function (error, results) {
+          //if error in the query
+          if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
+          //if there is no data
+          if (results.length === 0) return res.status(404).json({error: "No se encuentran productos asociados a esta solicitud de envío"})
           //send result
           res.json( results )
         });
         break ;
-      case "relationByService":
-        //query to get all related services and request by service ID
-        await pool.query(`SELECT * FROM servicios_por_solicitudes WHERE idServicioTransporte = ?`,
+      case "relationByRequest":
+        //query to get all related request and products by request ID
+        await pool.query(`SELECT * FROM productos_por_solicitudes_envio WHERE idSolicitudEnvio = ?`,
           id, function (error, results) {
           //if error in the query
           if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
           //if there is no data
-          if (results.length === 0) return res.status(404).json({error: "No se encuentra ninguna solicitud de envío asociada a este servicio de transporte"})
+          if (results.length === 0) return res.status(404).json({error: "No se encuentra ningún producto asociado a esta solicitud de envío"})
           //send result
           res.json( results )
         });
         break;
-      case "relationByRequest":
-        //query to get all related services and request by request ID
-        await pool.query(`SELECT * FROM servicios_por_solicitudes WHERE idSolicitudEnvio = ?`, id, function (error, results) {
+      case "relationByProduct":
+        //query to get all related request and products by products ID
+        await pool.query(`SELECT * FROM productos_por_solicitudes_envio WHERE idProductos = ?`, id, function (error, results) {
           //if error in the query
           if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
           //if there is no data
-          if (results.length === 0) return res.status(404).json({error: "No se encuentra ningún servicio de transporte asociado a esta solicitud de envío"})
+          if (results.length === 0) return res.status(404).json({error: "No se encuentra ninguna solicitud de envío asociada a este producto"})
           //send result
           res.json( results )
         });
@@ -173,25 +169,23 @@ export const getAllServicesOrRequestsPerID = async (req, res) => {
   }
 };
 
-export const updateServicesRequests = async (req, res) => {
+export const updateRequestProduct = async (req, res) => {
   try {
     //get ids
-    const { request, service } = req.params;
+    const { product, request } = req.params;
 
     //get all data
     const {
-      status,
-      mensaje_status
+      cantidad
     } = req.body;
 
     //new object to save
-    const newServiceRequest = {
-      status,
-      mensaje_status
+    const newRequestProduct = {
+      cantidad
     };
 
     //query to update one row
-    await pool.query("UPDATE servicios_por_solicitudes set ? WHERE idSolicitudEnvio = ? AND idServicioTransporte = ?", [newServiceRequest, request, service], function (error, results, fields) {
+    await pool.query("UPDATE productos_por_solicitudes_envio set ? WHERE idProductos = ? AND idSolicitudEnvio = ?", [newRequestProduct, product, request], function (error, results, fields) {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al guardar en la base de datos"})
       //send result
@@ -205,12 +199,12 @@ export const updateServicesRequests = async (req, res) => {
   }
 };
 
-export const deleteServicesRequests = async (req, res) => {
+export const deleteRequestProduct = async (req, res) => {
   try {
     //get id
-    const { request, service } = req.params;
+    const { product, request } = req.params;
     //query to delete one row
-    await pool.query("DELETE FROM servicios_por_solicitudes WHERE idSolicitudEnvio = ? AND idServicioTransporte = ?", [request, service], function (error, results, fields) {
+    await pool.query("DELETE FROM productos_por_solicitudes_envio WHERE idProductos = ? AND idSolicitudEnvio = ?", [ product, request ], function (error, results, fields) {
       //if error in the query or no row affected
       if (error || (results.affectedRows === 0)) return res.status(400).json({error: "Error al eliminar en la base de datos"})
       //send result
