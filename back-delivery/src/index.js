@@ -15,7 +15,7 @@ app.use(cors())
 //habilitar express.json
 app.use(express.json({ extended: true }))
 
-app.set("port", 3000);
+app.set("port", 4000);
 
 app.listen(app.get("port"));
 
