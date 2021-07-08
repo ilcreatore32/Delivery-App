@@ -6,11 +6,13 @@ import { Router } from "express";
 // } from '../middlewares/validation';
 //import controllers
 import {
-  getOnePerson
+  getOnePerson,
+  getPeople
 } from '../controllers/peopleController'
 
 //all the routes
 const router = Router();
 router.get('/:id', getOnePerson)
+      .get('/', getPeople)
 
 export default router;

@@ -1,48 +1,68 @@
-import React from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import Modal from "../Modal/Modal";
+import axiosClient from '../../config/axiosClient';
 
 function ShowServiceModal(props) {
+  const { selectedService, selectedServiceAreas, selectedServicePerson } = props;
+
+  const [vehicleSelected, setVehiclesSelected] = useState({})
+  const [errorVehicle, setErrorVehicle] = useState('')
+
+  const getVehicle = async (vehiculoId) => {
+    try {
+      let vehiculo = await axiosClient.get(`/vehicles/${vehiculoId}`)
+      setVehiclesSelected(vehiculo.data)
+      setErrorVehicle('');
+    } catch (err) {
+      if (err.response) {
+        setErrorVehicle(err.response.data.error);
+        setVehiclesSelected({});
+      }
+    }
+  }
+  useEffect(() => {
+    if ( selectedService.idVehiculos ) {
+      getVehicle(selectedService.idVehiculos)
+      return
+    } else {
+      setVehiclesSelected({})
+      return
+    }
+  },[selectedService])
   return (
     <Modal {...props}>
-      <form action="">
-        <h3 htmlFor="vehicle">Medio de Transporte</h3>
-        <div id="vehicle">
-          <input type="radio" id="car" name="vehicle" value="car" />
-          <label for="car">Carro</label>
-          <input type="radio" id="truck" name="vehicle" value="truck" />
-          <label for="truck">Camion</label>
-          <input type="radio" id="other" name="vehicle" value="other" />
-          <label for="other">Otro</label>
-        </div>
+      {
+        errorVehicle
+        ? <p>{errorVehicle}</p>
+        : <Fragment>
+            <h3>Prestador del servicio: { selectedServicePerson ? ` ${selectedServicePerson.nombre} ${selectedServicePerson.apellido}` : null}</h3>
+            <h3>Cédula de Identidad: { selectedServicePerson ? ` ${selectedServicePerson.cedula}` : null}</h3>
+            <h3>Medio de Transporte: { selectedService ? selectedService.medio_de_transporte : null}</h3>
+            <h3>Hora de Inicio(Formato de 24 horas): { selectedService ? selectedService.inicio_de_horario : null}</h3>
+            <h3>Hora de Finalización(Formato de 24 horas): { selectedService ? selectedService.fin_de_horario : null}</h3>
+            <h3>Coste por Kilomentro: { selectedService ? selectedService.coste_por_kilometros : null}$</h3>
+            <h3>Disponibilidad:
+              { selectedService
+                ? selectedService.disponibilidad === 1
+                  ? ' Disponible' : ' No Disponible'
+                : null
+              }
+            </h3>
+            { Object.keys(vehicleSelected).length !== 0
+              ? (
+                <Fragment>
+                  <h3>Modelo del Vehículo: { vehicleSelected ? vehicleSelected.modelo : null}</h3>
+                  <h3>Año del Vehículo: { vehicleSelected ? vehicleSelected.year : null}</h3>
+                  <h3>Cantidad de Casajeros del Vehículo: { vehicleSelected ? vehicleSelected.cantidad_pasajeros : null}</h3>
+                  <h3>Capacidad de Carga del Vehículo (Kg): { vehicleSelected ? vehicleSelected.capacidad_carga : null}</h3>
+                  <h3>Kilomentros del Vehículo: { vehicleSelected ? vehicleSelected.kilometros : null}</h3>
+                </Fragment>
+                )
+              : null
+            }
+          </Fragment>
+      }
 
-        <h3 htmlFor="areas">Areas de Operativas</h3>
-        <div id="areas">
-          <input type="checkbox" id="catia" name="catia" value="Catia" />
-          <label for="catia">Catia</label>
-          <input type="checkbox" id="propatria" name="propatria" value="Propatria" />
-          <label for="propatria">Propatria</label>
-          <input type="checkbox" id="altamira" name="altamira" value="Altamira" />
-          <label for="altamira">Altamira</label>
-        </div>
-
-        <h3 htmlFor="times">Horarios del Servicio</h3>
-        <div id="times">
-          <label htmlFor="start-time">Inicio</label>
-          <input type="time" id="start-time"></input>
-          <label htmlFor="final-time">Fin</label>
-          <input type="time" id="final-time"></input>
-        </div>
-
-        <h3 htmlFor="times">Costo por Kilometro</h3>
-        <div id="times">
-          <input type="number" />
-          <input type="range" />
-        </div>
-        <div className="buttons">
-          <button className="button-edit">Editar</button>
-          <button className="button-delete">Eliminar</button>
-        </div>
-      </form>
     </Modal>
   );
 }

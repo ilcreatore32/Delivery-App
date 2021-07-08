@@ -128,7 +128,7 @@ body {
     display: flex;
     flex-direction: column;
     align-self: auto;
-    height: 150px;
+    max-height: 500px;
     width: 150px;
     border-radius: 30px;
     margin: 20px;
@@ -173,4 +173,8 @@ body {
     align-self: center;
     border-radius: 30px;
     margin-top: 30px;
+    margin-bottom: 30px;
+}
+.transport_info_min{
+  padding-top: 30px
 }
