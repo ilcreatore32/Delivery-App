@@ -60,11 +60,11 @@ function ShowProductModal(props) {
             <h3>Estado del país en el que se entregarán los productos: { selectedRequest ? selectedRequest.estado : null}</h3>
             <h3>Municipio en el que se entregarán los productos: { selectedRequest ? selectedRequest.municipio : null}</h3>
             <h3>Parroquia en la que se entregarán los productos: { selectedRequest ? selectedRequest.parroquia : null}</h3>
-            { selectedRequest.avenida ? <h3>Avenida en la que se entregarán los productos:  `${selectedRequest.avenida}` </h3> : null}
-            { selectedRequest.calle ? <h3>Calle en la que se entregarán los productos:  `${selectedRequest.calle}` </h3> : null}
-            { selectedRequest.edificio ? <h3>Edificio en el que se entregarán los productos:  `${selectedRequest.edificio}` </h3> : null}
-            { selectedRequest.piso ? <h3>Piso del edificio en el que se entregarán los productos:  `${selectedRequest.piso}` </h3> : null}
-            { selectedRequest.referencia_extra ? <h3>Referencia Extra:  `${selectedRequest.referencia_extra}` </h3> : null}
+            { selectedRequest.avenida ? <h3>Avenida en la que se entregarán los productos:  {selectedRequest.avenida} </h3> : null}
+            { selectedRequest.calle ? <h3>Calle en la que se entregarán los productos:  {selectedRequest.calle} </h3> : null}
+            { selectedRequest.edificio ? <h3>Edificio en el que se entregarán los productos:  {selectedRequest.edificio} </h3> : null}
+            { selectedRequest.piso ? <h3>Piso del edificio en el que se entregarán los productos:  {selectedRequest.piso} </h3> : null}
+            { selectedRequest.referencia_extra ? <h3>Referencia Extra:  {selectedRequest.referencia_extra} </h3> : null}
 
             { productsPerRequest.length !== 0
               ? productsPerRequest.map(productPerRequest => {
@@ -77,7 +77,7 @@ function ShowProductModal(props) {
                   ? <Fragment key={idProductos}>
                   <h3>Nombre del Producto: { product_found ? product_found[0].nombre_producto : null}</h3>
                   <h3>Tipo de Producto: { product_found ? product_found[0].tipo_producto : null}</h3>
-                  <h3>Tamaño: { product_found ? product_found[0].tamaño : null}</h3>
+                  <h3>Tamaño (cm): { product_found ? product_found[0].tamaño : null}</h3>
                   <h3>Peso (kg): { product_found ? product_found[0].peso : null}</h3>
                   <h3>Precio: { product_found ? product_found[0].precio : null}$</h3>
                   <h3>Cantidad: { productPerRequest ? productPerRequest.cantidad : null}</h3>

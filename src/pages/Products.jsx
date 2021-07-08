@@ -43,6 +43,7 @@ function Products() {
   }
   useEffect(() => {
     getRequests()
+    console.log(people);
   },[])
 
   return (

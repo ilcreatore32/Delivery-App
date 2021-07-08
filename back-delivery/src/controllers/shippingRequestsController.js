@@ -18,7 +18,8 @@ export const addShippingRequest = async (req, res) => {
       calle	= null,
       edificio = null,
       piso = null,
-      referencia_extra = null
+      referencia_extra = null,
+      personas_cedula
     } = req.body;
     //generate id
     const idSolicitudEnvio = uuid()
@@ -36,7 +37,8 @@ export const addShippingRequest = async (req, res) => {
       calle,
       edificio,
       piso,
-      referencia_extra
+      referencia_extra,
+      personas_cedula
     };
     //query to insert new data
     await pool.query('INSERT INTO solicitudesenvioproductos set ?', [newShippingRequest], function (error, results, fields) {
@@ -110,7 +112,8 @@ export const updateShippingRequest = async (req, res) => {
       calle	= null,
       edificio = null,
       piso = null,
-      referencia_extra = null
+      referencia_extra = null,
+      personas_cedula
     } = req.body;
     //new object to save
     const newShippingRequest = {
@@ -125,7 +128,8 @@ export const updateShippingRequest = async (req, res) => {
       calle,
       edificio,
       piso,
-      referencia_extra
+      referencia_extra,
+      personas_cedula
     };
     //query to update one row
     await pool.query("UPDATE solicitudesenvioproductos set ? WHERE idSolicitudEnvio = ?", [newShippingRequest, id], function (error, results, fields) {
