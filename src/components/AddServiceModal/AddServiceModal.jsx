@@ -59,29 +59,51 @@ function AddServiceModal(props) {
           +
         </button>
 
-        <h3 htmlFor="times">Horarios del Servicio</h3>
-        <div id="times">
-          <label htmlFor="start-time">Inicio</label>
-          <input type="time" id="start-time"></input>
-          <label htmlFor="final-time">Fin</label>
-          <input type="time" id="final-time"></input>
+        <table className="mg">
+          <tr>
+            <th>Estado</th>
+            <th>Municipio</th>
+            <th>Ciudad</th>
+            <th>Parroquia</th>
+          </tr>
+          <tr>
+            <td>falcon</td>
+            <td>no se</td>
+            <td>caracas</td>
+            <td>libertador</td>
+          </tr>
+        </table>
+
+        <label htmlFor="times">Horarios del Servicio</label>
+        <div className="flex-container-modal evenly">
+          <div>
+            <label htmlFor="start-time">Inicio</label>
+            <input type="time" id="start-time"></input>
+          </div>
+          <div>
+            <label htmlFor="final-time">Fin</label>
+            <input type="time" id="final-time"></input>
+          </div>
         </div>
 
-        <h3 htmlFor="times">Costo por Kilometro</h3>
+        <label htmlFor="times">Costo por Kilometro</label>
         <div id="times">
           <input type="number" />
-          <input type="range" />
         </div>
 
-        <h3 htmlFor="able">Disponibilidad</h3>
+        <label htmlFor="disponibilidad">Disponibilidad</label>
         <div id="able">
-          <input type="radio" id="true" name="option" value="true" />
-          <label for="true">Si</label>
-          <input type="radio" id="false" name="option" value="false" />
-          <label for="false">No</label>
+          <label className="radio" htmlFor="true">
+            Si
+          </label>
+          <input type="radio" id="true" name="disponibilidad" value="true" />
+          <label className="radio" htmlFor="false">
+            No
+          </label>
+          <input type="radio" id="false" name="disponibilidad" value="false" />
         </div>
 
-        <button type="submit">Publicar Servicio</button>
+        <button className="b-submit" type="submit">Publicar Servicio</button>
       </form>
 
       <AddServiceAreasModal
