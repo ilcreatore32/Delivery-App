@@ -19,6 +19,7 @@ function AddServiceModal(props) {
   })
   const [vehicles, setVehicles] = useState([])
   const [errorVehicle, setErrorVehicle] = useState('')
+  const [sucessVehicle, setSucessVehicle] = useState('')
   const getVehicles = async () => {
     try {
       let vehiculos = await axiosClient.get(`/vehicles`)
@@ -38,6 +39,9 @@ function AddServiceModal(props) {
   return (
     <Modal {...props}>
       <form>
+        {errorVehicle ? <span class="toast danger">{errorVehicle}</span> : null}
+        {sucessVehicle ? <span class="toast success">{sucessVehicle}</span> : null}
+        
         <h3 htmlFor="vehicle">Medio de Transporte</h3>
         <select name="vehicle" id="vehicle">
           <optgroup>

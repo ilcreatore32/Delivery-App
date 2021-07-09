@@ -8,8 +8,6 @@ function Modal({ isOpen, closeModal, title, children }) {
 
   return (
     <div className={`modal ${isOpen && "modal-open"}`} onClick={closeModal}>
-      <span class="toast success">Success</span>
-      <span class="toast danger">Danger</span>
       <div className="modal-body" onClick={handleModalBodyClick}>
         <div className="buttons">
           <h2> {title} </h2>

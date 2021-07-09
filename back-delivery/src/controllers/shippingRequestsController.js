@@ -7,6 +7,7 @@ export const addShippingRequest = async (req, res) => {
   try {
     //get all data
     const {
+      idSolicitudEnvio,
       descripcion,
       fecha,
       status,
@@ -21,8 +22,6 @@ export const addShippingRequest = async (req, res) => {
       referencia_extra = null,
       personas_cedula
     } = req.body;
-    //generate id
-    const idSolicitudEnvio = uuid()
     //new object to save
     const newShippingRequest = {
       idSolicitudEnvio,
