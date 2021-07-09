@@ -60,6 +60,19 @@ function ShowServiceModal(props) {
                 )
               : null
             }
+            <h3>Areas de Operaciones: </h3>
+            {
+              selectedServiceAreas.length !== 0 
+              ? selectedServiceAreas.map((area) => (
+                  <Fragment key={area.idAreaOperaciones}>
+                    <h3>Estado del País: { area.estado } </h3>
+                    <h3>Municipio: { area.municipio } </h3>
+                    <h3>Ciudad: { area.ciudad } </h3>
+                    <h3>Parroquia: { area.parroquia } </h3>
+                  </Fragment>
+                ))
+              : null
+            }
           </Fragment>
       }
 
