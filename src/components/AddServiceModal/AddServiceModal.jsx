@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AddServiceAreasModal from "../AddServiceAreasModal/AddServiceAreasModal";
 import Modal from "../Modal/Modal";
 import useModal from "../../hooks/useModal";
+import axiosClient from '../../config/axiosClient';
+import { v4 as uuid } from 'uuid';
 
 function AddServiceModal(props) {
   const [
@@ -9,16 +11,43 @@ function AddServiceModal(props) {
     openAddServiceAreasModal,
     closeAddServiceAreasModal,
   ] = useModal();
+  const [user, setUser] = useState({
+    cedula: 28044244,
+    tipo_cedula: "V",
+    nombre: "Jesús",
+    apellido: "Rivas",
+  })
+  const [vehicles, setVehicles] = useState([])
+  const [errorVehicle, setErrorVehicle] = useState('')
+  const getVehicles = async () => {
+    try {
+      let vehiculos = await axiosClient.get(`/vehicles`)
+      setVehicles(vehiculos.data)
+      setErrorVehicle('');
+    } catch (err) {
+      if (err.response) {
+        setErrorVehicle(err.response.data.error);
+        setVehicles([]);
+      }
+    }
+  }
+  useEffect(() => {
+    getVehicles()
+  },[])
 
   return (
     <Modal {...props}>
-      <form action="">
+      <form>
         <h3 htmlFor="vehicle">Medio de Transporte</h3>
         <select name="vehicle" id="vehicle">
           <optgroup>
-            <option value="test">test 1</option>
-            <option value="test">test 2</option>
-            <option value="test">test 3</option>
+            {
+              vehicles.length !== 0
+              ? vehicles.map(vehicle => (
+                <option value={vehicle.idVehiculos}>{vehicle.modelo}</option>
+              ))
+              : <option value="">No posee vehículos</option>
+            }
           </optgroup>
         </select>
 

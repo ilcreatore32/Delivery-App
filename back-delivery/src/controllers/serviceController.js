@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import pool from "../database";
 
 
@@ -7,6 +6,7 @@ export const addService = async (req, res) => {
   try {
     //get all data
     const {
+      idServicioTransporte,
       medio_de_transporte,
       inicio_de_horario,
       fin_de_horario,
@@ -20,8 +20,7 @@ export const addService = async (req, res) => {
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       //if there is no values
       if ( Object.values(results[0])[0] !== 1 ) return res.status(404).json({ error: "Vehiculo no encontrado" })
-      //generate id
-      const idServicioTransporte = uuid()
+
       //new object to save
       const newService = {
         idServicioTransporte,
