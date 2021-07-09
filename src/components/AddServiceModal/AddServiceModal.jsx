@@ -1,29 +1,34 @@
 import React from "react";
+import AddServiceAreasModal from "../AddServiceAreasModal/AddServiceAreasModal";
 import Modal from "../Modal/Modal";
+import useModal from "../../hooks/useModal";
 
 function AddServiceModal(props) {
+  const [
+    isAddServiceAreasOpenModal,
+    openAddServiceAreasModal,
+    closeAddServiceAreasModal,
+  ] = useModal();
+
   return (
     <Modal {...props}>
       <form action="">
         <h3 htmlFor="vehicle">Medio de Transporte</h3>
-        <div id="vehicle">
-          <input type="radio" id="car" name="vehicle" value="car" />
-          <label for="car">Carro</label>
-          <input type="radio" id="truck" name="vehicle" value="truck" />
-          <label for="truck">Camion</label>
-          <input type="radio" id="other" name="vehicle" value="other" />
-          <label for="other">Otro</label>
-        </div>
+        <select name="vehicle" id="vehicle">
+          <optgroup>
+            <option value="test">test 1</option>
+            <option value="test">test 2</option>
+            <option value="test">test 3</option>
+          </optgroup>
+        </select>
 
-        <h3 htmlFor="areas">Areas de Operativas</h3>
-        <div id="areas">
-          <input type="checkbox" id="catia" name="catia" value="Catia" />
-          <label for="catia">Catia</label>
-          <input type="checkbox" id="propatria" name="propatria" value="Propatria" />
-          <label for="propatria">Propatria</label>
-          <input type="checkbox" id="altamira" name="altamira" value="Altamira" />
-          <label for="altamira">Altamira</label>
-        </div>
+        <h3 htmlFor="areas">Areas de Operacion</h3>
+        <button
+          className="add-button flex-item small-flex-item"
+          onClick={(e) => { e.preventDefault(); openAddServiceAreasModal() }}
+        >
+          +
+        </button>
 
         <h3 htmlFor="times">Horarios del Servicio</h3>
         <div id="times">
@@ -39,8 +44,22 @@ function AddServiceModal(props) {
           <input type="range" />
         </div>
 
+        <h3 htmlFor="able">Disponibilidad</h3>
+        <div id="able">
+          <input type="radio" id="true" name="option" value="true" />
+          <label for="true">Si</label>
+          <input type="radio" id="false" name="option" value="false" />
+          <label for="false">No</label>
+        </div>
+
         <button type="submit">Publicar Servicio</button>
       </form>
+
+      <AddServiceAreasModal
+        isOpen={isAddServiceAreasOpenModal}
+        closeModal={closeAddServiceAreasModal}
+        title="Agregar Area de Operación"
+      />
     </Modal>
   );
 }
