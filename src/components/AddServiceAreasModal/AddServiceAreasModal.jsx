@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext }  from "react";
 import Modal from "../Modal/Modal";
 import { AddServiceContext } from '../../context/addServiceContext';
+import useModal from "../../hooks/useModal";
 
 function AddServiceAreasModal(props) {
   const [user, setUser] = useState({
@@ -9,8 +10,8 @@ function AddServiceAreasModal(props) {
     nombre: "Jesús",
     apellido: "Rivas",
   })
-  //generate id
-  const { setServiceToAdd, areaToAdd, setAreaToAdd } = useContext(AddServiceContext);
+  const {closeModal} = props;
+  const { areaToAdd, setAreaToAdd, areasToAdd, setAreasToAdd } = useContext(AddServiceContext);
 
   const saveArea = e => {
     e.preventDefault()
@@ -21,7 +22,9 @@ function AddServiceAreasModal(props) {
   }
   const submitArea = e => {
     e.preventDefault()
-
+    setAreasToAdd(prevAareasToAdd => [...prevAareasToAdd, areaToAdd])
+    console.log(areasToAdd);
+    closeModal()
   }
   return (
     <Modal {...props}>

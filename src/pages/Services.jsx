@@ -65,8 +65,8 @@ function Services() {
               return person.cedula === personas_cedula
             })
             return (
-              <div className="flex-item" key={idServicioTransporte}>
-                <div className="transport_info_min">
+              <div className="flex-item" key={idServicioTransporte} style={{ height: "auto",maxHeight: "700px" }}>
+                <div className="transport_info_min" >
                   <h4>{medio_de_transporte}</h4>
                   <p>{coste_por_kilometros}</p>
                   {area.map(area =>

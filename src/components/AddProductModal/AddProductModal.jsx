@@ -105,7 +105,7 @@ function AddProductModal(props) {
           setSucessProduct('Exito al crear producto');
           setTimeout(() => {
             setSucessProduct('')
-            window.location.replace('/product')
+            window.location.replace('/products')
           }, 3000);
         } catch (err) {
           if (err) {

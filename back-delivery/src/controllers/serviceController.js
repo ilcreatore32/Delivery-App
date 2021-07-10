@@ -12,7 +12,8 @@ export const addService = async (req, res) => {
       fin_de_horario,
       coste_por_kilometros,
       disponibilidad,
-      idVehiculos
+      idVehiculos,
+      personas_cedula
     } = req.body;
     await pool.query('SELECT EXISTS(SELECT 1 FROM vehiculos WHERE idVehiculos = ?)',
     [idVehiculos], async function (error, results, fields) {
@@ -29,12 +30,13 @@ export const addService = async (req, res) => {
         fin_de_horario,
         coste_por_kilometros,
         disponibilidad,
-        idVehiculos
+        idVehiculos,
+        personas_cedula
       };
       //query to insert new data
       await pool.query('INSERT INTO ofertasserviciotransporte set ?', [newService], function (error, results, fields) {
         //if error in the query
-        if (error) return res.status(400).json({error: "Error al guardar en la base de datos"})
+        if (error) return res.status(400).json(error)
         //all correct
         res.status(200).json( { message: 'Añadido el servicio de transporte' } )
       });
