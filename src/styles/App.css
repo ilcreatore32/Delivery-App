@@ -174,3 +174,9 @@ body {
     border-radius: 30px;
     margin-top: 30px;
 }
+
+.small-flex-item{
+    font-size:unset !important;
+    height: unset !important;
+    width: unset !important;
+}
