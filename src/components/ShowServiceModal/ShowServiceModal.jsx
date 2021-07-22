@@ -5,42 +5,48 @@ function ShowServiceModal(props) {
   return (
     <Modal {...props}>
       <form action="">
-        <h3 htmlFor="vehicle">Medio de Transporte</h3>
+        <label htmlFor="vehicle">Medio de Transporte</label>
         <div id="vehicle">
           <input type="radio" id="car" name="vehicle" value="car" />
-          <label for="car">Carro</label>
+          <label htmlFor="car">Carro</label>
           <input type="radio" id="truck" name="vehicle" value="truck" />
-          <label for="truck">Camion</label>
+          <label htmlFor="truck">Camion</label>
           <input type="radio" id="other" name="vehicle" value="other" />
-          <label for="other">Otro</label>
+          <label htmlFor="other">Otro</label>
+        </div>
+        
+
+        <p>Areas Operativas</p>
+        <table>
+          <tr>
+            <th>Estado</th>
+            <th>Municipio</th>
+            <th>Ciudad</th>
+            <th>Parroquia</th>
+          </tr>
+          <tr>
+            <td>falcon</td>
+            <td>no se</td>
+            <td>caracas</td>
+            <td>libertador</td>
+          </tr>
+        </table>
+
+        <label htmlFor="times">Horarios del Servicio</label>
+        <div className="flex-container-modal evenly">
+          <div>
+            <label htmlFor="start-time">Inicio</label>
+            <input type="time" id="start-time"></input>
+          </div>
+          <div>
+            <label htmlFor="final-time">Fin</label>
+            <input type="time" id="final-time"></input>
+          </div>
         </div>
 
-        <h3 htmlFor="areas">Areas de Operativas</h3>
-        <div id="areas">
-          <input type="checkbox" id="catia" name="catia" value="Catia" />
-          <label for="catia">Catia</label>
-          <input type="checkbox" id="propatria" name="propatria" value="Propatria" />
-          <label for="propatria">Propatria</label>
-          <input type="checkbox" id="altamira" name="altamira" value="Altamira" />
-          <label for="altamira">Altamira</label>
-        </div>
-
-        <h3 htmlFor="times">Horarios del Servicio</h3>
-        <div id="times">
-          <label htmlFor="start-time">Inicio</label>
-          <input type="time" id="start-time"></input>
-          <label htmlFor="final-time">Fin</label>
-          <input type="time" id="final-time"></input>
-        </div>
-
-        <h3 htmlFor="times">Costo por Kilometro</h3>
+        <label htmlFor="times">Costo por Kilometro</label>
         <div id="times">
           <input type="number" />
-          <input type="range" />
-        </div>
-        <div className="buttons">
-          <button className="button-edit">Editar</button>
-          <button className="button-delete">Eliminar</button>
         </div>
       </form>
     </Modal>
