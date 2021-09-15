@@ -68,7 +68,7 @@ function Services() {
               <div className="flex-item" key={idServicioTransporte} style={{ height: "auto",maxHeight: "700px" }}>
                 <div className="transport_info_min" >
                   <h4>{medio_de_transporte}</h4>
-                  <p>{coste_por_kilometros}</p>
+                  <p>{coste_por_kilometros}$</p>
                   {area.map(area =>
                     <p key={area.idAreaOperaciones}>{area.estado}</p>
                   )}

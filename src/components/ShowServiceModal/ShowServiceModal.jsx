@@ -71,7 +71,7 @@ function ShowServiceModal(props) {
               </div>
             </div>
 
-            <label htmlFor="times">Costo por Kilometro (En dolares): </label>
+            <label htmlFor="times">Costo por Kilometro (En dolares $): </label>
             <div id="times">
               <input type="number" name="coste_por_kilometros" value={ selectedService ? selectedService.coste_por_kilometros : null}/>
             </div>

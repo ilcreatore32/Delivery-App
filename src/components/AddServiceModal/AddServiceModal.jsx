@@ -123,7 +123,6 @@ function AddServiceModal(props) {
             <option value="Camion">Camion</option>
             <option value="Motocicleta">Motocicleta</option>
             <option value="Bicicleta">Bicicleta</option>
-            <option value="Pie">Pie</option>
             <option value="Otro">Otro</option>
           </optgroup>
         </select>
@@ -169,7 +168,7 @@ function AddServiceModal(props) {
           </div>
         </div>
 
-        <label htmlFor="times">Costo por Kilometro (En dolares): </label>
+        <label htmlFor="times">Costo por Kilometro (En dolares $): </label>
         <div id="times">
           <input type="number" name="coste_por_kilometros" onChange={saveService}/>
         </div>
