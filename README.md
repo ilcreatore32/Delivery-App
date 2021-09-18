@@ -32,11 +32,11 @@ _Simplemente selecciona la opción de tu preferencia (línea de comandos de **Gi
 
 Clone with SSH:
 
-    git clone -b Berman_Weishler --single-branch git@github.com:ilcreatore32/Delivery-App.git
+    git clone git@github.com:ilcreatore32/Delivery-App.git
 
 Clone with HTTPS:
 
-    git clone -b Berman_Weishler --single-branch https://github.com/ilcreatore32/Delivery-App.git
+    git clone https://github.com/ilcreatore32/Delivery-App.git
 
 > _Si no sabe como utilizar el proyecto, continué hacia el apartado de "**Como Desplegar el Proyecto**" para ver como lograrlo._
 
