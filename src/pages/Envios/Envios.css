@@ -1,0 +1,66 @@
+/* Envios Dashboard */
+
+/* Menu */
+.dashboard-menu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #525583;
+
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: center;
+    align-content: center;
+    gap: .22rem;
+}
+
+.dark-dropdown{
+    color: #EDF2F4 !important;
+}
+
+.account-menu {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: center;
+    align-content: center;
+    gap: .22rem;
+}
+
+/* Dashboard */
+
+.dashboard {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    align-content: center;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    margin: 1rem;
+    border: 1px solid var(--dark-color);
+    border-radius: 9px;
+    padding: 1rem;
+}
+
+.dashboard-left-side-component{
+    width: 40%;
+    border: 1px solid var(--dark-color);
+    border-radius: 9px;
+}
+
+.dashboard-right-side-component{
+    width: 100%;
+    border: 1px solid var(--dark-color);
+    border-radius: 9px;
+}

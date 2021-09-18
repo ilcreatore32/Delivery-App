@@ -1,14 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AddServiceProvider from './context/addServiceContext';
-
 import App from './App';
+
+/* React-Bootstrap */
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
   <React.StrictMode>
-  <AddServiceProvider>
     <App />
-  </AddServiceProvider>
 </React.StrictMode>,
   document.getElementById('root')
 );

@@ -1,0 +1,33 @@
+/* Account Page */
+
+.account-page {
+    margin: 1rem auto;
+    border: 1px solid var(--dark-color);
+    border-radius: 9px;
+    padding: 1rem;
+    width: 60%;
+    background-color: var(--body-color);
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
+th {
+    width: 30%;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.btn-flex {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem;
+    padding: .5rem;
+}
