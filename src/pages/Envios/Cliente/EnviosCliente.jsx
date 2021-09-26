@@ -1,5 +1,8 @@
 import React from "react";
 
+/* DataTable Columns */
+import { EnviosColumns } from "../../../Models/DataTableColums";
+
 /* React-Router */
 import { Link } from "react-router-dom";
 
@@ -27,17 +30,23 @@ function EnviosCliente() {
                 <Link to="/Cuenta">Su Cuenta</Link>
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="">Salir</NavDropdown.Item>
+              <NavDropdown.Item
+                onClick={() => {
+                  alert("Adios");
+                }}
+              >
+                Salir
+              </NavDropdown.Item>
             </NavDropdown>
           </div>
         </div>
-        <h1  className="text-center">Envios</h1>
+        <h1 className="text-center">Envios</h1>
         <div className="dashboard">
           <div className="dashboard-left-side-component">
             <LeftSideComponent envios={true} />
           </div>
           <div className="dashboard-right-side-component">
-            <RightSideComponent />
+            <RightSideComponent columns={EnviosColumns} />
           </div>
         </div>
       </div>

@@ -1,5 +1,8 @@
 import React from "react";
 
+/* DataTable Columns */
+import { VehiculosColumns } from '../../Models/DataTableColums';
+
 /* React-Bootstrap */
 import NavDropdown from "react-bootstrap/NavDropdown";
 
@@ -52,13 +55,13 @@ function Vehiculos() {
             </NavDropdown>
           </div>
         </div>
-        <h1  className="text-center">Sus Vehiculos</h1>
+        <h1 className="text-center">Sus Vehiculos</h1>
         <div className="dashboard">
           <div className="dashboard-left-side-component">
             <LeftSideComponent vehiculos={true} />
           </div>
           <div className="dashboard-right-side-component">
-            <RightSideComponent />
+            <RightSideComponent columns={VehiculosColumns} />
           </div>
         </div>
       </div>

@@ -18,8 +18,8 @@ function Envios() {
         o
         <EnviosTransportista />
     */
-    // setType(true);
-    setType(false);
+        setType(false)
+        //setType(true);
   }, []);
 
   return (

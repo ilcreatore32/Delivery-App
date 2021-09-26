@@ -1,124 +1,66 @@
 import React from "react";
-import { useTable } from "react-table";
 
-function RightSideComponent({ cabecera, cuerpo }) {
-  /*  Este Componente crea una tabla a partir
-    de los datos ingrsados como props.
+/* React-Datatable */
+import DataTable from "react-data-table-component";
 
-    Dependiendo de donde se llame y que datos se
-    transmitan puede listar bien sea envios, servicios,
-    vehiculos, etc. 
+/* CSS */
+import "./RightSideComponent.css";
 
-    Envia las columnas como props con useMemo para definir las
-    columnas segun envios, servicios, vehiculos, etc.
+function RightSideComponent({ columns, data }) {
 
-    Example Vehiculos:
-        const columns = React.useMemo(
-            () => [
-            {
-                Header: "id",
-                accessor: "data.id", // accessor is the "key" in the data
-                                    // ref hacia los datos de la tabla
-            },
-            {
-                Header: "Marca",
-                accessor: "data.Marca",
-            },
-            {
-                Header: "Modelo",
-                accessor: "data.Modelo",
-            },
-            {
-                etc...
-            },
-            ],
-            []
-        );
-    
-    Envia los datos como props...
-*/
-
-  const data = React.useMemo(
-    () => [
-      {
-        col1: "Hello",
-        col2: "World",
+  const Styles = {
+    headRow: {
+      style: {
+        border: "none",
       },
-      {
-        col1: "react-table",
-        col2: "rocks",
+    },
+    headCells: {
+      style: {
+        color: "#202124",
+        fontSize: "14px",
+        width: "100%",
       },
-      {
-        col1: "whatever",
-        col2: "you want",
+    },
+    rows: {
+      highlightOnHoverStyle: {
+        backgroundColor: "#dc354530",
+        borderBottomColor: "#FFFFFF",
+        borderRadius: "25px",
+        outline: "1px solid #FFFFFF",
       },
-    ],
-    []
-  );
+    },
+    pagination: {
+      style: {
+        color: "#000",
+        border: "none",
+        justifyContent: "center",
+        margin: ".5rem auto",
+        width: "fit-content",
+        borderRadius: "14px"
+      },
+    },
+  };
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Column 1",
-        accessor: "col1", // accessor is the "key" in the data
-      },
-      {
-        Header: "Column 2",
-        accessor: "col2",
-      },
-    ],
-    []
-  );
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });
+  const paginationOptions = {
+    rowsPerPageText: "Filas por Pagina",
+    rangeSeparatorText: "de",
+    selectAllRowsItem: true,
+    selectAllRowsItemText: "Todos",
+  };
 
   return (
     <>
-      <table {...getTableProps()} style={{ border: "solid 1px blue" }}>
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th
-                  {...column.getHeaderProps()}
-                  style={{
-                    borderBottom: "solid 3px red",
-                    background: "aliceblue",
-                    color: "black",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {column.render("Header")}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td
-                      {...cell.getCellProps()}
-                      style={{
-                        padding: "10px",
-                        border: "solid 1px gray",
-                        background: "papayawhip",
-                      }}
-                    >
-                      {cell.render("Cell")}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <DataTable
+        className="table"
+        columns={columns}
+        data={data}
+        pagination
+        paginationComponentOptions={paginationOptions}
+        fixedHeader
+        fixedHeaderScrollHeight="600px"
+        customStyles={Styles}
+        highlightOnHover
+      />
     </>
   );
 }

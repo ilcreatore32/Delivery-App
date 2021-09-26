@@ -13,7 +13,9 @@ import Servicios from "./pages/Servicios/Servicios";
 import Asumidos from "./pages/Asumidos/Asumidos";
 import NoMatch from "./pages/NoMatch";
 
+/* CSS */
 import "./styles/App.css";
+import "./styles/Responsive.css";
 
 function App() {
   const tran = "/Transportista";

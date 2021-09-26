@@ -8,16 +8,16 @@ import Vehiculos from "./Vehiculos/Vehiculos";
 /* CSS*/
 import "./LeftSideComponent.css";
 
-function LeftSideComponent({ envios, servicios, vehiculos, asumidos }) {
+function LeftSideComponent({ envios, servicios, vehiculos, asumidos, admin }) {
   return (
     <>
       <div className="left-side-component">
         {envios ? (
-          <Envios asumidos={asumidos} />
+          <Envios asumidos={asumidos} admin={admin} />
         ) : servicios ? (
-          <Servicios />
+          <Servicios admin={admin} />
         ) : vehiculos ? (
-          <Vehiculos />
+          <Vehiculos admin={admin} />
         ) : (
           null
         )}

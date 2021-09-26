@@ -15,10 +15,12 @@
     "bootstrap": "^5.1.0",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-beta.6",
+    "react-data-table-component": "^7.2.1",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-table": "^7.7.0",
+    "styled-components": "^5.3.1",
     "uuid": "^8.3.2",
     "web-vitals": "^1.1.2"
   },

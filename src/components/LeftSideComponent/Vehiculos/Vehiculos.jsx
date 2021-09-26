@@ -3,7 +3,7 @@ import React from "react";
 /* React-Bootstrap */
 import Form from "react-bootstrap/Form";
 
-function Vehiculos() {
+function Vehiculos({ admin }) {
   var today = new Date();
   var year = today.getFullYear();
   var minYears = [];
@@ -95,6 +95,25 @@ function Vehiculos() {
             <Form.Group className="flex-form-group mb-3">
               <Form.Control type="text" />
             </Form.Group>
+          </div>
+          <div className="client mb-3">
+            {admin ? (
+              <>
+                <h5 className="form-title">Usuario</h5>
+                <Form.Group className="flex-form-group mb-3">
+                  <Form.Label htmlFor="firts-name">Nombres</Form.Label>
+                  <Form.Control id="firts-name" type="text" />
+                </Form.Group>
+                <Form.Group className="flex-form-group mb-3">
+                  <Form.Label htmlFor="last-name">Apellidos</Form.Label>
+                  <Form.Control id="last-name" type="text" />
+                </Form.Group>
+                <Form.Group className="flex-form-group mb-3">
+                  <Form.Label htmlFor="identity">Cedula</Form.Label>
+                  <Form.Control id="identity" type="number" />
+                </Form.Group>
+              </>
+            ) : null}
           </div>
         </Form>
       </div>

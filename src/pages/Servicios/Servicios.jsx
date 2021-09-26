@@ -1,5 +1,8 @@
 import React from "react";
 
+/* DataTable Columns */
+import { ServiciosColumns } from "../../Models/DataTableColums";
+
 /* React-Bootstrap */
 import NavDropdown from "react-bootstrap/NavDropdown";
 
@@ -56,7 +59,7 @@ function Servicios() {
             <LeftSideComponent servicios={true} />
           </div>
           <div className="dashboard-right-side-component">
-            <RightSideComponent />
+            <RightSideComponent columns={ServiciosColumns} />
           </div>
         </div>
       </div>
