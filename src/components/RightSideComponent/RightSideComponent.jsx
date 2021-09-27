@@ -1,65 +1,50 @@
 import React from "react";
 
 /* React-Datatable */
-import DataTable from "react-data-table-component";
+import { DataGrid } from "@mui/x-data-grid";
 
 /* CSS */
 import "./RightSideComponent.css";
 
-function RightSideComponent({ columns, data }) {
+function RightSideComponent({ Columns, Data }) {
+  // const rows = [
+  //   { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
+  //   { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
+  //   { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
+  //   { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
+  //   { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
+  //   { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
+  //   { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
+  //   { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
+  //   { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
+  // ];
 
-  const Styles = {
-    headRow: {
-      style: {
-        border: "none",
-      },
-    },
-    headCells: {
-      style: {
-        color: "#202124",
-        fontSize: "14px",
-        width: "100%",
-      },
-    },
-    rows: {
-      highlightOnHoverStyle: {
-        backgroundColor: "#dc354530",
-        borderBottomColor: "#FFFFFF",
-        borderRadius: "25px",
-        outline: "1px solid #FFFFFF",
-      },
-    },
-    pagination: {
-      style: {
-        color: "#000",
-        border: "none",
-        justifyContent: "center",
-        margin: ".5rem auto",
-        width: "fit-content",
-        borderRadius: "14px"
-      },
-    },
-  };
+  const rows = [
+    { id: 1 },
+    { id: 2 },
+    { id: 3 },
+    { id: 4 },
+    { id: 5 },
+    { id: 6 },
+    { id: 7 },
+    { id: 8 },
+    { id: 9 },
+  ];
 
-  const paginationOptions = {
-    rowsPerPageText: "Filas por Pagina",
-    rangeSeparatorText: "de",
-    selectAllRowsItem: true,
-    selectAllRowsItemText: "Todos",
-  };
-
+  const columns = [
+    {
+      headerName: "id",
+      field: "id",
+    }
+  ];
   return (
     <>
-      <DataTable
-        className="table"
+      <DataGrid
+        rows={rows}
         columns={columns}
-        data={data}
-        pagination
-        paginationComponentOptions={paginationOptions}
-        fixedHeader
-        fixedHeaderScrollHeight="600px"
-        customStyles={Styles}
-        highlightOnHover
+        pageSize={10}
+        rowsPerPageOptions={[10]}
+        checkboxSelection
       />
     </>
   );

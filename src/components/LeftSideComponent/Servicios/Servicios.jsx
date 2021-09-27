@@ -1,94 +1,200 @@
 import React from "react";
+import { useState } from "react";
+
+/* Material UI */
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import InputAdornment from "@mui/material/InputAdornment";
+import MenuItem from "@mui/material/MenuItem";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 /* React-Bootstrap */
 import Form from "react-bootstrap/Form";
 
 function Servicios({ admin }) {
+  const [Disponibility, setDisponibility] = useState("");
+  const [Medium, setMedium] = useState("");
+
+  const handleMediumChange = (e) => {
+    setMedium(e.target.value);
+  };
+
+  const handleDisponibilityChange = (e) => {
+    setDisponibility(e.target.value);
+  };
+
+  const mediums = [
+    {
+      value: "1",
+      label: "Carro",
+    },
+    {
+      value: "2",
+      label: "Moto",
+    },
+  ];
+
+  const disponibilities = [
+    {
+      value: "1",
+      label: "Inmediata",
+    },
+    {
+      value: "2",
+      label: "No Disponible",
+    },
+  ];
+
   return (
     <>
-      <div>
-        <Form>
-          <div className="location mt-3">
-            <h5 className="form-title">Ubicación</h5>
-            <Form.Group className="flex-form-group mb-3">
-              <Form.Label htmlFor="estado">Estado</Form.Label>
-              <Form.Select id="state" size="sm">
-                <option>DC</option>
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="flex-form-group mb-3">
-              <Form.Label htmlFor="municipio">Municipio</Form.Label>
-              <Form.Select id="municipio" size="sm">
-                <option>Libertador</option>
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="flex-form-group mb-3">
-              <Form.Label htmlFor="parroquia">Parroquia</Form.Label>
-              <Form.Select id="parroquia" size="sm">
-                <option>DC</option>
-              </Form.Select>
-            </Form.Group>
-          </div>
+      <Form>
+        <Box
+          sx={{
+            display: "grid",
+            rowGap: 3,
+            margin: "1rem",
+            padding: "1rem 0",
+          }}
+        >
+          <Box
+            sx={{
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: "repeat(3, 1fr)",
+            }}
+          >
+            <TextField id="" label="Estado" variant="filled" />
+            <TextField id="" label="Municipio" variant="filled" />
+            <TextField id="" label="Parroquia" variant="filled" />
+          </Box>
 
-          <div className="time">
-            <h5 className="form-title">Horario</h5>
-            <Form.Group className="flex-form-group mb-3">
-              <Form.Label htmlFor="init-time">Inicio</Form.Label>
-              <Form.Control id="init-time" type="time" />
-            </Form.Group>
-            <Form.Group className="flex-form-group mb-3">
-              <Form.Label htmlFor="finish-time">Cierre</Form.Label>
-              <Form.Control id="finish-time" type="time" />
-            </Form.Group>
-          </div>
-          <div className="price">
-            <h5 className="form-title">Precio</h5>
-            <Form.Group className="flex-form-group mb-3">
-              <Form.Label htmlFor="min-price">Mínimo</Form.Label>
-              <Form.Control id="min-price" type="number" />
-            </Form.Group>
-            <Form.Group className="flex-form-group mb-3">
-              <Form.Label htmlFor="max-price">Máximo</Form.Label>
-              <Form.Control id="max-price" type="number" />
-            </Form.Group>
-          </div>
-          <div className="medium mb-3">
-            <h5 className="form-title">Medio</h5>
-            <Form.Group className="flex-form-group mb-3">
-              <Form.Select size="sm">
-                <option>Moto</option>
-              </Form.Select>
-            </Form.Group>
-          </div>
-          <div className="disponibility mb-3">
-            <h5 className="form-title">Disponibilidad</h5>
-            <Form.Group className="flex-form-group mb-3">
-              <Form.Select size="sm">
-                <option>Inmediata</option>
-              </Form.Select>
-            </Form.Group>
-          </div>
-          <div className="user mb-3">
-            {admin ? (
-              <>
-                <h5 className="form-title">Usuario</h5>
-                <Form.Group className="flex-form-group mb-3">
-                  <Form.Label htmlFor="firts-name">Nombres</Form.Label>
-                  <Form.Control id="firts-name" type="text" />
-                </Form.Group>
-                <Form.Group className="flex-form-group mb-3">
-                  <Form.Label htmlFor="last-name">Apellidos</Form.Label>
-                  <Form.Control id="last-name" type="text" />
-                </Form.Group>
-                <Form.Group className="flex-form-group mb-3">
-                  <Form.Label htmlFor="identity">Cedula</Form.Label>
-                  <Form.Control id="identity" type="number" />
-                </Form.Group>
-              </>
-            ) : null}
-          </div>
-        </Form>
-      </div>
+          <Box
+            sx={{
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: "repeat(2, 1fr)",
+            }}
+          >
+            <TextField
+              id=""
+              label="Inicio"
+              type="time"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="filled"
+            />
+            <TextField
+              id=""
+              label="Cierre"
+              type="time"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="filled"
+            />
+          </Box>
+
+          <Box
+            sx={{
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: "repeat(2, 1fr)",
+            }}
+          >
+            <TextField
+              id=""
+              label="Mínimo"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AttachMoneyIcon />
+                  </InputAdornment>
+                ),
+              }}
+              variant="filled"
+            />
+            <TextField
+              id=""
+              label="Maximo"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AttachMoneyIcon />
+                  </InputAdornment>
+                ),
+              }}
+              variant="filled"
+            />
+          </Box>
+
+          <Box
+            sx={{
+              display: "grid",
+            }}
+          >
+            <TextField
+              id=""
+              select
+              label="Medio"
+              value={Medium}
+              onChange={handleMediumChange}
+              variant="filled"
+            >
+              {mediums.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+
+          <Box
+            sx={{
+              display: "grid",
+            }}
+          >
+            <TextField
+              id=""
+              select
+              label="Disponibilidad"
+              value={Disponibility}
+              onChange={handleDisponibilityChange}
+              variant="filled"
+            >
+              {disponibilities.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+
+          {admin ? (
+            <>
+              <Box
+                sx={{
+                  display: "grid",
+                  gap: 2,
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                }}
+              >
+                <TextField id="" label="Nombres" variant="filled" />
+                <TextField id="" label="Apellidos" variant="filled" />
+                <TextField id="" label="Cedula" variant="filled" />
+              </Box>
+            </>
+          ) : null}
+        </Box>
+      </Form>
     </>
   );
 }

@@ -17,45 +17,29 @@ const urlVehiculos = "/Vehiculos";
 /* Envios Columns */
 export const EnviosColumns = [
   {
-    name: "id",
-    selector: "id",
-    sortable: true,
+    headerName: "id",
+    field: "id",
   },
   {
-    name: "Ubicación",
-    selector: "",
-    sortable: true,
+    headerName: "Ubicación",
+    field: "",
   },
   {
-    name: "Productos",
-    selector: "",
-    sortable: true,
+    headerName: "Productos",
+    field: "",
   },
   {
-    name: "Valor del Pedido",
-    selector: "",
-    sortable: true,
+    headerName: "Valor del Pedido",
+    field: "",
   },
   {
-    name: "Peso Total",
-    selector: "",
-    sortable: true,
+    headerName: "Peso Total",
+    field: "",
   },
   {
-    name: "Fecha del Pedido",
-    selector: "",
-    sortable: true,
-  },
-  {
-    cell: ({ id }) => (
-      <Link to={`${urlEnvios}/${id}`}>
-        <FontAwesomeIcon style={{ color: "#EF233C" }} icon={faInfoCircle} />
-      </Link>
-    ),
-    allowOverflow: true,
-    button: true,
-    width: "2rem",
-  },
+    headerName: "Fecha del Pedido",
+    field: "",
+  }
 ];
 
 /* Servicios Columns */

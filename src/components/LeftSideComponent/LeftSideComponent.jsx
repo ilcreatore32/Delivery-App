@@ -18,9 +18,7 @@ function LeftSideComponent({ envios, servicios, vehiculos, asumidos, admin }) {
           <Servicios admin={admin} />
         ) : vehiculos ? (
           <Vehiculos admin={admin} />
-        ) : (
-          null
-        )}
+        ) : null}
       </div>
     </>
   );
