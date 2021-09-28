@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 /* App Pages */
+import Login from "./components/Login/Login";
 import Envios from "./pages/Envios/Envios";
 /* Cuenta */
 import Cuenta from "./pages/Cuenta/Cuenta";
@@ -17,19 +18,24 @@ import Asumidos from "./pages/Asumidos/Asumidos";
 import NoMatch from "./pages/NoMatch";
 
 /* Material UI */
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
+import {
+  FormControlLabel,
+  FormGroup,
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  IconButton,
+  MenuItem,
+  Menu,
+  Button,
+} from "@mui/material";
+
+import MaterialSwitch from "@mui/material/Switch";
+
+/* Material Icons */
 import MenuIcon from "@mui/icons-material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MSwitch from "@mui/material/Switch";
-import Button from "@mui/material/Button";
 
 /* CSS */
 import "./styles/App.css";
@@ -72,7 +78,7 @@ function App() {
               <FormGroup>
                 <FormControlLabel
                   control={
-                    <MSwitch
+                    <MaterialSwitch
                       checked={auth}
                       onChange={handleChange}
                       aria-label="login switch"
@@ -121,6 +127,7 @@ function App() {
         </Box>
         <div className="app-page wrapper">
           <Switch>
+            <Route path="/" exact component={Login} />
             <Route path="/Envios" exact component={Envios} />
             {/* Cuenta */}
             <Route path="/Cuenta" exact component={Cuenta} />

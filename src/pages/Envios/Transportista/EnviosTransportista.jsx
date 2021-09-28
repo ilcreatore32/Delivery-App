@@ -4,7 +4,7 @@ import React from "react";
 import { Typography, Grid } from "@mui/material";
 
 /* DataTable Columns */
-import { EnviosColumns } from "../../../Models/DataTableColums";
+import { EnviosColumns } from "../../../models/DataTableColums";
 
 /* Components */
 import AppTabs from "../../../components/AppTabs/AppTabs";
