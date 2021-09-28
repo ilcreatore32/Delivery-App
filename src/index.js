@@ -2,10 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 
-/* Redux */
-import store from './config/store';
-import { Provider } from "react-redux";
-
 /* Material UI */
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -25,11 +21,9 @@ const DarkTheme = createTheme({
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <ThemeProvider theme={DarkTheme}>
-        <App />
-      </ThemeProvider>
-    </Provider>
+    <ThemeProvider theme={DarkTheme}>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
