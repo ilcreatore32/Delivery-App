@@ -10,7 +10,6 @@ import {
   TextField,
   Box,
 } from "@mui/material";
-// import { CircularProgress } from "@material-ui/core";
 
 /* CSS */
 import "./Login.css";
@@ -33,7 +32,6 @@ function Login() {
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={open}
         >
-          {/* <CircularProgress color="inherit" /> */}
           <Grid className="login-component">
             <Paper elevation={10} className="paper-style">
               <Grid align="center">

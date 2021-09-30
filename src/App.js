@@ -1,8 +1,14 @@
-import { React } from "react";
+import { Component, React } from "react";
 import { useState } from "react";
 
 /* React-Router */
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  PrivateRoute,
+  Redirect,
+} from "react-router-dom";
 import { Link } from "react-router-dom";
 
 /* App Pages */
@@ -57,6 +63,17 @@ function App() {
     setAnchorEl(null);
   };
 
+  const PrivateRoute = ({ auth, component: Component, ...rest }) => {
+    return (
+      <Route
+        {...rest}
+        render={(props) =>
+          auth ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />
+        }
+      />
+    );
+  };
+
   return (
     <>
       <Router>
@@ -87,10 +104,15 @@ function App() {
                   label={auth ? "Logout" : "Login"}
                 />
               </FormGroup>
-              <Button component={Link} variant="outlined" to="/">
+              <Button
+                component={Link}
+                variant="outlined"
+                to="/Envios"
+                auth={auth}
+              >
                 Envios
               </Button>
-              <Button component={Link} variant="outlined" to="/">
+              <Button component={Link} variant="outlined" to="/" auth={auth}>
                 Transporte
               </Button>
               {auth && (
@@ -128,14 +150,34 @@ function App() {
         <div className="app-page wrapper">
           <Switch>
             <Route path="/" exact component={Login} />
-            <Route path="/Envios" exact component={Envios} />
+            <PrivateRoute path="/Envios" exact component={Envios} auth={auth} />
             {/* Cuenta */}
-            <Route path="/Cuenta" exact component={Cuenta} />
-            <Route path="/Cuenta/Editar" exact component={EditarCuenta} />
+            <PrivateRoute path="/Cuenta" exact component={Cuenta} auth={auth} />
+            <PrivateRoute
+              path="/Cuenta/Editar"
+              exact
+              component={EditarCuenta}
+              auth={auth}
+            />
             {/* Transportista */}
-            <Route path={`/Asumidos`} exact component={Asumidos} />
-            <Route path={`/Servicios`} exact component={Servicios} />
-            <Route path={`/Vehiculos`} exact component={Vehiculos} />
+            <PrivateRoute
+              path={`/Asumidos`}
+              exact
+              component={Asumidos}
+              auth={auth}
+            />
+            <PrivateRoute
+              path={`/Servicios`}
+              exact
+              component={Servicios}
+              auth={auth}
+            />
+            <PrivateRoute
+              path={`/Vehiculos`}
+              exact
+              component={Vehiculos}
+              auth={auth}
+            />
             <Route path="*" component={NoMatch} />
           </Switch>
         </div>
