@@ -8,20 +8,20 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 /* React-Bootstrap */
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const DarkTheme = createTheme({
+const Theme = createTheme({
   palette: {
-    dark: {
-      main: "#212121",
+    primary: {
+      main: "#23272a",
     },
     secondary: {
-      main: "#00e55f",
+      main: "#4a44f8",
     },
   },
 });
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={DarkTheme}>
+    <ThemeProvider theme={Theme}>
       <App />
     </ThemeProvider>
   </React.StrictMode>,

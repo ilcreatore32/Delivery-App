@@ -1,4 +1,8 @@
 import React from "react";
+import { useState } from "react";
+
+/* React-Router */
+import { Link } from "react-router-dom";
 
 /* Material UI */
 import {
@@ -9,15 +13,20 @@ import {
   Button,
   TextField,
   Box,
+  IconButton,
 } from "@mui/material";
+import MuiLink from "@mui/material/Link";
 // import { CircularProgress } from "@material-ui/core";
+
+/* Material UI Icons */
+import CloseIcon from "@mui/icons-material/CloseTwoTone";
 
 /* CSS */
 import "./Login.css";
 import logo from "../../assets/logo.png";
 
 function Login() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleClose = () => {
     setOpen(false);
   };
@@ -35,40 +44,91 @@ function Login() {
         >
           {/* <CircularProgress color="inherit" /> */}
           <Grid className="login-component">
-            <Paper elevation={10} className="paper-style">
+            <Paper elevation={0} className="paper-style">
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div className=""></div>
+                <IconButton
+                  edge="start"
+                  color="error"
+                  onClick={handleClose}
+                  aria-label="Cerrar"
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+
               <Grid align="center">
-                <img alt="Logo" src={logo} className="logo" />
-                <Typography variant="h4" component="h2">
-                  Welcome
-                </Typography>
+                <Box>
+                  <img alt="Logo" src={logo} className="logo" />
+                  <Typography variant="h4" component="h2">
+                    Welcome
+                  </Typography>
+                </Box>
                 <Grid>
-                  <Typography variant="h6" component="h1">
-                    Sign In
+                  <Typography variant="h6" component="h3">
+                    Please, Sign In
                   </Typography>
                   <Box
-                    sx={{
-                      display: "grid",
-                      gap: 2,
-                      gridTemplateRows: "repeat(2, 1fr)",
-                    }}
-                  >
-                    <TextField
-                      id=""
-                      label="Outlined"
-                      variant="outlined"
-                      type="email"
-                    />
-                    <TextField id="" label="Outlined" variant="outlined" />
-                  </Box>
-                  <Box
+                  className="login-inputs"
                     sx={{
                       display: "grid",
                       gap: 2,
                       gridTemplateColumns: "repeat(2, 1fr)",
                     }}
                   >
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button>Acceder</Button>
+                    <TextField
+                      id=""
+                      label="Correo Electronico"
+                      variant="filled"
+                      type="email"
+                    />
+                    <TextField
+                      id=""
+                      label="Contraseña"
+                      variant="filled"
+                      type="password"
+                    />
+                  </Box>
+                  <Box className="login-links">
+                    <Typography
+                      className="login-link"
+                      variant="h4"
+                      component="h4"
+                    >
+                      Forgot Password ?{" "}
+                      <MuiLink component={Link} To="/">
+                        Password Recover
+                      </MuiLink>
+                    </Typography>
+                    <Typography
+                      className="login-link"
+                      variant="h4"
+                      component="h4"
+                    >
+                      Don't have an account ?{" "}
+                      <MuiLink component={Link} To="/">
+                        Sign Up Here
+                      </MuiLink>
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gap: 2,
+                      gridTemplateColumns: "repeat(2, 1fr)",
+                      justifyContent: "space-between"
+                    }}
+                  >
+                    <Button color="error" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button color="success">Acceder</Button>
                   </Box>
                 </Grid>
               </Grid>

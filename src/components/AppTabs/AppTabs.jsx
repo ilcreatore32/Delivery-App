@@ -7,9 +7,9 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import ExploreTwoToneIcon from '@mui/icons-material/ExploreTwoTone';
+import ExploreTwoToneIcon from "@mui/icons-material/ExploreTwoTone";
 import AddTaskIcon from "@mui/icons-material/AddTask";
-import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
+import WorkTwoToneIcon from "@mui/icons-material/WorkTwoTone";
 import CommuteIcon from "@mui/icons-material/Commute";
 
 function AppTabs() {
@@ -24,8 +24,13 @@ function AppTabs() {
     <>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar className="delivery-secundary-bar" position="static">
-          <Toolbar>
-            <Tabs value={currentTab} centered>
+          <Toolbar sx={{color:"#614fb4"}}>
+            <Tabs
+              value={currentTab}
+              centered
+              textColor="primary"
+              indicatorColor="secondary"
+            >
               <Tab
                 label="Envios"
                 value={`/Envios`}

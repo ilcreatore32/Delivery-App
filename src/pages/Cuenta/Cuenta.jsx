@@ -1,7 +1,10 @@
 import React from "react";
 
 /* React-Router */
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+
+/* Material UI */
+import { Grid, Box, Typography } from "@mui/material";
 
 /* React-Bootstrap */
 import { Button } from "react-bootstrap";
@@ -15,11 +18,20 @@ import { faEdit } from "@fortawesome/free-regular-svg-icons";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 
 /* CSS */
-import './Cuenta.css';
+import "./Cuenta.css";
 
 function Cuenta() {
   return (
     <>
+      <Grid className="account-page">
+        <Grid align="center">
+          <Box>
+            <Typography variant="h4" component="h2">
+              Detalles de su Cuenta
+            </Typography>
+          </Box>
+        </Grid>
+      </Grid>
       <div className="account-page">
         <Container>
           <h2 className="text-center mb-3">Detalles de su Cuenta</h2>
@@ -59,7 +71,7 @@ function Cuenta() {
             </tbody>
           </Table>
 
-          <h3 className='mb-3'>Suscripción</h3>
+          <h3 className="mb-3">Suscripción</h3>
 
           <Table striped bordered hover variant="dark">
             <tbody>
@@ -86,7 +98,7 @@ function Cuenta() {
             </tbody>
           </Table>
 
-          <h3 className='mb-3'>Pago de Mensualidad</h3>
+          <h3 className="mb-3">Pago de Mensualidad</h3>
 
           <Table striped bordered hover variant="dark">
             <thead>
@@ -121,7 +133,7 @@ function Cuenta() {
 
           <div className="btn-flex mb-3 mt-3">
             <Button>
-                <Link to='/Cuenta/Editar'>Editar Cuenta</Link>
+              <Link to="/Cuenta/Editar">Editar Cuenta</Link>
             </Button>
             <Button>Realizar Pago</Button>
           </div>

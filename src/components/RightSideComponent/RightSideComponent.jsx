@@ -7,7 +7,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import "./RightSideComponent.css";
 
 function RightSideComponent({ Columns, Data }) {
-
   const rows = [
     { id: 1 },
     { id: 2 },
@@ -24,7 +23,7 @@ function RightSideComponent({ Columns, Data }) {
     {
       headerName: "id",
       field: "id",
-    }
+    },
   ];
   return (
     <>
@@ -33,7 +32,6 @@ function RightSideComponent({ Columns, Data }) {
         columns={columns}
         pageSize={10}
         rowsPerPageOptions={[10]}
-        checkboxSelection
       />
     </>
   );

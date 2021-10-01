@@ -7,10 +7,15 @@ import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
 
 /* Material UI */
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import InputAdornment from "@mui/material/InputAdornment";
-import MenuItem from "@mui/material/MenuItem";
+import {
+  TextField,
+  Box,
+  InputAdornment,
+  MenuItem,
+  Divider,
+  Paper,
+  Typography,
+} from "@mui/material";
 
 /* React-Bootstrap */
 import Form from "react-bootstrap/Form";
@@ -43,163 +48,234 @@ function Vehiculos({ admin }) {
         <Box
           sx={{
             display: "grid",
-            rowGap: 3,
+            rowGap: 1,
             margin: "1rem",
             padding: "1rem 0",
           }}
         >
-          <Box
-            sx={{
-              display: "grid",
-              gap: 2,
-              gridTemplateColumns: "repeat(3, 1fr)",
-            }}
-          >
-            <TextField id="" label="Tipo" variant="filled" />
-            <TextField id="" label="Marca" variant="filled" />
-            <TextField id="" label="Modelo" variant="filled" />
-          </Box>
-
-          <Box
-            sx={{
-              display: "grid",
-              gap: 2,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <TextField
-              id=""
-              select
-              label="Estado del Envio"
-              value={MinYear}
-              onChange={handleMinYearChange}
-              variant="filled"
+          <Paper variant="outlined" sx={{ padding: "1rem" }}>
+            <Typography variant="h6" component="span">
+              Vehiculo
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gap: 1,
+                gridTemplateColumns: "repeat(3, 1fr)",
+              }}
             >
-              {minYears.map((year) => (
-                <MenuItem key={year} value={year}>
-                  {year}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              id=""
-              select
-              label="Estado del Envio"
-              value={MaxYear}
-              onChange={handleMaxYearChange}
-              variant="filled"
+              <TextField
+                id=""
+                label="Tipo"
+                variant="filled"
+                color="secondary"
+              />
+              <TextField
+                id=""
+                label="Marca"
+                variant="filled"
+                color="secondary"
+              />
+              <TextField
+                id=""
+                label="Modelo"
+                variant="filled"
+                color="secondary"
+              />
+            </Box>
+          </Paper>
+          <Divider variant="middle" />
+          <Paper variant="outlined" sx={{ padding: "1rem" }}>
+            <Typography variant="h6" component="span">
+              Año
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gap: 1,
+                gridTemplateColumns: "repeat(2, 1fr)",
+              }}
             >
-              {maxYears.map((year) => (
-                <MenuItem key={year} value={year}>
-                  {year}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-
-          <Box
-            sx={{
-              display: "grid",
-              gap: 2,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <TextField
-              id=""
-              label="Mínimos"
-              type="number"
-              InputLabelProps={{
-                shrink: true,
+              <TextField
+                id=""
+                select
+                label="Estado del Envio"
+                value={MinYear}
+                onChange={handleMinYearChange}
+                variant="filled"
+                color="secondary"
+              >
+                {minYears.map((year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                id=""
+                select
+                label="Estado del Envio"
+                value={MaxYear}
+                onChange={handleMaxYearChange}
+                variant="filled"
+                color="secondary"
+              >
+                {maxYears.map((year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+          </Paper>
+          <Divider variant="middle" />
+          <Paper variant="outlined" sx={{ padding: "1rem" }}>
+            <Typography variant="h6" component="span">
+              Pasajeros
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gap: 1,
+                gridTemplateColumns: "repeat(2, 1fr)",
               }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FontAwesomeIcon icon={faAngleDown} />
-                  </InputAdornment>
-                ),
+            >
+              <TextField
+                id=""
+                label="Mínimos"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FontAwesomeIcon icon={faAngleDown} />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="filled"
+                color="secondary"
+              />
+              <TextField
+                id=""
+                label="Maximos"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FontAwesomeIcon icon={faAngleUp} />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="filled"
+                color="secondary"
+              />
+            </Box>
+          </Paper>
+          <Divider variant="middle" />
+          <Paper variant="outlined" sx={{ padding: "1rem" }}>
+            <Typography variant="h6" component="span">
+              Carga
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gap: 1,
+                gridTemplateColumns: "repeat(2, 1fr)",
               }}
-              variant="filled"
-            />
-            <TextField
-              id=""
-              label="Maximos"
-              type="number"
-              InputLabelProps={{
-                shrink: true,
+            >
+              <TextField
+                id=""
+                label="Mínimos"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FontAwesomeIcon icon={faAngleDown} />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="filled"
+                color="secondary"
+              />
+              <TextField
+                id=""
+                label="Maximos"
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FontAwesomeIcon icon={faAngleUp} />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="filled"
+                color="secondary"
+              />
+            </Box>
+          </Paper>
+          <Divider variant="middle" />
+          <Paper variant="outlined" sx={{ padding: "1rem" }}>
+            <Typography variant="h6" component="span">
+              Matricula
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
               }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FontAwesomeIcon icon={faAngleUp} />
-                  </InputAdornment>
-                ),
-              }}
-              variant="filled"
-            />
-          </Box>
-
-          <Box
-            sx={{
-              display: "grid",
-              gap: 2,
-              gridTemplateColumns: "repeat(2, 1fr)",
-            }}
-          >
-            <TextField
-              id=""
-              label="Mínimos"
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FontAwesomeIcon icon={faAngleDown} />
-                  </InputAdornment>
-                ),
-              }}
-              variant="filled"
-            />
-            <TextField
-              id=""
-              label="Maximos"
-              type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FontAwesomeIcon icon={faAngleUp} />
-                  </InputAdornment>
-                ),
-              }}
-              variant="filled"
-            />
-          </Box>
-
-          <Box
-            sx={{
-              display: "grid",
-            }}
-          >
-            <TextField id="" label="Matricula" variant="filled" />
-          </Box>
-
+            >
+              <TextField
+                id=""
+                label="Matricula"
+                variant="filled"
+                color="secondary"
+              />
+            </Box>
+          </Paper>
           {admin ? (
             <>
-              <Box
-                sx={{
-                  display: "grid",
-                  gap: 2,
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                }}
-              >
-                <TextField id="" label="Nombres" variant="filled" />
-                <TextField id="" label="Apellidos" variant="filled" />
-                <TextField id="" label="Cedula" variant="filled" />
-              </Box>
+              <Divider variant="middle" />
+              <Paper variant="outlined" sx={{ padding: "1rem" }}>
+                <Typography variant="h6" component="span">
+                  Usuario
+                </Typography>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gap: 1,
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                  }}
+                >
+                  <TextField
+                    id=""
+                    label="Nombres"
+                    variant="filled"
+                    color="secondary"
+                  />
+                  <TextField
+                    id=""
+                    label="Apellidos"
+                    variant="filled"
+                    color="secondary"
+                  />
+                  <TextField
+                    id=""
+                    label="Cedula"
+                    variant="filled"
+                    color="secondary"
+                  />
+                </Box>
+              </Paper>
             </>
           ) : null}
         </Box>
