@@ -15,8 +15,11 @@ import {
   Box,
   IconButton,
 } from "@mui/material";
+<<<<<<< HEAD
 import MuiLink from "@mui/material/Link";
 // import { CircularProgress } from "@material-ui/core";
+=======
+>>>>>>> 7a23178b057568aef2a0959d0cd14deeab59762e
 
 /* Material UI Icons */
 import CloseIcon from "@mui/icons-material/CloseTwoTone";
@@ -42,7 +45,6 @@ function Login() {
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={open}
         >
-          {/* <CircularProgress color="inherit" /> */}
           <Grid className="login-component">
             <Paper elevation={0} className="paper-style">
               <Box
