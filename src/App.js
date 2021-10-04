@@ -1,4 +1,4 @@
-import { Component, React } from "react";
+import React from "react";
 import { useState } from "react";
 
 /* React-Router */
@@ -6,13 +6,16 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  PrivateRoute,
   Redirect,
+  Link,
 } from "react-router-dom";
-import { Link } from "react-router-dom";
+
+/* Components */
+import Login from "./components/Login/Login";
+import SignUp from "./components/SignUp/SignUp";
 
 /* App Pages */
-import Login from "./components/Login/Login";
+import Home from "./pages/Home/Home";
 import Envios from "./pages/Envios/Envios";
 /* Cuenta */
 import Cuenta from "./pages/Cuenta/Cuenta";
@@ -35,13 +38,15 @@ import {
   MenuItem,
   Menu,
   Button,
+  Badge,
 } from "@mui/material";
 
 import MaterialSwitch from "@mui/material/Switch";
 
 /* Material Icons */
 import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
+import NotificationsIcon from "@mui/icons-material/NotificationsActiveTwoTone";
+import AccountCircle from "@mui/icons-material/AccountCircleTwoTone";
 
 /* CSS */
 import "./styles/App.css";
@@ -80,15 +85,19 @@ function App() {
         <Box sx={{ flexGrow: 1 }}>
           <AppBar className="delivery-app-bar" position="static">
             <Toolbar>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-              >
-                <MenuIcon />
-              </IconButton>
+              {auth ? (
+                <>
+                  <IconButton
+                    size="large"
+                    edge="start"
+                    color="secondary"
+                    aria-label="menu"
+                    sx={{ mr: 2 }}
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                </>
+              ) : null}
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 Delivery App
               </Typography>
@@ -104,22 +113,57 @@ function App() {
                   label={auth ? "Logout" : "Login"}
                 />
               </FormGroup>
-              <Button
-                component={Link}
-                variant="outlined"
-                to="/Envios"
-                auth={auth}
-              >
-                Envios
-              </Button>
-              <Button component={Link} variant="outlined" to="/" auth={auth}>
-                Transporte
-              </Button>
+              {auth ? (
+                <>
+                  <Box sx={{ display: "flex", gap: "1rem" }}>
+                    <Button
+                      component={Link}
+                      size="small"
+                      variant="text"
+                      to="/Envios"
+                      auth={auth}
+                      sx={{ padding: ".2rem" }}
+                    >
+                      Envios
+                    </Button>
+                    <Button
+                      component={Link}
+                      size="small"
+                      to="/"
+                      variant="text"
+                      auth={auth}
+                      sx={{ padding: ".2rem" }}
+                    >
+                      Transporte
+                    </Button>
+                    <IconButton>
+                      <Badge
+                        size="sm"
+                        color="secondary"
+                        showZero
+                        badgeContent={0}
+                      >
+                        <NotificationsIcon />
+                      </Badge>
+                    </IconButton>
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Button variant="text" component={Login}>
+                    Sign in
+                  </Button>
+                  <Button variant="text" component={SignUp}>
+                    Sign up
+                  </Button>
+                </>
+              )}
+
               {auth && (
                 <div>
                   <IconButton
                     size="large"
-                    aria-label="account of current user"
+                    aria-label="Cuenta"
                     aria-controls="menu-appbar"
                     aria-haspopup="true"
                     onClick={handleMenu}
@@ -135,21 +179,41 @@ function App() {
                     onClose={handleClose}
                     transformOrigin={{ horizontal: "right", vertical: "top" }}
                     anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    MenuListProps={{
+                      "aria-labelledby": "basic-button",
+                    }}
                   >
-                    <MenuItem onClick={handleClose}>Cambiar a Cliente</MenuItem>
-                    <MenuItem onClick={handleClose}>
-                      <Link to="/Cuenta">Su Cuenta</Link>
+                    <MenuItem
+                      component={Link}
+                      to="/Cuenta"
+                      onClick={handleClose}
+                    >
+                      Cambiar a Cliente
                     </MenuItem>
-                    <MenuItem onClick={handleChange}>Salir</MenuItem>
+                    <MenuItem
+                      component={Link}
+                      to="/Cuenta"
+                      onClick={handleClose}
+                    >
+                      Su Cuenta
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setAuth(false);
+                        handleClose();
+                      }}
+                    >
+                      Salir
+                    </MenuItem>
                   </Menu>
                 </div>
               )}
             </Toolbar>
           </AppBar>
         </Box>
-        <div className="app-page wrapper">
+        <Box >
           <Switch>
-            <Route path="/" exact component={Login} />
+            <Route path="/" exact component={Home} />
             <PrivateRoute path="/Envios" exact component={Envios} auth={auth} />
             {/* Cuenta */}
             <PrivateRoute path="/Cuenta" exact component={Cuenta} auth={auth} />
@@ -180,7 +244,7 @@ function App() {
             />
             <Route path="*" component={NoMatch} />
           </Switch>
-        </div>
+        </Box>
       </Router>
     </>
   );

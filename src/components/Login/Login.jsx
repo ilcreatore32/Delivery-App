@@ -1,9 +1,6 @@
 import React from "react";
 import { useState } from "react";
 
-/* React-Router */
-import { Link } from "react-router-dom";
-
 /* Material UI */
 import {
   Grid,
@@ -15,11 +12,6 @@ import {
   Box,
   IconButton,
 } from "@mui/material";
-<<<<<<< HEAD
-import MuiLink from "@mui/material/Link";
-// import { CircularProgress } from "@material-ui/core";
-=======
->>>>>>> 7a23178b057568aef2a0959d0cd14deeab59762e
 
 /* Material UI Icons */
 import CloseIcon from "@mui/icons-material/CloseTwoTone";
@@ -76,7 +68,7 @@ function Login() {
                     Please, Sign In
                   </Typography>
                   <Box
-                  className="login-inputs"
+                    className="login-inputs"
                     sx={{
                       display: "grid",
                       gap: 2,
@@ -84,13 +76,11 @@ function Login() {
                     }}
                   >
                     <TextField
-                      id=""
                       label="Correo Electronico"
                       variant="filled"
                       type="email"
                     />
                     <TextField
-                      id=""
                       label="Contraseña"
                       variant="filled"
                       type="password"
@@ -102,10 +92,7 @@ function Login() {
                       variant="h4"
                       component="h4"
                     >
-                      Forgot Password ?{" "}
-                      <MuiLink component={Link} To="/">
-                        Password Recover
-                      </MuiLink>
+                      Forgot Password ? <Button>Password Recover</Button>
                     </Typography>
                     <Typography
                       className="login-link"
@@ -113,9 +100,7 @@ function Login() {
                       component="h4"
                     >
                       Don't have an account ?{" "}
-                      <MuiLink component={Link} To="/">
-                        Sign Up Here
-                      </MuiLink>
+                      <Button>Sign Up Here</Button>
                     </Typography>
                   </Box>
 
@@ -124,7 +109,7 @@ function Login() {
                       display: "grid",
                       gap: 2,
                       gridTemplateColumns: "repeat(2, 1fr)",
-                      justifyContent: "space-between"
+                      justifyContent: "space-between",
                     }}
                   >
                     <Button color="error" onClick={handleClose}>

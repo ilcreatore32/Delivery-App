@@ -1,0 +1,11 @@
+.home-images {
+    height: 91vh;
+    background-size: cover;
+    background-image: url("../../assets/images/home-page-images/home.jpg");
+}
+
+.backdrop {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.37);
+}

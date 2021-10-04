@@ -77,22 +77,22 @@ export const VehiculosColumns = [
   },
   {
     headerName: "Tipo de Vehiculo",
-    field: "",
+    field: "Vehiculo_Marca",
     sortable: true,
   },
   {
     headerName: "Nombre",
-    field: "",
+    field: "Vehiculo_Modelo",
     sortable: true,
   },
   {
     headerName: "Año",
-    field: "",
+    field: "Vehiculo_Anio",
     sortable: true,
   },
   {
     headerName: "Pasajeros",
-    field: "",
+    field: "Vehiculo_Pasajeros",
     sortable: true,
   },
   {
@@ -102,12 +102,12 @@ export const VehiculosColumns = [
   },
   {
     headerName: "Capacidad de Carga",
-    field: "",
+    field: "Vehiculo_CapacidadCarga",
     sortable: true,
   },
   {
     headerName: "Matricula",
-    field: "",
+    field: "Vehiculo_Matricula",
     sortable: true,
   },
 ];

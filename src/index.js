@@ -3,25 +3,17 @@ import ReactDOM from "react-dom";
 import App from "./App";
 
 /* Material UI */
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
+
+/* Themes */
+import { Light, Dark } from "./styles/theme";
 
 /* React-Bootstrap */
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const Theme = createTheme({
-  palette: {
-    primary: {
-      main: "#23272a",
-    },
-    secondary: {
-      main: "#4a44f8",
-    },
-  },
-});
-
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={Theme}>
+    <ThemeProvider theme={Dark}>
       <App />
     </ThemeProvider>
   </React.StrictMode>,

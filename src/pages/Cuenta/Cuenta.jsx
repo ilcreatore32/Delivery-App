@@ -4,141 +4,180 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 /* Material UI */
-import { Grid, Box, Typography } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Typography,
+  TableContainer,
+  TableHead,
+  Table,
+  TableRow,
+  TableCell,
+  TableBody,
+  Collapse,
+  IconButton,
+} from "@mui/material";
 
-/* React-Bootstrap */
-import { Button } from "react-bootstrap";
-import { Container } from "react-bootstrap";
-import { Table } from "react-bootstrap";
-
-/* Font-Awesome */
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { faEdit } from "@fortawesome/free-regular-svg-icons";
-import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
+/* Material UI Icons */
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import FilePresentTwoToneIcon from "@mui/icons-material/FilePresentTwoTone";
+import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
+import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 
 /* CSS */
 import "./Cuenta.css";
 
 function Cuenta() {
+  const [open, setOpen] = React.useState(false);
   return (
     <>
       <Grid className="account-page">
         <Grid align="center">
-          <Box>
+          <Box sx={{ margin: "1rem 0" }}>
             <Typography variant="h4" component="h2">
               Detalles de su Cuenta
             </Typography>
+            <TableContainer sx={{ margin: "1rem 0" }}>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell component="th">Cédula</TableCell>
+                    <TableCell align="center">27598116</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Nombres</TableCell>
+                    <TableCell align="center">Weishler Joice</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Apellidos</TableCell>
+                    <TableCell align="center">Berman Torres</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Correo Electronico</TableCell>
+                    <TableCell align="center">
+                      ilCreatore321@gmail.com
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">
+                      Comprobante Documento de Identidad
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconButton size="large">
+                        <FilePresentTwoToneIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Telefonos</TableCell>
+                    <TableCell align="center">
+                      <IconButton size="small" onClick={() => setOpen(!open)}>
+                        {open ? (
+                          <KeyboardArrowUpIcon />
+                        ) : (
+                          <KeyboardArrowDownIcon />
+                        )}
+                      </IconButton>
+                      <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Box sx={{ margin: 1 }}>
+                          <Table size="small" aria-label="purchases">
+                            <TableBody>
+                              <TableRow>
+                                <TableCell>04242029818</TableCell>
+                              </TableRow>
+                              <TableRow>
+                                <TableCell>04242596061</TableCell>
+                              </TableRow>
+                            </TableBody>
+                          </Table>
+                        </Box>
+                      </Collapse>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+          <Box sx={{ margin: "1rem 0" }}>
+            <Typography variant="h4" component="h2">
+              Suscripción
+            </Typography>
+            <TableContainer sx={{ margin: "1rem 0" }}>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell component="th">Tipo</TableCell>
+                    <TableCell align="center">27598116</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Monto</TableCell>
+                    <TableCell align="center">Weishler Joice</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Estado</TableCell>
+                    <TableCell align="center">Berman Torres</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Fecha de Inicio</TableCell>
+                    <TableCell align="center">
+                      ilCreatore321@gmail.com
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th">Fecha de Vencimiento</TableCell>
+                    <TableCell align="center">01/01/2021</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+          <Box sx={{ margin: "1rem 0" }}>
+            <Typography variant="h4" component="h2">
+              Pagos de Mensualidad
+            </Typography>
+            <TableContainer sx={{ margin: "1rem 0" }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>#</TableCell>
+                    <TableCell>Metodo</TableCell>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Estado</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>1</TableCell>
+                    <TableCell>Transferencia</TableCell>
+                    <TableCell>01/01/2021</TableCell>
+                    <TableCell>Aceptado</TableCell>
+                    <TableCell>
+                      <IconButton size="large">
+                        <VisibilityTwoToneIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton size="large">
+                        <EditTwoToneIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton size="large">
+                        <DeleteTwoToneIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Box>
         </Grid>
       </Grid>
-      <div className="account-page">
-        <Container>
-          <h2 className="text-center mb-3">Detalles de su Cuenta</h2>
-          <Table striped bordered hover variant="dark">
-            <tbody>
-              <tr>
-                <th scope="row">Cédula</th>
-                <td>00000000</td>
-              </tr>
-              <tr>
-                <th scope="row">Nombres</th>
-                <td>Weishler Joice</td>
-              </tr>
-              <tr>
-                <th scope="row">Apellidos</th>
-                <td>Berman Torres</td>
-              </tr>
-              <tr>
-                <th scope="row">Correo</th>
-                <td>WBerman@gmail.com</td>
-              </tr>
-              <tr>
-                <th scope="row">Comprobante Documento de Identidad</th>
-                <td>XXXX</td>
-              </tr>
-              <tr>
-                <th scope="row">Telefonos</th>
-                <td>
-                  <ul>
-                    <li>0424-0000-000</li>
-                    <li>0424-0000-000</li>
-                    <li>0424-0000-000</li>
-                    <li>0424-0000-000</li>
-                  </ul>
-                </td>
-              </tr>
-            </tbody>
-          </Table>
-
-          <h3 className="mb-3">Suscripción</h3>
-
-          <Table striped bordered hover variant="dark">
-            <tbody>
-              <tr>
-                <th scope="row">Tipo</th>
-                <td>00000000</td>
-              </tr>
-              <tr>
-                <th scope="row">Monto</th>
-                <td>Weishler Joice</td>
-              </tr>
-              <tr>
-                <th scope="row">Estado</th>
-                <td>Berman Torres</td>
-              </tr>
-              <tr>
-                <th scope="row">Fecha de Inicio</th>
-                <td>WBerman@gmail.com</td>
-              </tr>
-              <tr>
-                <th scope="row">Fecha de Vencimiento</th>
-                <td>XXXX</td>
-              </tr>
-            </tbody>
-          </Table>
-
-          <h3 className="mb-3">Pago de Mensualidad</h3>
-
-          <Table striped bordered hover variant="dark">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Método</th>
-                <th>Fecha</th>
-                <th>Estado</th>
-                <th></th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>Transferencia</td>
-                <td>03-03-2021</td>
-                <td>Aceptado</td>
-                <td>
-                  <FontAwesomeIcon icon={faInfoCircle} />
-                </td>
-                <td>
-                  <FontAwesomeIcon icon={faEdit} />
-                </td>
-                <td>
-                  <FontAwesomeIcon icon={faTrashAlt} />
-                </td>
-              </tr>
-            </tbody>
-          </Table>
-
-          <div className="btn-flex mb-3 mt-3">
-            <Button>
-              <Link to="/Cuenta/Editar">Editar Cuenta</Link>
-            </Button>
-            <Button>Realizar Pago</Button>
-          </div>
-        </Container>
-      </div>
     </>
   );
 }

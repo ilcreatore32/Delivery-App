@@ -6,6 +6,10 @@
     margin: 0;
 }
 
+.MuiButtonBase-root {
+    color: #5b36b4 !important;
+}
+
 .delivery-app-bar {
     background-color: #23272a !important;
 }

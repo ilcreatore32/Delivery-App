@@ -31,7 +31,7 @@ import TestCardImage from "../../assets/images/test-card-image.jpg";
 
 function Vehiculos() {
   let [view, setView] = useState("true");
-
+  
   const handleChange = (e) => {
     if (e.currentTarget.value === "true") {
       setView(true);
@@ -52,7 +52,7 @@ function Vehiculos() {
             <LeftSideComponent vehiculos={true} />
           </Grid>
           <Grid item xs={6} md={8}>
-            <Paper variant="outlined" sx={{margin: ".3rem auto"}}>
+            <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
               <ToggleButtonGroup
                 value={view}
                 color="secondary"
@@ -60,10 +60,10 @@ function Vehiculos() {
                 onChange={handleChange}
                 sx={{
                   display: "flex",
-                  gap: .5,
+                  gap: 0.5,
                   alignItems: "center",
                   justifyContent: "flex-end",
-                  margin: ".3rem"
+                  margin: ".3rem",
                 }}
               >
                 <ToggleButton value={true} aria-label="Table">
