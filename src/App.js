@@ -182,6 +182,9 @@ function App() {
                     MenuListProps={{
                       "aria-labelledby": "basic-button",
                     }}
+                    sx={{
+                      backgroundColor: "rgba(0, 0, 0, 0.20)",
+                    }}
                   >
                     <MenuItem
                       component={Link}
@@ -211,7 +214,7 @@ function App() {
             </Toolbar>
           </AppBar>
         </Box>
-        <Box >
+        <Box>
           <Switch>
             <Route path="/" exact component={Home} />
             <PrivateRoute path="/Envios" exact component={Envios} auth={auth} />

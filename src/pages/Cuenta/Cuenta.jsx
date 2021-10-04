@@ -16,6 +16,7 @@ import {
   TableBody,
   Collapse,
   IconButton,
+  Button,
 } from "@mui/material";
 
 /* Material UI Icons */
@@ -25,6 +26,7 @@ import FilePresentTwoToneIcon from "@mui/icons-material/FilePresentTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 /* CSS */
 import "./Cuenta.css";
@@ -35,11 +37,11 @@ function Cuenta() {
     <>
       <Grid className="account-page">
         <Grid align="center">
-          <Box sx={{ margin: "1rem 0" }}>
+          <Box sx={{ margin: ".5rem 0" }}>
             <Typography variant="h4" component="h2">
               Detalles de su Cuenta
             </Typography>
-            <TableContainer sx={{ margin: "1rem 0" }}>
+            <TableContainer sx={{ margin: "2rem 0" }}>
               <Table>
                 <TableBody>
                   <TableRow>
@@ -100,30 +102,31 @@ function Cuenta() {
               </Table>
             </TableContainer>
           </Box>
-          <Box sx={{ margin: "1rem 0" }}>
+          <Box sx={{ margin: ".5rem 0" }}>
             <Typography variant="h4" component="h2">
               Suscripción
             </Typography>
-            <TableContainer sx={{ margin: "1rem 0" }}>
+            <TableContainer sx={{ margin: "2rem 0" }}>
               <Table>
                 <TableBody>
                   <TableRow>
                     <TableCell component="th">Tipo</TableCell>
-                    <TableCell align="center">27598116</TableCell>
+                    <TableCell align="center">Cliente</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell component="th">Monto</TableCell>
-                    <TableCell align="center">Weishler Joice</TableCell>
+                    <TableCell align="center">
+                      100
+                      <AttachMoneyIcon size="small" color="secondary" />
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell component="th">Estado</TableCell>
-                    <TableCell align="center">Berman Torres</TableCell>
+                    <TableCell align="center">Activo</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell component="th">Fecha de Inicio</TableCell>
-                    <TableCell align="center">
-                      ilCreatore321@gmail.com
-                    </TableCell>
+                    <TableCell align="center">01/01/2021</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell component="th">Fecha de Vencimiento</TableCell>
@@ -133,11 +136,11 @@ function Cuenta() {
               </Table>
             </TableContainer>
           </Box>
-          <Box sx={{ margin: "1rem 0" }}>
+          <Box sx={{ margin: ".5rem 0" }}>
             <Typography variant="h4" component="h2">
               Pagos de Mensualidad
             </Typography>
-            <TableContainer sx={{ margin: "1rem 0" }}>
+            <TableContainer sx={{ margin: "2rem 0" }}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -168,13 +171,32 @@ function Cuenta() {
                     </TableCell>
                     <TableCell>
                       <IconButton size="large">
-                        <DeleteTwoToneIcon />
+                        <DeleteTwoToneIcon color="error" />
                       </IconButton>
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </TableContainer>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              margin: "1rem 2rem",
+            }}
+          >
+            <Button
+              component={Link}
+              variant="outlined"
+              color="secondary"
+              to="/Cuenta/Editar"
+            >
+              Editar Cuenta
+            </Button>
+            <Button component={Link} variant="outlined" color="secondary">
+              Algo
+            </Button>
           </Box>
         </Grid>
       </Grid>

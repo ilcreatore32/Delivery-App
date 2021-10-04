@@ -1,42 +1,72 @@
 *,
 ::before,
 ::after {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
 }
 
+/* Scrollbar */
+html::-webkit-scrollbar {
+  width: 13px;
+  background-color: #23272a;
+}
+
+html::-webkit-scrollbar-track {
+  background-color: #23272a;
+  border-radius: 100px;
+}
+
+html::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  border: 5px solid transparent;
+  background-clip: content-box;
+  background-color: #5b36b4;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background-color: #5e38b8;
+}
+
+html::-webkit-scrollbar-track:hover,
+html::-webkit-scrollbar-track:active {
+  background: #32373b;
+}
+
+/* Link */
 .MuiButtonBase-root {
-    color: #5b36b4 !important;
+  color: #5b36b4 !important;
 }
 
+/* App bars */
 .delivery-app-bar {
-    background-color: #23272a !important;
+  background-color: #23272a !important;
 }
 
 .delivery-secundary-bar {
-    background-color: #8a71ff70 !important;
+  background-color: #8a71ff70 !important;
 }
 
 /* No Match */
 .noMatch {
-    text-align: center;
-    margin-top: 100px;
-    margin-bottom: 100px;
+  text-align: center;
+  margin-top: 100px;
+  margin-bottom: 100px;
 }
 
 .noMatch div {
-    text-align: center;
-    font-size: 90px;
-    font-family: 'Catamaran', sans-serif;
-    font-weight: 700;
-    color: #ef233bd5;
+  text-align: center;
+  font-size: 90px;
+  font-family: "Catamaran", sans-serif;
+  font-weight: 700;
+  color: #ef233bd5;
 }
 
 .noMatch div small {
-    text-align: center;
-    font-size: 45px;
-    font-family: 'Catamaran', sans-serif;
-    font-weight: 600;
-    color: #2b2d42e8;
+  text-align: center;
+  font-size: 45px;
+  font-family: "Catamaran", sans-serif;
+  font-weight: 600;
+  color: #2b2d42e8;
 }

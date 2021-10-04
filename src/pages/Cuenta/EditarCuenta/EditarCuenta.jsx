@@ -1,8 +1,24 @@
 import React from "react";
 import { useState } from "react";
 
+/* Material UI */
+import {
+  Grid,
+  Box,
+  Typography,
+  TableContainer,
+  TableHead,
+  Table,
+  TableRow,
+  TableCell,
+  TableBody,
+  Collapse,
+  IconButton,
+  Button,
+} from "@mui/material";
+
 /* React-Bootstrap */
-import { Button, Container, Form, Row, Col, ListGroup } from "react-bootstrap";
+import { Container, Form, Row, Col, ListGroup } from "react-bootstrap";
 
 /* Font-Awesome */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,8 +33,19 @@ function EditarCuenta() {
   const switchPhone = () => {
     !NewPhone ? setNewPhone(true) : setNewPhone(false);
   };
+
   return (
     <>
+      <Grid className="account-page">
+        <Grid align="center">
+          <Box sx={{ margin: ".5rem 0" }}>
+            <Typography variant="h4" component="h2">
+              Detalles de su Cuenta
+            </Typography>
+            
+          </Box>
+        </Grid>
+      </Grid>
       <div className="edit-account-page">
         <Container>
           <h1 className="text-center mb-3">Editar Cuenta</h1>
