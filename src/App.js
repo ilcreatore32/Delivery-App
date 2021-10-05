@@ -17,6 +17,7 @@ import SignUp from "./components/SignUp/SignUp";
 /* App Pages */
 import Home from "./pages/Home/Home";
 import Envios from "./pages/Envios/Envios";
+import EnviosDetails from "./pages/Envios/EnviosDetails/EnviosDetails";
 /* Cuenta */
 import Cuenta from "./pages/Cuenta/Cuenta";
 import EditarCuenta from "./pages/Cuenta/EditarCuenta/EditarCuenta";
@@ -57,6 +58,7 @@ function App() {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleChange = (event) => {
+    console.log(event.target.checked);
     setAuth(event.target.checked);
   };
 
@@ -104,11 +106,7 @@ function App() {
               <FormGroup>
                 <FormControlLabel
                   control={
-                    <MaterialSwitch
-                      checked={auth}
-                      onChange={handleChange}
-                      aria-label="login switch"
-                    />
+                    <MaterialSwitch checked={auth} onChange={handleChange} />
                   }
                   label={auth ? "Logout" : "Login"}
                 />
@@ -150,12 +148,10 @@ function App() {
                 </>
               ) : (
                 <>
-                  <Button variant="text" component={Login}>
-                    Sign in
-                  </Button>
-                  <Button variant="text" component={SignUp}>
-                    Sign up
-                  </Button>
+                  <Box sx={{ display: "flex", gap: ".3rem" }}>
+                    <Login />
+                    <SignUp />
+                  </Box>
                 </>
               )}
 
@@ -217,7 +213,14 @@ function App() {
         <Box>
           <Switch>
             <Route path="/" exact component={Home} />
+            {/* Envios */}
             <PrivateRoute path="/Envios" exact component={Envios} auth={auth} />
+            <PrivateRoute
+              path="/Envios/Detalles"
+              exact
+              component={EnviosDetails}
+              auth={auth}
+            />
             {/* Cuenta */}
             <PrivateRoute path="/Cuenta" exact component={Cuenta} auth={auth} />
             <PrivateRoute

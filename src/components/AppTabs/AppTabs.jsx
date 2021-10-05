@@ -1,12 +1,12 @@
 import React from "react";
 
+/* React-Router */
 import { Link, useRouteMatch } from "react-router-dom";
 
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+/* Material UI */
+import { AppBar, Box, Toolbar, Tabs, Tab } from "@mui/material";
+
+/* Material UI Icons */
 import ExploreTwoToneIcon from "@mui/icons-material/ExploreTwoTone";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import WorkTwoToneIcon from "@mui/icons-material/WorkTwoTone";
@@ -24,7 +24,16 @@ function AppTabs() {
     <>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar className="delivery-secundary-bar" position="static">
-          <Toolbar sx={{color:"#614fb4"}}>
+          <Toolbar
+            sx={{
+              color: "#614fb4",
+            }}
+          >
+            {/* 
+              error: first-child instead of: first-of-type
+              follow this path to change property
+              node_modules\@mui\material\Tab\Tab.js 
+            */}
             <Tabs
               value={currentTab}
               centered

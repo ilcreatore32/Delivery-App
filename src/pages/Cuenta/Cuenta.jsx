@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 
 /* React-Router */
 import { Link } from "react-router-dom";
@@ -17,6 +18,7 @@ import {
   Collapse,
   IconButton,
   Button,
+  Paper,
 } from "@mui/material";
 
 /* Material UI Icons */
@@ -32,7 +34,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import "./Cuenta.css";
 
 function Cuenta() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   return (
     <>
       <Grid className="account-page">
@@ -41,7 +43,11 @@ function Cuenta() {
             <Typography variant="h4" component="h2">
               Detalles de su Cuenta
             </Typography>
-            <TableContainer sx={{ margin: "2rem 0" }}>
+            <TableContainer
+              component={Paper}
+              variant="outlined"
+              sx={{ margin: "2rem 0" }}
+            >
               <Table>
                 <TableBody>
                   <TableRow>
@@ -106,7 +112,11 @@ function Cuenta() {
             <Typography variant="h4" component="h2">
               Suscripción
             </Typography>
-            <TableContainer sx={{ margin: "2rem 0" }}>
+            <TableContainer
+              component={Paper}
+              variant="outlined"
+              sx={{ margin: "2rem 0" }}
+            >
               <Table>
                 <TableBody>
                   <TableRow>
@@ -140,7 +150,11 @@ function Cuenta() {
             <Typography variant="h4" component="h2">
               Pagos de Mensualidad
             </Typography>
-            <TableContainer sx={{ margin: "2rem 0" }}>
+            <TableContainer
+              component={Paper}
+              variant="outlined"
+              sx={{ margin: "2rem 0" }}
+            >
               <Table>
                 <TableHead>
                   <TableRow>

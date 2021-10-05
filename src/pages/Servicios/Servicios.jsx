@@ -1,7 +1,10 @@
 import React from "react";
 
 /* Material UI */
-import { Typography, Grid } from "@mui/material";
+import { Typography, Grid, Paper, IconButton } from "@mui/material";
+
+/* Material UI Icons */
+import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 
 /* DataTable Columns */
 import { ServiciosColumns } from "../../models/DataTableColums";
@@ -11,7 +14,7 @@ import AppTabs from "../../components/AppTabs/AppTabs";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
-function Servicios() {
+function Servicios({ admin }) {
   return (
     <>
       <AppTabs />
@@ -24,6 +27,15 @@ function Servicios() {
             <LeftSideComponent servicios={true} />
           </Grid>
           <Grid item xs={6} md={8}>
+            {admin ? (
+              <>
+                <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
+                  <IconButton>
+                    <AddCircleTwoToneIcon size="large" color="secondary" />
+                  </IconButton>
+                </Paper>
+              </>
+            ) : null}
             <RightSideComponent columns={ServiciosColumns} />
           </Grid>
         </Grid>

@@ -28,7 +28,6 @@ function Home() {
           >
             <Paper
               variant="outlined"
-              elevation={10}
               sx={{
                 backgroundColor: "#23272a",
                 padding: "1rem",

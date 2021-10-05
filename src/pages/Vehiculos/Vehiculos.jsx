@@ -13,11 +13,13 @@ import {
   CardActionArea,
   Box,
   Paper,
+  IconButton,
 } from "@mui/material";
 
 /* Material UI Icons */
 import ViewListIcon from "@mui/icons-material/ViewList";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
+import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 
 /* DataTable Columns */
 import { VehiculosColumns } from "../../models/DataTableColums";
@@ -29,9 +31,9 @@ import LeftSideComponent from "../../components/LeftSideComponent/LeftSideCompon
 
 import TestCardImage from "../../assets/images/test-card-image.jpg";
 
-function Vehiculos() {
+function Vehiculos({ admin }) {
   let [view, setView] = useState("true");
-  
+
   const handleChange = (e) => {
     if (e.currentTarget.value === "true") {
       setView(true);
@@ -53,6 +55,13 @@ function Vehiculos() {
           </Grid>
           <Grid item xs={6} md={8}>
             <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
+              {admin ? (
+                <>
+                  <IconButton>
+                    <AddCircleTwoToneIcon size="large" color="secondary" />
+                  </IconButton>
+                </>
+              ) : null}
               <ToggleButtonGroup
                 value={view}
                 color="secondary"

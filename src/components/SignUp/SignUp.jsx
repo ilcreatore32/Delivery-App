@@ -31,7 +31,9 @@ function SignUp() {
 
   return (
     <>
-      <Button onClick={handleToggle}>Sign Up</Button>
+      <Button onClick={handleToggle} variant="outlined" color="secondary">
+        Sign Up
+      </Button>
       <div>
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

@@ -31,7 +31,9 @@ function Login() {
 
   return (
     <>
-      <Button onClick={handleToggle}>Sign In</Button>
+      <Button onClick={handleToggle} variant="outlined" color="secondary">
+        Sign In
+      </Button>
       <div>
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -99,8 +101,7 @@ function Login() {
                       variant="h4"
                       component="h4"
                     >
-                      Don't have an account ?{" "}
-                      <Button>Sign Up Here</Button>
+                      Don't have an account ? <Button>Sign Up Here</Button>
                     </Typography>
                   </Box>
 

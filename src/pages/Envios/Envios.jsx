@@ -8,7 +8,7 @@ import EnviosCliente from "./Cliente/EnviosCliente";
 /* CSS */
 import "./Envios.css";
 
-function Envios() {
+function Envios({admin}) {
   const [Type, setType] = useState(null);
 
   useEffect(() => {
@@ -18,19 +18,19 @@ function Envios() {
         o
         <EnviosTransportista />
     */
-        setType(false)
-        //setType(true);
+    setType(false);
+    //setType(true);
   }, []);
 
   return (
     <>
       {Type ? (
         <>
-          <EnviosCliente />
+          <EnviosCliente admin={true} />
         </>
       ) : (
         <>
-          <EnviosTransportista />
+          <EnviosTransportista admin={true} />
         </>
       )}
     </>
