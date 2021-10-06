@@ -15,7 +15,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 ReactDOM.render(
   <React.StrictMode>
     <CssBaseline>
-      <ThemeProvider theme={Light}>
+      <ThemeProvider theme={Dark}>
         <App />
       </ThemeProvider>
     </CssBaseline>
