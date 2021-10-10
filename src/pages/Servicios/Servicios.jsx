@@ -7,7 +7,7 @@ import { Typography, Grid, Paper, IconButton } from "@mui/material";
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 
 /* DataTable Columns */
-import { ServiciosColumns } from "../../models/DataTableColums";
+import { ServiciosColumns } from "../../models/DataTableColums.tsx";
 
 /* Components */
 import AppTabs from "../../components/AppTabs/AppTabs";
@@ -15,6 +15,17 @@ import RightSideComponent from "../../components/RightSideComponent/RightSideCom
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
 function Servicios({ admin }) {
+  const Data = [
+    {
+      id: "1",
+      Medio: "Carro",
+      Horario: "7am a 8pm",
+      Precio: "70",
+      Disponibilidad: "inmediata",
+      Areas: "Caracas",
+    },
+  ];
+
   return (
     <>
       <AppTabs />
@@ -36,7 +47,7 @@ function Servicios({ admin }) {
                 </Paper>
               </>
             ) : null}
-            <RightSideComponent columns={ServiciosColumns} />
+            <RightSideComponent Columns={ServiciosColumns} Data={Data} />
           </Grid>
         </Grid>
       </div>

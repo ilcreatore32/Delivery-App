@@ -1,13 +1,10 @@
 import React from "react";
 
-/* React-Router */
-import { Link } from 'react-router-dom';
-
 /* Material UI */
-import { Typography, Grid, Paper, Button } from "@mui/material";
+import { Typography, Grid, Paper } from "@mui/material";
 
 /* DataTable Columns */
-import { EnviosColumns } from "../../../models/DataTableColums";
+import { EnviosColumns } from "../../../models/DataTableColums.tsx";
 
 /* Components */
 import AddEnvios from "../AddEnvios/AddEnvios";
@@ -16,6 +13,17 @@ import RightSideComponent from "../../../components/RightSideComponent/RightSide
 import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideComponent";
 
 function EnviosTransportista({ admin }) {
+  const Data = [
+    {
+      id: 1,
+      location: "caracas",
+      products: "harina",
+      price: 12,
+      weight: 144,
+      date: "01.01.2021",
+    },
+  ];
+
   return (
     <>
       <AppTabs />
@@ -32,11 +40,10 @@ function EnviosTransportista({ admin }) {
               <>
                 <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
                   <AddEnvios />
-                  <Button component={Link} to="/Envios/Detalles">detalles</Button>
                 </Paper>
               </>
             ) : null}
-            <RightSideComponent columns={EnviosColumns} />
+            <RightSideComponent Columns={EnviosColumns} Data={Data} />
           </Grid>
         </Grid>
       </div>

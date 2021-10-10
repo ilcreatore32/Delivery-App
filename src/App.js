@@ -58,7 +58,6 @@ function App() {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleChange = (event) => {
-    console.log(event.target.checked);
     setAuth(event.target.checked);
   };
 
@@ -119,7 +118,6 @@ function App() {
                       size="small"
                       variant="text"
                       to="/Envios"
-                      auth={auth}
                       sx={{ padding: ".2rem" }}
                     >
                       Envios
@@ -129,7 +127,6 @@ function App() {
                       size="small"
                       to="/"
                       variant="text"
-                      auth={auth}
                       sx={{ padding: ".2rem" }}
                     >
                       Transporte

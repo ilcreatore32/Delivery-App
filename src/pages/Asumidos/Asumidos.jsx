@@ -4,7 +4,7 @@ import React from "react";
 import { Typography, Grid } from "@mui/material";
 
 /* DataTable Columns */
-import { EnviosColumns } from "../../models/DataTableColums";
+import { EnviosColumns } from "../../models/DataTableColums.tsx";
 
 /* Components */
 import AppTabs from "../../components/AppTabs/AppTabs";
@@ -12,6 +12,16 @@ import RightSideComponent from "../../components/RightSideComponent/RightSideCom
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
 function Asumidos() {
+  const Data = [
+    {
+      id: 1,
+      location: "caracas",
+      products: "harina",
+      price: 12,
+      weight: 144,
+      date: "01.01.2021",
+    },
+  ];
   return (
     <>
       <AppTabs />
@@ -24,7 +34,7 @@ function Asumidos() {
             <LeftSideComponent envios={true} asumidos={true} />
           </Grid>
           <Grid item xs={6} md={8}>
-            <RightSideComponent columns={EnviosColumns} />
+            <RightSideComponent Columns={EnviosColumns} Data={Data} />
           </Grid>
         </Grid>
       </div>

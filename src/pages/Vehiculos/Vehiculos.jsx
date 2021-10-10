@@ -22,7 +22,7 @@ import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 
 /* DataTable Columns */
-import { VehiculosColumns } from "../../models/DataTableColums";
+import { VehiculosColumns } from "../../models/DataTableColums.tsx";
 
 /* Components */
 import AppTabs from "../../components/AppTabs/AppTabs";
@@ -41,6 +41,39 @@ function Vehiculos({ admin }) {
       setView(false);
     }
   };
+
+  const Data = [
+    {
+      id: 1,
+      Marca: "Ford",
+      Modelo: "Cruze",
+      Año: 2019,
+      Pasajeros: 4,
+      Areas: "Caracas",
+      CapacidadCarga: "120",
+      Matricula: "AOP4C5AS",
+    },
+    {
+      id: 2,
+      Marca: "Jeep",
+      Modelo: "Grand Cheeroke",
+      Año: 2009,
+      Pasajeros: 6,
+      Areas: "Valencia",
+      CapacidadCarga: "200",
+      Matricula: "WP012AVC",
+    },
+    {
+      id: 3,
+      Marca: "Chevrolet",
+      Modelo: "Highlander",
+      Año: 2021,
+      Pasajeros: 5,
+      Areas: "Falcon",
+      CapacidadCarga: "200",
+      Matricula: "WWER441G",
+    },
+  ];
 
   return (
     <>
@@ -84,7 +117,7 @@ function Vehiculos({ admin }) {
               </ToggleButtonGroup>
             </Paper>
             {view ? (
-              <RightSideComponent columns={VehiculosColumns} />
+              <RightSideComponent Columns={VehiculosColumns} Data={Data} />
             ) : (
               <>
                 <Box
@@ -95,29 +128,36 @@ function Vehiculos({ admin }) {
                     maxWidth: "fit-contend",
                   }}
                 >
-                  <Card variant="outlined">
-                    <CardActionArea
-                      sx={{ maxWidth: 345, flexDirection: "column" }}
-                    >
-                      <CardMedia
-                        component="img"
-                        height="140"
-                        image={TestCardImage}
-                        alt="test card image"
-                      />
-                      <CardContent>
-                        <Typography gutterBottom variant="span" component="sup">
-                          Id: <code>01</code>
-                        </Typography>
-                        <Typography gutterBottom variant="h5" component="div">
-                          Modelo: <code>Cruze</code>
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Matricula: <code>A100PF</code>
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
+                  {Data.map(({ id, Modelo, Matricula }) => {
+                    return(
+                    <Card variant="outlined">
+                      <CardActionArea
+                        sx={{ maxWidth: 345, flexDirection: "column" }}
+                      >
+                        <CardMedia
+                          component="img"
+                          height="140"
+                          image={TestCardImage}
+                          alt="test card image"
+                        />
+                        <CardContent>
+                          <Typography
+                            gutterBottom
+                            variant="span"
+                            component="sup"
+                          >
+                            Id: <code>{id}</code>
+                          </Typography>
+                          <Typography gutterBottom variant="h5" component="div">
+                            Modelo: <code>{Modelo}</code>
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Matricula: <code>{Matricula}</code>
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                  )})}
                 </Box>
               </>
             )}

@@ -1,20 +1,28 @@
 import React from "react";
 
 /* Material UI */
-import { Typography, Grid, Paper, IconButton } from "@mui/material";
-
-/* Material UI Icons */
-import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
+import { Typography, Grid, Paper } from "@mui/material";
 
 /* DataTable Columns */
-import { EnviosColumns } from "../../../models/DataTableColums";
+import { EnviosColumns } from "../../../models/DataTableColums.tsx";
 
 /* Components */
+import AddEnvios from "../AddEnvios/AddEnvios";
 import AppTabs from "../../../components/AppTabs/AppTabs";
 import RightSideComponent from "../../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideComponent";
 
 function EnviosCliente({ admin }) {
+  const Data = [
+    {
+      id: 1,
+      location: "caracas",
+      products: "harina",
+      price: 12,
+      weight: 144,
+      date: "01.01.2021",
+    },
+  ];
   return (
     <>
       <AppTabs />
@@ -30,13 +38,11 @@ function EnviosCliente({ admin }) {
             {admin ? (
               <>
                 <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
-                  <IconButton>
-                    <AddCircleTwoToneIcon size="large" color="secondary" />
-                  </IconButton>
+                  <AddEnvios />
                 </Paper>
               </>
             ) : null}
-            <RightSideComponent columns={EnviosColumns} />
+            <RightSideComponent Columns={EnviosColumns} Data={Data} />
           </Grid>
         </Grid>
       </div>
