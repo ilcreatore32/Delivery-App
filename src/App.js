@@ -24,6 +24,8 @@ import EditarCuenta from "./pages/Cuenta/EditarCuenta/EditarCuenta";
 /* Transportista*/
 import Vehiculos from "./pages/Vehiculos/Vehiculos";
 import Servicios from "./pages/Servicios/Servicios";
+import ServiciosDetails from "./pages/Servicios/ServiciosDetails/ServiciosDetails";
+import Edit from "./pages/Servicios/Edit/Edit";
 import Asumidos from "./pages/Asumidos/Asumidos";
 import NoMatch from "./pages/NoMatch";
 
@@ -213,7 +215,7 @@ function App() {
             {/* Envios */}
             <PrivateRoute path="/Envios" exact component={Envios} auth={auth} />
             <PrivateRoute
-              path="/Envios/Detalles"
+              path="/Envios/Detalles/:id"
               exact
               component={EnviosDetails}
               auth={auth}
@@ -237,6 +239,18 @@ function App() {
               path={`/Servicios`}
               exact
               component={Servicios}
+              auth={auth}
+            />
+            <PrivateRoute
+              path={`/Servicios/Detalles/:id`}
+              exact
+              component={ServiciosDetails}
+              auth={auth}
+            />
+            <PrivateRoute
+              path={`/Servicios/Editar/:id`}
+              exact
+              component={Edit}
               auth={auth}
             />
             <PrivateRoute

@@ -7,18 +7,17 @@ import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 
 /* Themes */
-import { Light, Dark } from "./styles/theme";
+import { Light, Dark } from "./themes/theme";
 
 /* React-Bootstrap */
 import "bootstrap/dist/css/bootstrap.min.css";
 
 ReactDOM.render(
   <React.StrictMode>
-    <CssBaseline>
-      <ThemeProvider theme={Light}>
-        <App />
-      </ThemeProvider>
-    </CssBaseline>
+    <ThemeProvider theme={Light}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
