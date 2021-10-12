@@ -7,6 +7,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 
 /* Themes */
+// eslint-disable-next-line
 import { Light, Dark } from "./themes/theme";
 
 /* React-Bootstrap */

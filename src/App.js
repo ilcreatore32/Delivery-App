@@ -2,32 +2,15 @@ import React from "react";
 import { useState } from "react";
 
 /* React-Router */
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-  Link,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+
+/* Routes */
+import Routes from "./routes/Routes";
+import NoMatch from "./pages/NoMatch";
 
 /* Components */
 import Login from "./components/Login/Login";
 import SignUp from "./components/SignUp/SignUp";
-
-/* App Pages */
-import Home from "./pages/Home/Home";
-import Envios from "./pages/Envios/Envios";
-import EnviosDetails from "./pages/Envios/EnviosDetails/EnviosDetails";
-/* Cuenta */
-import Cuenta from "./pages/Cuenta/Cuenta";
-import EditarCuenta from "./pages/Cuenta/EditarCuenta/EditarCuenta";
-/* Transportista*/
-import Vehiculos from "./pages/Vehiculos/Vehiculos";
-import Servicios from "./pages/Servicios/Servicios";
-import ServiciosDetails from "./pages/Servicios/ServiciosDetails/ServiciosDetails";
-import Edit from "./pages/Servicios/Edit/Edit";
-import Asumidos from "./pages/Asumidos/Asumidos";
-import NoMatch from "./pages/NoMatch";
 
 /* Material UI */
 import {
@@ -69,17 +52,6 @@ function App() {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const PrivateRoute = ({ auth, component: Component, ...rest }) => {
-    return (
-      <Route
-        {...rest}
-        render={(props) =>
-          auth ? <Component {...props} /> : <Redirect to={{ pathname: "/" }} />
-        }
-      />
-    );
   };
 
   return (
@@ -211,54 +183,7 @@ function App() {
         </Box>
         <Box>
           <Switch>
-            <Route path="/" exact component={Home} />
-            {/* Envios */}
-            <PrivateRoute path="/Envios" exact component={Envios} auth={auth} />
-            <PrivateRoute
-              path="/Envios/Detalles/:id"
-              exact
-              component={EnviosDetails}
-              auth={auth}
-            />
-            {/* Cuenta */}
-            <PrivateRoute path="/Cuenta" exact component={Cuenta} auth={auth} />
-            <PrivateRoute
-              path="/Cuenta/Editar"
-              exact
-              component={EditarCuenta}
-              auth={auth}
-            />
-            {/* Transportista */}
-            <PrivateRoute
-              path={`/Asumidos`}
-              exact
-              component={Asumidos}
-              auth={auth}
-            />
-            <PrivateRoute
-              path={`/Servicios`}
-              exact
-              component={Servicios}
-              auth={auth}
-            />
-            <PrivateRoute
-              path={`/Servicios/Detalles/:id`}
-              exact
-              component={ServiciosDetails}
-              auth={auth}
-            />
-            <PrivateRoute
-              path={`/Servicios/Editar/:id`}
-              exact
-              component={Edit}
-              auth={auth}
-            />
-            <PrivateRoute
-              path={`/Vehiculos`}
-              exact
-              component={Vehiculos}
-              auth={auth}
-            />
+            <Routes auth={auth} />
             <Route path="*" component={NoMatch} />
           </Switch>
         </Box>
