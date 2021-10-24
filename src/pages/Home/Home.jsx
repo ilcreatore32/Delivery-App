@@ -68,11 +68,6 @@ function Home() {
           </Box>
         </Box>
       </Box>
-      <Box>
-        <Paper variant="outlined">
-          <h2>How to get started?</h2>
-        </Paper>
-      </Box>
     </>
   );
 }

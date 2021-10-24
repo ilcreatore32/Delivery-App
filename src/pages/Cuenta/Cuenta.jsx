@@ -30,9 +30,6 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
-/* CSS */
-import "./Cuenta.css";
-
 function Cuenta() {
   const [open, setOpen] = useState(false);
   return (
@@ -175,12 +172,12 @@ function Cuenta() {
                     <TableCell>Aceptado</TableCell>
                     <TableCell>
                       <IconButton size="large">
-                        <VisibilityTwoToneIcon />
+                        <VisibilityTwoToneIcon component={Link} to="/Cuenta/Pagos/Detalles/:id" />
                       </IconButton>
                     </TableCell>
                     <TableCell>
                       <IconButton size="large">
-                        <EditTwoToneIcon />
+                        <EditTwoToneIcon component={Link} to="/Cuenta/Pagos/Editar/:id" />
                       </IconButton>
                     </TableCell>
                     <TableCell>
@@ -200,16 +197,11 @@ function Cuenta() {
               margin: "1rem 2rem",
             }}
           >
-            <Button
-              component={Link}
-              variant="outlined"
-              color="secondary"
-              to="/Cuenta/Editar"
-            >
+            <Button component={Link} variant="outlined" to="/Cuenta/Editar">
               Editar Cuenta
             </Button>
-            <Button component={Link} variant="outlined" color="secondary">
-              Algo
+            <Button component={Link} variant="outlined"  to="/Cuenta/Pagos">
+              Realizar Pago
             </Button>
           </Box>
         </Grid>

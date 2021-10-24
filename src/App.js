@@ -121,6 +121,7 @@ function App() {
                 <>
                   <Box sx={{ display: "flex", gap: ".3rem" }}>
                     <Login />
+                    <Login shop={true} />
                     <SignUp />
                   </Box>
                 </>

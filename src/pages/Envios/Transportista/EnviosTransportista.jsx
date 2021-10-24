@@ -7,12 +7,12 @@ import { Typography, Grid, Paper } from "@mui/material";
 import { EnviosColumns } from "../../../models/DataTableColums.tsx";
 
 /* Components */
-import AddEnvios from "../AddEnvios/AddEnvios";
+import Add from "../Add/Add";
 import AppTabs from "../../../components/AppTabs/AppTabs";
 import RightSideComponent from "../../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideComponent";
 
-function EnviosTransportista({ admin }) {
+function EnviosTransportista() {
   const Data = [
     {
       id: 1,
@@ -36,13 +36,9 @@ function EnviosTransportista({ admin }) {
             <LeftSideComponent envios={true} />
           </Grid>
           <Grid item xs={6} md={8}>
-            {admin ? (
-              <>
-                <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
-                  <AddEnvios />
-                </Paper>
-              </>
-            ) : null}
+            <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
+              <Add />
+            </Paper>
             <RightSideComponent Columns={EnviosColumns} Data={Data} />
           </Grid>
         </Grid>

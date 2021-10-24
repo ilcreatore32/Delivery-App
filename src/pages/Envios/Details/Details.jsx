@@ -38,7 +38,7 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-function EnviosDetails() {
+function Details() {
   const [open, setOpen] = useState(false);
   const [Offer, setOffer] = useState(false);
   const [SelectedOffer, setSelectedOffer] = useState(null);
@@ -488,4 +488,4 @@ function EnviosDetails() {
   );
 }
 
-export default EnviosDetails;
+export default Details;

@@ -7,20 +7,27 @@ import { Route, Redirect } from "react-router-dom";
 
 /* Envios */
 import Envios from "../pages/Envios/Envios";
-import EnviosDetails from "../pages/Envios/EnviosDetails/EnviosDetails";
+import { default as EnviosDetails } from "../pages/Envios/Details/Details";
 import Asumidos from "../pages/Asumidos/Asumidos";
 
 /* Servicios */
 import Servicios from "../pages/Servicios/Servicios";
-import ServiciosDetails from "../pages/Servicios/ServiciosDetails/ServiciosDetails";
-import Edit from "../pages/Servicios/Edit/Edit";
+import { default as ServiciosAdd } from "../pages/Servicios/Add/Add";
+import { default as ServiciosDetails } from "../pages/Servicios/Details/Details";
+import { default as ServiciosEdit } from "../pages/Servicios/Edit/Edit";
 
 /* Vehiculos */
 import Vehiculos from "../pages/Vehiculos/Vehiculos";
 
+/* Usuarios */
+import Usuarios from "../pages/Usuarios/Usuarios";
+
+/* Pagos */
+import Pagos from "../pages/Pagos/Pagos";
+
 /* Cuenta */
 import Cuenta from "../pages/Cuenta/Cuenta";
-import EditarCuenta from "../pages/Cuenta/EditarCuenta/EditarCuenta";
+import { default as CuentaEdit } from "../pages/Cuenta/Edit/Edit";
 
 const PrivateRoute = ({ auth, component: Component, ...rest }) => {
   return (
@@ -33,7 +40,7 @@ const PrivateRoute = ({ auth, component: Component, ...rest }) => {
   );
 };
 
-function PrivateRoutes({auth}) {
+function PrivateRoutes({ auth }) {
   return (
     <>
       <PrivateRoute path="/Envios" exact component={Envios} auth={auth} />
@@ -48,7 +55,7 @@ function PrivateRoutes({auth}) {
       <PrivateRoute
         path="/Cuenta/Editar"
         exact
-        component={EditarCuenta}
+        component={CuentaEdit}
         auth={auth}
       />
       {/* Transportista */}
@@ -66,9 +73,15 @@ function PrivateRoutes({auth}) {
         auth={auth}
       />
       <PrivateRoute
+        path={`/Servicios/Añadir`}
+        exact
+        component={ServiciosAdd}
+        auth={auth}
+      />
+      <PrivateRoute
         path={`/Servicios/Editar/:id`}
         exact
-        component={Edit}
+        component={ServiciosEdit}
         auth={auth}
       />
       <PrivateRoute
@@ -77,6 +90,8 @@ function PrivateRoutes({auth}) {
         component={Vehiculos}
         auth={auth}
       />
+      <PrivateRoute path={`/Usuarios`} exact component={Usuarios} auth={auth} />
+      <PrivateRoute path={`/Pagos`} exact component={Pagos} auth={auth} />
     </>
   );
 }

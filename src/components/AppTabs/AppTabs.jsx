@@ -11,6 +11,8 @@ import ExploreTwoToneIcon from "@mui/icons-material/ExploreTwoTone";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import WorkTwoToneIcon from "@mui/icons-material/WorkTwoTone";
 import CommuteIcon from "@mui/icons-material/Commute";
+import GroupTwoToneIcon from '@mui/icons-material/GroupTwoTone';
+import PaymentsTwoToneIcon from '@mui/icons-material/PaymentsTwoTone';
 
 function AppTabs() {
   const routeMatch = useRouteMatch([
@@ -18,6 +20,8 @@ function AppTabs() {
     `/Servicios`,
     `/Asumidos`,
     `/Vehiculos`,
+    `/Pagos`,
+    `/Usuarios`,
   ]);
   const currentTab = routeMatch?.path;
   return (
@@ -66,6 +70,20 @@ function AppTabs() {
                 value={`/Vehiculos`}
                 to={`/Vehiculos`}
                 icon={<CommuteIcon />}
+                component={Link}
+              />
+              <Tab
+                label="Pagos"
+                value={`/Pagos`}
+                to={`/Pagos`}
+                icon={<PaymentsTwoToneIcon />}
+                component={Link}
+              />
+              <Tab
+                label="Usuarios"
+                value={`/Usuarios`}
+                to={`/Usuarios`}
+                icon={<GroupTwoToneIcon />}
                 component={Link}
               />
             </Tabs>

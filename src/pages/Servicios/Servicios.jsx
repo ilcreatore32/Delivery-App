@@ -1,5 +1,8 @@
 import React from "react";
 
+/* React-Router */
+import { Link } from "react-router-dom";
+
 /* Material UI */
 import { Typography, Grid, Paper, IconButton } from "@mui/material";
 
@@ -38,15 +41,11 @@ function Servicios({ admin }) {
             <LeftSideComponent servicios={true} />
           </Grid>
           <Grid item xs={6} md={8}>
-            {admin ? (
-              <>
-                <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
-                  <IconButton>
-                    <AddCircleTwoToneIcon size="large" color="secondary" />
-                  </IconButton>
-                </Paper>
-              </>
-            ) : null}
+            <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
+              <IconButton component={Link} to="/Servicios/Añadir">
+                <AddCircleTwoToneIcon size="large" />
+              </IconButton>
+            </Paper>
             <RightSideComponent Columns={ServiciosColumns} Data={Data} />
           </Grid>
         </Grid>

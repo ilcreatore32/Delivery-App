@@ -245,3 +245,149 @@ export const VehiculosColumns: GridColDef[] = [
     },
   },
 ];
+
+/* Pagos Columns */
+export const PagosColumns: GridColDef[] = [
+  {
+    headerName: "id",
+    field: "id",
+    sortable: true,
+  },
+  {
+    headerName: "Método de Pago",
+    field: "Metodo",
+    sortable: true,
+  },
+  {
+    headerName: "Fecha",
+    field: "Fecha",
+    sortable: true,
+  },
+  {
+    headerName: "Monto",
+    field: "Monto",
+    sortable: true,
+  },
+  {
+    headerName: "Estatus",
+    field: "Estatus",
+    sortable: true,
+  },
+  {
+    headerName: "Usuario",
+    field: "Usuario",
+    sortable: true,
+  },
+  {
+    field: "details",
+    headerName: "Detalles",
+    sortable: false,
+    renderCell: (thisRow) => {
+      return (
+        <IconButton component={Link} to={`/Pagos/Detalles/${thisRow.row.id}`}>
+          <VisibilityTwoToneIcon />
+        </IconButton>
+      );
+    },
+  },
+  {
+    field: "edit",
+    headerName: "Editar",
+    sortable: false,
+    renderCell: (thisRow) => {
+      return (
+        <IconButton component={Link} to={`/Pagos/Editar/${thisRow.row.id}`}>
+          <EditTwoToneIcon />
+        </IconButton>
+      );
+    },
+  },
+  {
+    field: "delete",
+    headerName: "Eliminar",
+    sortable: false,
+    renderCell: (thisRow) => {
+      return (
+        <IconButton component={Link} to={`/Pagos/Eliminar/${thisRow.row.id}`}>
+          <DeleteTwoToneIcon />
+        </IconButton>
+      );
+    },
+  },
+];
+
+/* Usuarios Columns */
+export const UsuariosColumns: GridColDef[] = [
+  {
+    headerName: "id",
+    field: "id",
+    sortable: true,
+  },
+  {
+    headerName: "Cédula",
+    field: "Cedula",
+    sortable: true,
+  },
+  {
+    headerName: "Nombre Completo",
+    field: "Nombre",
+    sortable: true,
+  },
+  {
+    headerName: "Correo",
+    field: "Correo",
+    sortable: true,
+  },
+  {
+    headerName: "Subscripción",
+    field: "Subscripcion",
+    sortable: true,
+  },
+  {
+    headerName: "Estatus",
+    field: "Estatus",
+    sortable: true,
+  },
+  {
+    field: "details",
+    headerName: "Detalles",
+    sortable: false,
+    renderCell: (thisRow) => {
+      return (
+        <IconButton
+          component={Link}
+          to={`/Usuarios/Detalles/${thisRow.row.id}`}
+        >
+          <VisibilityTwoToneIcon />
+        </IconButton>
+      );
+    },
+  },
+  {
+    field: "edit",
+    headerName: "Editar",
+    sortable: false,
+    renderCell: (thisRow) => {
+      return (
+        <IconButton component={Link} to={`/Usuarios/Editar/${thisRow.row.id}`}>
+          <EditTwoToneIcon />
+        </IconButton>
+      );
+    },
+  },
+  {
+    field: "delete",
+    headerName: "Eliminar",
+    sortable: false,
+    renderCell: (thisRow) => {
+      return (
+        <IconButton
+          component={Link}
+          to={`/Usuarios/Eliminar/${thisRow.row.id}`}
+        >
+          <DeleteTwoToneIcon />
+        </IconButton>
+      );
+    },
+  },
+];

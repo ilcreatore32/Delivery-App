@@ -91,7 +91,7 @@ function Vehiculos({ admin }) {
               {admin ? (
                 <>
                   <IconButton>
-                    <AddCircleTwoToneIcon size="large" color="secondary" />
+                    <AddCircleTwoToneIcon size="large"/>
                   </IconButton>
                 </>
               ) : null}

@@ -21,7 +21,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
 });
 
-function AddEnvios() {
+function Add() {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -85,7 +85,7 @@ function AddEnvios() {
           <Button onClick={handleClose} variant="text">
             Cancelar
           </Button>
-          <Button onClick={handleClose} variant="text">
+          <Button variant="text">
             Guardar
           </Button>
         </Box>
@@ -94,4 +94,4 @@ function AddEnvios() {
   );
 }
 
-export default AddEnvios;
+export default Add;

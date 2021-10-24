@@ -7,11 +7,21 @@ import { Paper } from "@mui/material";
 import Envios from "./Envios/Envios";
 import Servicios from "./Servicios/Servicios";
 import Vehiculos from "./Vehiculos/Vehiculos";
+import Pagos from "./Pagos/Pagos";
+import Usuarios from "./Usuarios/Usuarios";
 
 /* CSS*/
 import "./LeftSideComponent.css";
 
-function LeftSideComponent({ envios, servicios, vehiculos, asumidos, admin }) {
+function LeftSideComponent({
+  envios,
+  servicios,
+  vehiculos,
+  asumidos,
+  pagos,
+  usuarios,
+  admin,
+}) {
   return (
     <>
       <div className="left-side-component">
@@ -22,6 +32,10 @@ function LeftSideComponent({ envios, servicios, vehiculos, asumidos, admin }) {
             <Servicios admin={admin} />
           ) : vehiculos ? (
             <Vehiculos admin={admin} />
+          ) : pagos ? (
+            <Pagos admin={admin} />
+          ) : usuarios ? (
+            <Usuarios admin={admin} />
           ) : null}
         </Paper>
       </div>

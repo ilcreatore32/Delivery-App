@@ -25,7 +25,7 @@ import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-function ServiciosDetails() {
+function Details() {
   const [open, setOpen] = useState(false);
   const { id } = useParams();
 
@@ -278,4 +278,4 @@ function ServiciosDetails() {
   );
 }
 
-export default ServiciosDetails;
+export default Details;
