@@ -2,11 +2,13 @@ import mysql from "mysql";
 import { promisify } from "util";
 import config from "./config";
 
+/* Extract DB Options */
 const { db_options } = config;
 
-
+/* Create Pool */
 const pool = mysql.createPool(db_options);
 
+/* Start connection */
 pool.getConnection((err, connection) => {
   if (err) {
     if (err.code === "PROTOCOL_CONNECTION_LOST") {

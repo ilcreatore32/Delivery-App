@@ -1,8 +1,1 @@
-node_modules
-.tern-project
-
-# environemnt variables
-.env
-
-# dist
-dist
+node_modules/

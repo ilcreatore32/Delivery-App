@@ -1,21 +1,17 @@
 import express from "express";
-//const conectarDB = require('./config/db');
-import cors from 'cors'
+import cors from 'cors';
 import routes from "./routes";
-// crear el servidor
 
+// create express app
 const app = express();
 
-//conectar a la base de datos
-//conectarDB();
-
-//habilitar cors
+//use cors
 app.use(cors())
 
-//habilitar express.json
+//use json
 app.use(express.json({ extended: true }))
 
-app.set("port", 4000);
+app.set("port", 4001);
 
 app.listen(app.get("port"));
 

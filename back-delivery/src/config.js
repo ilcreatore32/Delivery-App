@@ -3,7 +3,7 @@
  */
 import { config } from "dotenv";
 config();
-
+/* Database Config */
 export default {
   db_options : {
     connectionLimit: 10,
