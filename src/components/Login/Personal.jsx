@@ -1,5 +1,11 @@
 import React from "react";
 import { useState } from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+import { Login as loginPersonal } from "../../api/Login";
+
+import Alert from "../Alert/Alert";
 
 /* Material UI */
 import {
@@ -24,7 +30,32 @@ import CloseIcon from "@mui/icons-material/CloseTwoTone";
 import "./Login.css";
 import logo from "../../assets/logo.png";
 
+const validationSchema = yup.object({
+  email: yup
+    .string("Enter your email")
+    .email("Enter a valid email")
+    .required("Email is required"),
+  password: yup
+    .string("Enter your password")
+    .min(4, "Minimum 4 characters")
+    .required("Password is required"),
+});
+
 function Login({ shop }) {
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      const auth = await loginPersonal(values);
+      await localStorage.setItem("token", auth.token);
+      (await auth) ? Alert.loginSuccess() : Alert.loginError();
+      await handleClose();
+    },
+  });
+
   const [open, setOpen] = useState(false);
   const handleClose = () => {
     setOpen(false);
@@ -43,7 +74,11 @@ function Login({ shop }) {
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={open}
         >
-          <Grid className="login-component">
+          <Grid
+            component="form"
+            className="login-component"
+            onSubmit={formik.handleSubmit}
+          >
             <Paper elevation={0} className="paper-style">
               <Box
                 sx={{
@@ -60,7 +95,6 @@ function Login({ shop }) {
                   <CloseIcon />
                 </IconButton>
               </Box>
-
               <Grid align="center">
                 <Box>
                   <img alt="Logo" src={logo} className="logo" />
@@ -84,11 +118,32 @@ function Login({ shop }) {
                       label="Correo Electronico"
                       variant="filled"
                       type="email"
+                      id="email"
+                      name="email"
+                      value={formik.values.email}
+                      placeholder="something@example.com"
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.email && Boolean(formik.errors.email)
+                      }
+                      helperText={formik.touched.email && formik.errors.email}
                     />
                     <TextField
                       label="Contraseña"
                       variant="filled"
                       type="password"
+                      id="password"
+                      name="password"
+                      value={formik.values.password}
+                      placeholder="****"
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.password &&
+                        Boolean(formik.errors.password)
+                      }
+                      helperText={
+                        formik.touched.password && formik.errors.password
+                      }
                     />
                     <Box
                       sx={{
@@ -150,7 +205,7 @@ function Login({ shop }) {
                     }}
                   >
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button>Acceder</Button>
+                    <Button type="submit">Acceder</Button>
                   </Box>
                 </Grid>
               </Grid>
