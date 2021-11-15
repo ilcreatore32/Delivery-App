@@ -88,27 +88,32 @@ export const EnviosColumns: GridColDef[] = [
 export const ServiciosColumns: GridColDef[] = [
   {
     headerName: "id",
-    field: "id",
+    field: "ST_Id",
     sortable: true,
   },
   {
     headerName: "Medio de Transporte",
-    field: "Medio",
+    field: "MT_Nombre",
     sortable: true,
   },
   {
-    headerName: "Horario",
-    field: "Horario",
+    headerName: "Inicio",
+    field: "ST_HorarioIni",
+    sortable: true,
+  },
+  {
+    headerName: "Fin",
+    field: "ST_HorarioFin",
     sortable: true,
   },
   {
     headerName: "Precio",
-    field: "Precio",
+    field: "ST_Precio",
     sortable: true,
   },
   {
-    headerName: "Disponibilidad",
-    field: "Disponibilidad",
+    headerName: "Estatus",
+    field: "ST_Status",
     sortable: true,
   },
   {

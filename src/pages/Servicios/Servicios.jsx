@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 /* React-Router */
 import { Link } from "react-router-dom";
@@ -9,6 +9,8 @@ import { Typography, Grid, Paper, IconButton } from "@mui/material";
 /* Material UI Icons */
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 
+/* Api */
+import { GetService } from "../../api/Get";
 /* DataTable Columns */
 import { ServiciosColumns } from "../../models/DataTableColums.tsx";
 
@@ -18,16 +20,15 @@ import RightSideComponent from "../../components/RightSideComponent/RightSideCom
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
 function Servicios({ admin }) {
-  const Data = [
-    {
-      id: "1",
-      Medio: "Carro",
-      Horario: "7am a 8pm",
-      Precio: "70",
-      Disponibilidad: "inmediata",
-      Areas: "Caracas",
-    },
-  ];
+  const [services, setServices] = useState(null);
+  const fetchService = async () => {
+    const response = await GetService();
+    await console.log(response);
+    await setServices(response);
+  };
+  useEffect(() => {
+    fetchService();
+  }, []);
 
   return (
     <>
@@ -46,7 +47,7 @@ function Servicios({ admin }) {
                 <AddCircleTwoToneIcon size="large" />
               </IconButton>
             </Paper>
-            <RightSideComponent Columns={ServiciosColumns} Data={Data} />
+            <RightSideComponent Columns={ServiciosColumns} Data={services} />
           </Grid>
         </Grid>
       </div>

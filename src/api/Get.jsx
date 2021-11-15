@@ -22,18 +22,23 @@ export function GetOneEnvio(id) {
 }
 
 /* Servicios */
-export function GetServicios() {
-  Api.get("/Servicios")
+export async function GetService() {
+  const service = await Api.get("/service", {
+    params: {
+      "view_option": "admin",
+    },
+  })
     .then((result) => {
-      console.log(result);
+      return result.data;
     })
     .catch((error) => {
-      console.log(error);
+      console.log("Error al consultar los servicios");
     });
+  return service;
 }
 
-export function GetOneServicio(id) {
-  Api.get(`/Servicios/${id}`)
+export function GetOneService(id) {
+  Api.get(`/service/${id}`)
     .then((result) => {
       console.log(result);
     })

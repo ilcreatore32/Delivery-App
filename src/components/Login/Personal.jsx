@@ -1,10 +1,10 @@
-import React from "react";
+import React, {useContext} from "react";
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
 import { Login as loginPersonal } from "../../api/Login";
-
+import {authContext} from "../../context/authContext"
 import Alert from "../Alert/Alert";
 
 /* Material UI */
@@ -52,11 +52,14 @@ function Login({ shop }) {
       const auth = await loginPersonal(values);
       await localStorage.setItem("token", auth.token);
       (await auth) ? Alert.loginSuccess() : Alert.loginError();
+      await AuthContext.setAuth(auth);
       await handleClose();
     },
   });
 
   const [open, setOpen] = useState(false);
+  const AuthContext = useContext(authContext);
+  
   const handleClose = () => {
     setOpen(false);
   };
