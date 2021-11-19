@@ -1,12 +1,11 @@
 import axios from "axios";
 import getToken from "./getToken";
 // import getParams from "./getParams";
+// import getUser from "./getUser";
 
-/* Obtencion del token */
-let token = getToken();
 
-/* Obtencion de Parametros */
-// let params = getParams();
+/* Obtencion del User */
+// let user = getUser(token);
 
 /* Instancia de Axios */
 const Api = axios.create({
@@ -21,17 +20,19 @@ const Api = axios.create({
    y que envie los parametros segun el usuario 
 */
 Api.interceptors.request.use((config) => {
+  /* Obtencion del token */
+let token = getToken();
   if (token) {
     config.headers = {
       "x-auth-token": token,
     };
   }
-  /* if (params) {
-    config.params = {
-      params,
-    };
-  }
-  */
+  // if (user) {
+  //   config.params = {
+  //     /* Obtencion de Parametros */
+  //     "view_option": getParams(user.permission),
+  //   };
+  // }
   return config;
 });
 
