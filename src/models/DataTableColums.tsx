@@ -17,33 +17,28 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 /* Envios Columns */
 export const EnviosColumns: GridColDef[] = [
   {
-    headerName: "id",
-    field: "id",
+    headerName: "Id",
+    field: "SE_Id",
     sortable: true,
   },
   {
-    headerName: "Ubicación",
-    field: "location",
-    sortable: true,
-  },
-  {
-    headerName: "Productos",
-    field: "products",
+    headerName: "Fecha",
+    field: "SE_Fecha",
     sortable: true,
   },
   {
     headerName: "Valor del Pedido",
-    field: "price",
+    field: "SE_ValorTotal",
     sortable: true,
   },
   {
     headerName: "Peso Total",
-    field: "weight",
+    field: "SE_PesoTotal",
     sortable: true,
   },
   {
-    headerName: "Fecha del Pedido",
-    field: "date",
+    headerName: "Productos",
+    field: "Productos_Envio",
     sortable: true,
   },
   {
@@ -52,7 +47,7 @@ export const EnviosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Envios/Detalles/${thisRow.row.id}`}>
+        <IconButton component={Link} to={`/Envios/Detalles/${thisRow.row.SE_Id}`}>
           <VisibilityTwoToneIcon />
         </IconButton>
       );
@@ -64,7 +59,7 @@ export const EnviosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Envios/Editar/${thisRow.row.id}`}>
+        <IconButton component={Link} to={`/Envios/Editar/${thisRow.row.SE_Id}`}>
           <EditTwoToneIcon />
         </IconButton>
       );
@@ -76,7 +71,7 @@ export const EnviosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Envios/Eliminar/${thisRow.row.id}`}>
+        <IconButton component={Link} to={`/Envios/Eliminar/${thisRow.row.SE_Id}`}>
           <DeleteTwoToneIcon />
         </IconButton>
       );
@@ -87,7 +82,7 @@ export const EnviosColumns: GridColDef[] = [
 /* Servicios Columns */
 export const ServiciosColumns: GridColDef[] = [
   {
-    headerName: "id",
+    headerName: "Id",
     field: "ST_Id",
     sortable: true,
   },
@@ -129,7 +124,7 @@ export const ServiciosColumns: GridColDef[] = [
       return (
         <IconButton
           component={Link}
-          to={`/Servicios/Detalles/${thisRow.row.id}`}
+          to={`/Servicios/Detalles/${thisRow.row.ST_Id}`}
         >
           <VisibilityTwoToneIcon />
         </IconButton>
@@ -142,7 +137,7 @@ export const ServiciosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Servicios/Editar/${thisRow.row.id}`}>
+        <IconButton component={Link} to={`/Servicios/Editar/${thisRow.row.ST_Id}`}>
           <EditTwoToneIcon />
         </IconButton>
       );
@@ -156,7 +151,7 @@ export const ServiciosColumns: GridColDef[] = [
       return (
         <IconButton
           component={Link}
-          to={`/Servicios/Eliminar/${thisRow.row.id}`}
+          to={`/Servicios/Eliminar/${thisRow.row.ST_Id}`}
         >
           <DeleteTwoToneIcon />
         </IconButton>
@@ -168,43 +163,38 @@ export const ServiciosColumns: GridColDef[] = [
 /* Vehiculos Columns */
 export const VehiculosColumns: GridColDef[] = [
   {
-    headerName: "id",
-    field: "id",
-    sortable: true,
-  },
-  {
-    headerName: "Tipo de Vehiculo",
-    field: "Marca",
-    sortable: true,
-  },
-  {
-    headerName: "Nombre",
-    field: "Modelo",
-    sortable: true,
-  },
-  {
-    headerName: "Año",
-    field: "Año",
-    sortable: true,
-  },
-  {
-    headerName: "Pasajeros",
-    field: "Pasajeros",
-    sortable: true,
-  },
-  {
-    headerName: "Areas de Operaciones",
-    field: "Areas",
-    sortable: true,
-  },
-  {
-    headerName: "Capacidad de Carga",
-    field: "CapacidadCarga",
+    headerName: "Id",
+    field: "Vehiculo_Id",
     sortable: true,
   },
   {
     headerName: "Matricula",
-    field: "Matricula",
+    field: "Vehiculo_Matricula",
+    sortable: true,
+  },
+  {
+    headerName: "Marca",
+    field: "Vehiculo_Marca",
+    sortable: true,
+  },
+  {
+    headerName: "Modelo",
+    field: "Vehiculo_Modelo",
+    sortable: true,
+  },
+  {
+    headerName: "Año",
+    field: "Vehiculo_Anio",
+    sortable: true,
+  },
+  {
+    headerName: "Pasajeros",
+    field: "Vehiculo_Pasajeros",
+    sortable: true,
+  },
+  {
+    headerName: "Capacidad de Carga",
+    field: "Vehiculo_CapacidadCarga",
     sortable: true,
   },
   {
@@ -215,7 +205,7 @@ export const VehiculosColumns: GridColDef[] = [
       return (
         <IconButton
           component={Link}
-          to={`/Vehiculos/Detalles/${thisRow.row.id}`}
+          to={`/Vehiculos/Detalles/${thisRow.row.Vehiculo_Id}`}
         >
           <VisibilityTwoToneIcon />
         </IconButton>
@@ -228,7 +218,7 @@ export const VehiculosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Vehiculos/Editar/${thisRow.row.id}`}>
+        <IconButton component={Link} to={`/Vehiculos/Editar/${thisRow.row.Vehiculo_Id}`}>
           <EditTwoToneIcon />
         </IconButton>
       );
@@ -242,7 +232,7 @@ export const VehiculosColumns: GridColDef[] = [
       return (
         <IconButton
           component={Link}
-          to={`/Vehiculos/Eliminar/${thisRow.row.id}`}
+          to={`/Vehiculos/Eliminar/${thisRow.row.Vehiculo_Id}`}
         >
           <DeleteTwoToneIcon />
         </IconButton>
@@ -254,33 +244,33 @@ export const VehiculosColumns: GridColDef[] = [
 /* Pagos Columns */
 export const PagosColumns: GridColDef[] = [
   {
-    headerName: "id",
-    field: "id",
+    headerName: "Id",
+    field: "PS_Id",
     sortable: true,
   },
   {
     headerName: "Método de Pago",
-    field: "Metodo",
+    field: "PS_Metodo",
     sortable: true,
   },
   {
     headerName: "Fecha",
-    field: "Fecha",
+    field: "PS_Fecha",
     sortable: true,
   },
   {
     headerName: "Monto",
-    field: "Monto",
+    field: "PS_Monto",
     sortable: true,
   },
   {
     headerName: "Estatus",
-    field: "Estatus",
+    field: "PS_Status",
     sortable: true,
   },
   {
     headerName: "Usuario",
-    field: "Usuario",
+    field: "Persona_Nombre",
     sortable: true,
   },
   {
@@ -289,7 +279,7 @@ export const PagosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Pagos/Detalles/${thisRow.row.id}`}>
+        <IconButton component={Link} to={`/Pagos/Detalles/${thisRow.row.PS_Id}`}>
           <VisibilityTwoToneIcon />
         </IconButton>
       );
@@ -301,7 +291,7 @@ export const PagosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Pagos/Editar/${thisRow.row.id}`}>
+        <IconButton component={Link} to={`/Pagos/Editar/${thisRow.row.PS_Id}`}>
           <EditTwoToneIcon />
         </IconButton>
       );
@@ -313,7 +303,7 @@ export const PagosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Pagos/Eliminar/${thisRow.row.id}`}>
+        <IconButton component={Link} to={`/Pagos/Eliminar/${thisRow.row.PS_Id}`}>
           <DeleteTwoToneIcon />
         </IconButton>
       );

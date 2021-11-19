@@ -18,16 +18,6 @@ import RightSideComponent from "../../components/RightSideComponent/RightSideCom
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
 function Usuarios() {
-  const Data = [
-    {
-      id: "1",
-      Cedula: "27111000",
-      Nombre: "Jesus Torres",
-      Correo: "JT@gmail.com",
-      Subscripcion: "xcosa",
-      Estatus: "activo",
-    },
-  ];
   return (
     <>
       <AppTabs />
@@ -45,7 +35,7 @@ function Usuarios() {
                 <AddCircleTwoToneIcon size="large" />
               </IconButton>
             </Paper>
-            <RightSideComponent Columns={UsuariosColumns} Data={Data} />
+            <RightSideComponent Columns={UsuariosColumns} />
           </Grid>
         </Grid>
       </div>

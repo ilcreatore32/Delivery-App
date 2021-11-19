@@ -1,5 +1,8 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+/* API */
+import { GetVehicles } from "../../api/Get";
 
 /* Material UI */
 import {
@@ -32,6 +35,7 @@ import LeftSideComponent from "../../components/LeftSideComponent/LeftSideCompon
 import TestCardImage from "../../assets/images/test-card-image.jpg";
 
 function Vehiculos({ admin }) {
+  const [vehicles, setVehicles] = useState([]);
   let [view, setView] = useState("true");
 
   const handleChange = (e) => {
@@ -42,38 +46,14 @@ function Vehiculos({ admin }) {
     }
   };
 
-  const Data = [
-    {
-      id: 1,
-      Marca: "Ford",
-      Modelo: "Cruze",
-      Año: 2019,
-      Pasajeros: 4,
-      Areas: "Caracas",
-      CapacidadCarga: "120",
-      Matricula: "AOP4C5AS",
-    },
-    {
-      id: 2,
-      Marca: "Jeep",
-      Modelo: "Grand Cheeroke",
-      Año: 2009,
-      Pasajeros: 6,
-      Areas: "Valencia",
-      CapacidadCarga: "200",
-      Matricula: "WP012AVC",
-    },
-    {
-      id: 3,
-      Marca: "Chevrolet",
-      Modelo: "Highlander",
-      Año: 2021,
-      Pasajeros: 5,
-      Areas: "Falcon",
-      CapacidadCarga: "200",
-      Matricula: "WWER441G",
-    },
-  ];
+  const fetchVehicles = async () => {
+    const response = await GetVehicles();
+    await setVehicles(response);
+  };
+
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
 
   return (
     <>
@@ -91,7 +71,7 @@ function Vehiculos({ admin }) {
               {admin ? (
                 <>
                   <IconButton>
-                    <AddCircleTwoToneIcon size="large"/>
+                    <AddCircleTwoToneIcon size="large" />
                   </IconButton>
                 </>
               ) : null}
@@ -117,7 +97,11 @@ function Vehiculos({ admin }) {
               </ToggleButtonGroup>
             </Paper>
             {view ? (
-              <RightSideComponent Columns={VehiculosColumns} Data={Data} />
+              <RightSideComponent
+                rowId="Vehiculo_Id"
+                Columns={VehiculosColumns}
+                Data={vehicles}
+              />
             ) : (
               <>
                 <Box
@@ -128,36 +112,46 @@ function Vehiculos({ admin }) {
                     maxWidth: "fit-contend",
                   }}
                 >
-                  {Data.map(({ id, Modelo, Matricula }) => {
-                    return(
-                    <Card variant="outlined">
-                      <CardActionArea
-                        sx={{ maxWidth: 345, flexDirection: "column" }}
-                      >
-                        <CardMedia
-                          component="img"
-                          height="140"
-                          image={TestCardImage}
-                          alt="test card image"
-                        />
-                        <CardContent>
-                          <Typography
-                            gutterBottom
-                            variant="span"
-                            component="sup"
+                  {vehicles.map(
+                    ({ Vehiculo_Id, Vehiculo_Matricula, Vehiculo_Marca }) => {
+                      return (
+                        <Card key={Vehiculo_Id} variant="outlined">
+                          <CardActionArea
+                            sx={{ maxWidth: 345, flexDirection: "column" }}
                           >
-                            Id: <code>{id}</code>
-                          </Typography>
-                          <Typography gutterBottom variant="h5" component="div">
-                            Modelo: <code>{Modelo}</code>
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Matricula: <code>{Matricula}</code>
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Card>
-                  )})}
+                            <CardMedia
+                              component="img"
+                              height="140"
+                              image={TestCardImage}
+                              alt="test card image"
+                            />
+                            <CardContent>
+                              <Typography
+                                gutterBottom
+                                variant="span"
+                                component="sup"
+                              >
+                                Id: <code>{Vehiculo_Id}</code>
+                              </Typography>
+                              <Typography
+                                gutterBottom
+                                variant="h5"
+                                component="div"
+                              >
+                                Marca: <code>{Vehiculo_Marca}</code>
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                Matricula: <code>{Vehiculo_Matricula}</code>
+                              </Typography>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      );
+                    }
+                  )}
                 </Box>
               </>
             )}

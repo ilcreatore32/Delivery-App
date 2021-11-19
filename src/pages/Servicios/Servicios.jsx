@@ -10,22 +10,28 @@ import { Typography, Grid, Paper, IconButton } from "@mui/material";
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 
 /* Api */
-import { GetService } from "../../api/Get";
+import { GetServices } from "../../api/Get";
+
 /* DataTable Columns */
 import { ServiciosColumns } from "../../models/DataTableColums.tsx";
 
 /* Components */
 import AppTabs from "../../components/AppTabs/AppTabs";
+import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
 function Servicios({ admin }) {
   const [services, setServices] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const fetchService = async () => {
-    const response = await GetService();
-    await console.log(response);
+    await setLoading(true);
+    const response = await GetServices();
     await setServices(response);
+    await setLoading(false);
   };
+
   useEffect(() => {
     fetchService();
   }, []);
@@ -47,7 +53,24 @@ function Servicios({ admin }) {
                 <AddCircleTwoToneIcon size="large" />
               </IconButton>
             </Paper>
-            <RightSideComponent Columns={ServiciosColumns} Data={services} />
+            {loading ? (
+              <Paper
+                variant="outlined"
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  margin: ".3rem auto",
+                }}
+              >
+                <Spinner loading={loading} />
+              </Paper>
+            ) : (
+              <RightSideComponent
+                rowId="ST_Id"
+                Columns={ServiciosColumns}
+                Data={services}
+              />
+            )}
           </Grid>
         </Grid>
       </div>

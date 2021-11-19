@@ -1,15 +1,38 @@
 import axios from "axios";
+import getToken from "./getToken";
+// import getParams from "./getParams";
 
-// const auth = localStorage.getItem("token")
-//   ? JSON.parse(localStorage.getItem("token"))
-//   : null;
+/* Obtencion del token */
+let token = getToken();
 
+/* Obtencion de Parametros */
+// let params = getParams();
+
+/* Instancia de Axios */
 const Api = axios.create({
   baseURL: "http://localhost:4001",
   headers: {
     "Content-Type": "application/json",
-    "x-auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoyODA0NDI0NCwicGVybWlzc2lvbiI6IkEifSwiaWF0IjoxNjM2OTQzMjM1LCJleHAiOjE2MzY5NDY4MzV9.SfW-spkbu3x7790ta_FrlntPBjlo7IyumuW5tDvlJA0",
   },
+});
+
+/* Configuracion de la instancia de Axios 
+   para que envie el token en cada peticion 
+   y que envie los parametros segun el usuario 
+*/
+Api.interceptors.request.use((config) => {
+  if (token) {
+    config.headers = {
+      "x-auth-token": token,
+    };
+  }
+  /* if (params) {
+    config.params = {
+      params,
+    };
+  }
+  */
+  return config;
 });
 
 export default Api;

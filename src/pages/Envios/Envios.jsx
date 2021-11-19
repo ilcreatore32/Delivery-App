@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 /* Types */
 import EnviosTransportista from "./Transportista/EnviosTransportista";
@@ -8,7 +7,7 @@ import EnviosCliente from "./Cliente/EnviosCliente";
 /* CSS */
 import "./Envios.css";
 
-function Envios({admin}) {
+function Envios({ admin }) {
   const [Type, setType] = useState(null);
 
   useEffect(() => {
@@ -19,7 +18,6 @@ function Envios({admin}) {
         <EnviosTransportista />
     */
     setType(false);
-    //setType(true);
   }, []);
 
   return (

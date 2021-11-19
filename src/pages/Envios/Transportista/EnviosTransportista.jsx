@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+/* API */
+import { GetShippments } from "../../../api/Get";
 
 /* Material UI */
 import { Typography, Grid, Paper } from "@mui/material";
@@ -8,21 +11,25 @@ import { EnviosColumns } from "../../../models/DataTableColums.tsx";
 
 /* Components */
 import Add from "../Add/Add";
+import Spinner from "../../../components/Spinner/Spinner";
 import AppTabs from "../../../components/AppTabs/AppTabs";
 import RightSideComponent from "../../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideComponent";
 
-function EnviosTransportista() {
-  const Data = [
-    {
-      id: 1,
-      location: "caracas",
-      products: "harina",
-      price: 12,
-      weight: 144,
-      date: "01.01.2021",
-    },
-  ];
+function EnviosTransportista(Shippments) {
+  const [shippments, setShippments] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchShippment = async () => {
+    await setLoading(true);
+    const response = await GetShippments();
+    await setShippments(response);
+    await setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchShippment();
+  }, []);
 
   return (
     <>
@@ -39,7 +46,24 @@ function EnviosTransportista() {
             <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
               <Add />
             </Paper>
-            <RightSideComponent Columns={EnviosColumns} Data={Data} />
+            {loading ? (
+              <Paper
+                variant="outlined"
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  margin: ".3rem auto",
+                }}
+              >
+                <Spinner loading={loading} />
+              </Paper>
+            ) : (
+              <RightSideComponent
+                rowId="SE_Id"
+                Columns={EnviosColumns}
+                Data={shippments}
+              />
+            )}
           </Grid>
         </Grid>
       </div>

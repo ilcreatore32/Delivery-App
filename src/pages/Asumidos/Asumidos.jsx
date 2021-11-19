@@ -18,16 +18,7 @@ import RightSideComponent from "../../components/RightSideComponent/RightSideCom
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
 function Asumidos() {
-  const Data = [
-    {
-      id: 1,
-      location: "caracas",
-      products: "harina",
-      price: 12,
-      weight: 144,
-      date: "01.01.2021",
-    },
-  ];
+ 
   return (
     <>
       <AppTabs />
@@ -45,7 +36,7 @@ function Asumidos() {
                 <AddCircleTwoToneIcon size="large" />
               </IconButton>
             </Paper>
-            <RightSideComponent Columns={EnviosColumns} Data={Data} />
+            <RightSideComponent Columns={EnviosColumns} />
           </Grid>
         </Grid>
       </div>
