@@ -1,8 +1,14 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+/* API */
+import { GetOneShippment } from "../../../api/Get";
+
+/* React-Router */
+import { useParams } from "react-router";
 
 /* Material UI */
 import {
+  Tab,
   Box,
   Typography,
   List,
@@ -38,7 +44,18 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
+/* Components */
+import Spinner from "../../../components/Spinner/Spinner";
+
 function Details() {
+  const { id } = useParams();
+  const [shippment, setShippment] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [shippmentDetails, setShippmentDetails] = useState({});
+  const [productsList, setproductsList] = useState({});
+  const [servicesAvailable, setServicesAvailable] = useState({});
+
+  /*
   const [open, setOpen] = useState(false);
   const [Offer, setOffer] = useState(false);
   const [SelectedOffer, setSelectedOffer] = useState(null);
@@ -59,10 +76,59 @@ function Details() {
   const handleChange = (event) => {
     setTransportistaAccepted(event.target.checked);
   };
+  */
+
+  const fetchShippment = async () => {
+    await setLoading(true);
+    try {
+      const response = await GetOneShippment(id);
+      const { shippmentDetails, productsList, servicesAvailable } = response;
+      await setShippmentDetails(shippmentDetails);
+      await setproductsList(productsList);
+      await setServicesAvailable(servicesAvailable);
+      console.log(shippmentDetails, productsList, servicesAvailable);
+    } catch (error) {
+      console.log(error);
+    }
+    await setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchShippment();
+  }, []);
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      {loading ? (
+        <Paper
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            margin: "1rem auto",
+            padding: ".5rem 1rem",
+          }}
+          variant="outlined"
+        >
+          <Spinner loading={loading} />
+        </Paper>
+      ) : (
+        <>
+          <p>{shippmentDetails.SE_Id}</p>
+          <p>{shippmentDetails.SE_Fecha}</p>
+          <p>{shippmentDetails.SE_Status}</p>
+          <p>{shippmentDetails.SE_ValorTotal}</p>
+          <p>{shippmentDetails.SE_PesoTotal}</p>
+          <p>{shippmentDetails.SE_Id}</p>
+        </>
+      )}
+    </>
+  );
+}
+
+export default Details;
+
+/*
+<Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box sx={{ width: "100%", padding: ".5rem" }}>
           <Paper sx={{ padding: "1rem" }} variant="outlined">
             <FormGroup>
@@ -483,9 +549,4 @@ function Details() {
             ) : null}
           </Paper>
         </Box>
-      </Box>
-    </>
-  );
-}
-
-export default Details;
+      </Box>*/
