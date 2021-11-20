@@ -9,7 +9,9 @@ export const authMiddleware = (req, res, next) => {
   }
   //validar el token
   try {
-    const cifrado = jwt.verify(token, process.env.SECRETA)
+    const cifrado = jwt.verify(token, process.env.SECRETA, {
+      expiresIn: "24h" 
+      })
     req.user = cifrado.user;
     next()
   } catch (error) {

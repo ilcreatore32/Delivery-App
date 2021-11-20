@@ -80,7 +80,7 @@ export const registerUser = async (req, res) => {
                                           }
                                           /* create the token */
                                           jwt.sign(payload, process.env.SECRETA, {
-                                            expiresIn: 3600 
+                                            expiresIn: "24h" 
                                             }, (error, token) => {
                                             if (error) throw error;
                                             /* send token  */
