@@ -8,23 +8,10 @@ import { useParams } from "react-router";
 
 /* Material UI */
 import {
-  Tab,
   Box,
   Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
   IconButton,
-  ListItemButton,
   Paper,
-  ListSubheader,
-  Divider,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   TableContainer,
   TableCell,
   TableRow,
@@ -32,34 +19,51 @@ import {
   Table,
   Collapse,
   TableHead,
-  FormGroup,
-  FormControlLabel,
-  Switch,
+  Stack,
+  List,
+  ListSubheader,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+  Divider,
+  ListItemButton,
 } from "@mui/material";
+
+import { styled } from "@mui/material/styles";
 
 /* Material UI Icons */
 import BookmarkAddTwoToneIcon from "@mui/icons-material/BookmarkAddTwoTone";
-import BookmarkAddedTwoToneIcon from "@mui/icons-material/BookmarkAddedTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowDown";
+import BookmarkAddedTwoToneIcon from "@mui/icons-material/BookmarkAddedTwoTone";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 /* Components */
 import Spinner from "../../../components/Spinner/Spinner";
 
+const Item = styled(Paper)(({ theme }) => ({
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+  width: "100%",
+}));
+
 function Details() {
   const { id } = useParams();
-  const [shippment, setShippment] = useState({});
   const [loading, setLoading] = useState(false);
-  const [shippmentDetails, setShippmentDetails] = useState({});
-  const [productsList, setproductsList] = useState({});
-  const [servicesAvailable, setServicesAvailable] = useState({});
-
-  /*
   const [open, setOpen] = useState(false);
   const [Offer, setOffer] = useState(false);
   const [SelectedOffer, setSelectedOffer] = useState(null);
-  const [TransportistaAccepted, setTransportistaAccepted] = useState(true);
+
+  const [shippmentDetails, setShippmentDetails] = useState({});
+  const [productsList, setproductsList] = useState([]);
+  const [servicesAvailable, setServicesAvailable] = useState([]);
 
   const handleOffer = () => {
     setOffer(true);
@@ -73,6 +77,9 @@ function Details() {
     setSelectedOffer(e.target.value);
   };
 
+  /*
+  const [TransportistaAccepted, setTransportistaAccepted] = useState(true);
+
   const handleChange = (event) => {
     setTransportistaAccepted(event.target.checked);
   };
@@ -82,11 +89,13 @@ function Details() {
     await setLoading(true);
     try {
       const response = await GetOneShippment(id);
-      const { shippmentDetails, productsList, servicesAvailable } = response;
+      const { shippmentDetails, productsList, servicesAvailable } =
+        await response;
       await setShippmentDetails(shippmentDetails);
       await setproductsList(productsList);
       await setServicesAvailable(servicesAvailable);
       console.log(shippmentDetails, productsList, servicesAvailable);
+      console.log(productsList);
     } catch (error) {
       console.log(error);
     }
@@ -113,12 +122,275 @@ function Details() {
         </Paper>
       ) : (
         <>
-          <p>{shippmentDetails.SE_Id}</p>
-          <p>{shippmentDetails.SE_Fecha}</p>
-          <p>{shippmentDetails.SE_Status}</p>
-          <p>{shippmentDetails.SE_ValorTotal}</p>
-          <p>{shippmentDetails.SE_PesoTotal}</p>
-          <p>{shippmentDetails.SE_Id}</p>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={{ xs: 1, sm: 2, md: 2 }}
+            sx={{
+              margin: "1rem",
+            }}
+          >
+            <Item xs={6} sm={8} md={8}>
+              <Typography align="center" variant="h4" component="h1">
+                Detalles del Envio
+              </Typography>
+              <TableContainer sx={{ margin: "2rem 0" }}>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell component="th">Fecha del Pedido</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.SE_Fecha}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th">Estado</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.SE_Status}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th">Valor Total</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.SE_ValorTotal}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th">Peso Total</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.SE_PesoTotal}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Box
+                sx={{
+                  padding: "1rem",
+                }}
+              >
+                <Typography align="center" variant="h6" component="h2">
+                  Productos
+                </Typography>
+                <TableContainer>
+                  <Table sx={{ minWidth: 650 }}>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell align="center">Nombre</TableCell>
+                        <TableCell align="center">Tipo</TableCell>
+                        <TableCell align="center">Tamaño (cm)</TableCell>
+                        <TableCell align="center">Peso (Kg)</TableCell>
+                        <TableCell align="center">Cantidad</TableCell>
+                        <TableCell align="center">Precio ($)</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {productsList.map((product) => {
+                        return (
+                          <>
+                            <TableRow
+                            
+                              sx={{
+                                "&:last-child td, &:last-child th": {
+                                  border: 0,
+                                },
+                              }}
+                            >
+                              <TableCell align="center">
+                                {product.Producto_Nombre}
+                              </TableCell>
+                              <TableCell align="center">
+                                {product.Producto_Tipo}
+                              </TableCell>
+                              <TableCell align="center">
+                                {product.Producto_Tamano}
+                              </TableCell>
+                              <TableCell align="center">
+                                {product.Producto_Peso}
+                              </TableCell>
+                              <TableCell align="center">
+                                {product.ProductoSE_Cantidad}
+                              </TableCell>
+                              <TableCell align="center">
+                                {product.Producto_Precio}
+                              </TableCell>
+                            </TableRow>
+                          </>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+              <Box
+                sx={{
+                  padding: "1rem",
+                }}
+              >
+                <List
+                  sx={{
+                    width: "100%",
+                    bgcolor: "background.paper",
+                  }}
+                  
+                >
+                  <ListSubheader
+                    sx={{
+                      display: "flex",
+                      alignContent: "center",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    Servicios de Transporte Ofertados{" "}
+                    <IconButton onClick={handleOffer}>
+                      <BookmarkAddTwoToneIcon color="secondary" size="small" />
+                    </IconButton>
+                  </ListSubheader>
+                  {Offer ? (
+                    <>
+                      <Box
+                        sx={{
+                          margin: "2rem 3rem",
+                        }}
+                      >
+                        <ListSubheader>
+                          Ofrecer Servicios de Transporte
+                        </ListSubheader>
+                        <FormControl fullWidth>
+                          <InputLabel id="offer">Sus Servicios</InputLabel>
+                          <Select
+                            labelId="offer"
+                            id="offer"
+                            variant="filled"
+                            value={SelectedOffer}
+                            label="Sus Servicios"
+                            onChange={handleSelectedOffer}
+                          >
+                            <MenuItem value={1}>Carro</MenuItem>
+                            <MenuItem value={2}>Moto</MenuItem>
+                            <MenuItem value={3}>Camion</MenuItem>
+                          </Select>
+                        </FormControl>
+                        <Box
+                          sx={{
+                            margin: ".5rem 0",
+                            display: "flex",
+                            alignContent: "center",
+                            justifyContent: "space-around",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Button
+                            onClick={handleCloseOffer}
+                            variant="outlined"
+                            color="secondary"
+                          >
+                            Cancelar
+                          </Button>
+                          <Button variant="outlined" color="secondary">
+                            Ofrecer Servicio
+                          </Button>
+                        </Box>
+                      </Box>
+                    </>
+                  ) : null}
+                  <Divider />
+                  {servicesAvailable.map((service) => {
+                    return (
+                      <ListItem
+                      key={service.ST_Id}
+                        divider
+                        secondaryAction={
+                          <IconButton edge="end" aria-label="Eliminar Ofrecer">
+                            <DeleteTwoToneIcon color="error" size="small" />
+                          </IconButton>
+                        }
+                        disablePadding
+                      >
+                        <ListItemButton role={undefined}>
+                          <ListItemIcon>
+                            <BookmarkAddedTwoToneIcon color="secondary" />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={`${service.DatosMedio} - ${service.ST_Precio}$`}
+                            secondary={`Horario: ${service.ST_HorarioIni} - ${service.ST_HorarioFin}`}
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              </Box>
+            </Item>
+            <Item xs={6} sm={4} md={4}>
+              <Typography align="center" variant="h4" component="h2">
+                Detalles del Cliente
+              </Typography>
+              <TableContainer sx={{ margin: "1rem 0" }}>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell component="th">Cédula</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.SE_PersonaId}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th">Nombre</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.Persona_Nombre}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th">Apellido</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.Persona_Apellido}
+                      </TableCell>
+                    </TableRow>
+                    {shippmentDetails.Telefonos_Persona ? (
+                      <TableRow>
+                        <TableCell component="th">Telefonos</TableCell>
+                        <TableCell align="center">
+                          <IconButton
+                            size="small"
+                            onClick={() => setOpen(!open)}
+                          >
+                            {open ? (
+                              <KeyboardArrowUpIcon />
+                            ) : (
+                              <KeyboardArrowDownIcon />
+                            )}
+                          </IconButton>
+                          <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Box sx={{ margin: 1 }}>
+                              <Table size="small" aria-label="purchases">
+                                <TableBody>
+                                  {shippmentDetails.Telefonos_Persona.map(
+                                    (tlf) => {
+                                      return (
+                                        <TableRow>
+                                          <TableCell>{tlf}</TableCell>
+                                        </TableRow>
+                                      );
+                                    }
+                                  )}
+                                </TableBody>
+                              </Table>
+                            </Box>
+                          </Collapse>
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      <TableRow>
+                        <TableCell component="th">Telefonos</TableCell>
+                        <TableCell align="center">No hay registro</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Item>
+          </Stack>
         </>
       )}
     </>
@@ -143,90 +415,9 @@ export default Details;
               />
             </FormGroup>
             <Box>
-              <Typography align="center" variant="h4" component="h1">
-                Detalles del Envio
-              </Typography>
-              <TableContainer
-                component={Paper}
-                variant="outlined"
-                sx={{ margin: "2rem 0" }}
-              >
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell component="th">Fecha del Pedido</TableCell>
-                      <TableCell align="center">05/05/2021</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Estado</TableCell>
-                      <TableCell align="center">Disponible</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Valor Total</TableCell>
-                      <TableCell align="center">50$</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Peso Total</TableCell>
-                      <TableCell align="center">8 Kg</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Entidad Federal</TableCell>
-                      <TableCell align="center">Distrito Capital</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Municipio</TableCell>
-                      <TableCell align="center">Libertador</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Parroquía</TableCell>
-                      <TableCell align="center">Sucre</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Dirección Detallada</TableCell>
-                      <TableCell align="center">
-                        Altavista, Calle Real de Altavista, Escuela Agramonte.
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box
-                sx={{
-                  padding: "1rem",
-                }}
-              >
-                <Typography align="center" variant="h6" component="h2">
-                  Productos
-                </Typography>
-                <TableContainer component={Paper} variant="outlined">
-                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell align="center">Nombre</TableCell>
-                        <TableCell align="center">Tipo</TableCell>
-                        <TableCell align="center">Tamaño (cm)</TableCell>
-                        <TableCell align="center">Peso (Kg)</TableCell>
-                        <TableCell align="center">Cantidad</TableCell>
-                        <TableCell align="center">Precio ($)</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      <TableRow
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell align="center">Harina</TableCell>
-                        <TableCell align="center">Alimento</TableCell>
-                        <TableCell align="center">12</TableCell>
-                        <TableCell align="center">3</TableCell>
-                        <TableCell align="center">3</TableCell>
-                        <TableCell align="center">4</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
+              
+              
+              
               {TransportistaAccepted ? (
                 <>
                   <Box
@@ -275,105 +466,7 @@ export default Details;
                 </>
               ) : (
                 <>
-                  <Box
-                    sx={{
-                      padding: "1rem",
-                    }}
-                  >
-                    <List
-                      sx={{
-                        width: "100%",
-                        bgcolor: "background.paper",
-                      }}
-                      component={Paper}
-                      variant="outlined"
-                    >
-                      <ListSubheader
-                        sx={{
-                          display: "flex",
-                          alignContent: "center",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        Servicios de Transporte Ofertados{" "}
-                        <IconButton onClick={handleOffer}>
-                          <BookmarkAddTwoToneIcon
-                            color="secondary"
-                            size="small"
-                          />
-                        </IconButton>
-                      </ListSubheader>
-                      {Offer ? (
-                        <>
-                          <Box
-                            sx={{
-                              margin: "2rem 3rem",
-                            }}
-                          >
-                            <ListSubheader>
-                              Ofrecer Servicios de Transporte
-                            </ListSubheader>
-                            <FormControl fullWidth>
-                              <InputLabel id="offer">Sus Servicios</InputLabel>
-                              <Select
-                                labelId="offer"
-                                id="offer"
-                                variant="filled"
-                                value={SelectedOffer}
-                                label="Sus Servicios"
-                                onChange={handleSelectedOffer}
-                              >
-                                <MenuItem value={1}>Carro</MenuItem>
-                                <MenuItem value={2}>Moto</MenuItem>
-                                <MenuItem value={3}>Camion</MenuItem>
-                              </Select>
-                            </FormControl>
-                            <Box
-                              sx={{
-                                margin: ".5rem 0",
-                                display: "flex",
-                                alignContent: "center",
-                                justifyContent: "space-around",
-                                alignItems: "center",
-                              }}
-                            >
-                              <Button
-                                onClick={handleCloseOffer}
-                                variant="outlined"
-                                color="secondary"
-                              >
-                                Cancelar
-                              </Button>
-                              <Button variant="outlined" color="secondary">
-                                Ofrecer Servicio
-                              </Button>
-                            </Box>
-                          </Box>
-                        </>
-                      ) : null}
-                      <Divider />
-                      <ListItem
-                        divider
-                        secondaryAction={
-                          <IconButton edge="end" aria-label="Eliminar Ofrecer">
-                            <DeleteTwoToneIcon color="error" size="small" />
-                          </IconButton>
-                        }
-                        disablePadding
-                      >
-                        <ListItemButton role={undefined}>
-                          <ListItemIcon>
-                            <BookmarkAddedTwoToneIcon color="secondary" />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary="Prueba 1"
-                            secondary="prueba 2"
-                          />
-                        </ListItemButton>
-                      </ListItem>
-                    </List>
-                  </Box>
+                  
                 </>
               )}
             </Box>
@@ -386,63 +479,7 @@ export default Details;
             }}
             variant="outlined"
           >
-            <Typography align="center" variant="h4" component="h2">
-              Detalles del Cliente
-            </Typography>
-            <TableContainer
-              component={Paper}
-              variant="outlined"
-              sx={{ margin: "1rem 0" }}
-            >
-              <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableCell component="th">Cédula</TableCell>
-                    <TableCell align="center">27598116</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell component="th">Nombres</TableCell>
-                    <TableCell align="center">Weishler Joice</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell component="th">Apellidos</TableCell>
-                    <TableCell align="center">Berman Torres</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell component="th">Correo Electronico</TableCell>
-                    <TableCell align="center">
-                      ilCreatore321@gmail.com
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell component="th">Telefonos</TableCell>
-                    <TableCell align="center">
-                      <IconButton size="small" onClick={() => setOpen(!open)}>
-                        {open ? (
-                          <KeyboardArrowUpIcon />
-                        ) : (
-                          <KeyboardArrowDownIcon />
-                        )}
-                      </IconButton>
-                      <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                          <Table size="small" aria-label="purchases">
-                            <TableBody>
-                              <TableRow>
-                                <TableCell>04242029818</TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell>04242596061</TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                        </Box>
-                      </Collapse>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+            
             {TransportistaAccepted ? (
               <>
                 <Box
