@@ -1,11 +1,14 @@
-import React, {useContext} from "react";
-import { useState } from "react";
+import React, {useContext, useState} from "react";
+
+/* Formik */
 import { useFormik } from "formik";
 import * as yup from "yup";
 
+/* API */
 import { Login as loginPersonal } from "../../api/Login";
+
+/* Context */
 import {authContext} from "../../context/authContext"
-import Alert from "../Alert/Alert";
 
 /* Material UI */
 import {
@@ -29,6 +32,9 @@ import CloseIcon from "@mui/icons-material/CloseTwoTone";
 /* CSS */
 import "./Login.css";
 import logo from "../../assets/logo.png";
+
+/* Components */
+import Alert from "../Alert/Alert";
 
 const validationSchema = yup.object({
   email: yup
