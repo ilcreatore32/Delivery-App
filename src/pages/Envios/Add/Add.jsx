@@ -202,11 +202,7 @@ function Add() {
               </Typography>
               <Badge badgeContent={products.length} color="primary" />
             </Box>
-            <Chip
-              label="Vaciar Envio"
-              sx={{border: "1px solid #000"}}
-              onClick={handleDeleteProduct}
-            />
+            <Chip label="Vaciar Envio" onClick={handleDeleteProduct} />
           </Box>
           <Grid
             sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}

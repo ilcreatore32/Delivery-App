@@ -1,5 +1,7 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+/* API */
+import { GetOptions } from "../../../api/Get";
 
 /* Font-Awesome */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,32 +22,28 @@ import {
 /* Material UI Icons */
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
-/* React-Bootstrap */
-import Form from "react-bootstrap/Form";
-
 function Envios({ asumidos, admin }) {
-  const [Status, setStatus] = useState("Activo");
-
-  const options = [
-    {
-      id: 1,
-      value: "Activo",
-      label: "Activo",
-    },
-    {
-      id: 2,
-      value: "Pendiente",
-      label: "Pendiente",
-    },
-  ];
+  const [Status, setStatus] = useState("");
+  const [options, setOptions] = useState([]);
 
   const handleChange = (e) => {
     setStatus(e.target.value);
   };
 
+  const fetchOptions = async () => {
+    const municipalities = await GetOptions("municipality");
+    const federals = await GetOptions("federal_entity");
+    await setOptions([municipalities]);
+    await console.log(municipalities, federals);
+  };
+
+  useEffect(() => {
+    fetchOptions();
+  }, []);
+
   return (
     <>
-      <Form>
+      <form>
         <Box
           sx={{
             display: "grid",
@@ -284,7 +282,7 @@ function Envios({ asumidos, admin }) {
             </>
           ) : null}
         </Box>
-      </Form>
+      </form>
     </>
   );
 }
