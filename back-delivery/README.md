@@ -1,5 +1,5 @@
 
-# Delivery App (Backend)
+# Delivery App
 
 *Sistema Web de Auto-gestión de envíos a nivel nacional, usando el modelo de negocio [Crowdshipping](https://en.wikipedia.org/wiki/Crowdshipping)*
 

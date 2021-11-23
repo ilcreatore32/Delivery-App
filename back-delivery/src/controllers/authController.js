@@ -38,7 +38,7 @@ export const authenticateUser = async (req, res) => {
     })
   } catch (error) {
     /* error in the server */
-    console.log(error);
+    console.log(err);
     res.status(500).send('Error en el servidor') 
   }
 }

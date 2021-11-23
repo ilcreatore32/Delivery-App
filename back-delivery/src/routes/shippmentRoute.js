@@ -5,13 +5,16 @@ import {
   getOneShippment,
   editShippment,
   updateShippment,
-  deleteShippment
+  deleteShippment,
+  addShippments
 } from '../controllers/shippmentController'
+import { uploadExcel } from "../middlewares/multer";
 
 // api/shippment
 //all the routes
 const router = Router();
 router.get('/', getShippments)
+router.post('/', uploadExcel.single("excel"), addShippments)
 router.get('/:id', getOneShippment)
 router.delete('/:id', deleteShippment)
 router.get('/edit/:id', editShippment) 

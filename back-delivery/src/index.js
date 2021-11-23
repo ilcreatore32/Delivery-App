@@ -1,6 +1,7 @@
 import express from "express";
 import cors from 'cors';
 import routes from "./routes";
+import path from "path"
 
 // create express app
 const app = express();
@@ -10,6 +11,9 @@ app.use(cors())
 
 //use json
 app.use(express.json({ extended: true }))
+
+// Static files
+app.use(express.static(path.join(__dirname, '/files')));
 
 app.set("port", 4001);
 
