@@ -1,5 +1,11 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
+
+/* Formik */
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+/* API */
+import { Login as loginPersonal } from "../../api/Login";
 
 /* Material UI */
 import {
@@ -29,6 +35,33 @@ import UploadFileTwoToneIcon from "@mui/icons-material/UploadFileTwoTone";
 import "./SignUp.css";
 import logo from "../../assets/logo.png";
 
+const validationSchema = yup.object({
+  person_id: yup
+  .string("algo")
+  .required("Complete este Campo"),
+  type_id: yup
+    .string("Enter your password")
+    .min(4, "Minimum 4 characters")
+    .required("Complete este Campo"),
+  email: yup
+    .string("Enter your email")
+    .email("Enter a valid email")
+    .required("Complete este Campo"),
+  password: yup
+    .string("Enter your password")
+    .min(4, "Minimum 4 characters")
+    .required("Complete este Campo"),
+  name: yup
+    .string("Introduzca Nombre")
+    .min(4, "Minimum 4 characters")
+    .required("Complete este Campo"),
+  lastname: yup
+    .string("Introduzca su Apellido")
+    .min(4, "Minimum 4 characters")
+    .required("Complete este Campo"),
+  file: yup.string("Enter your file"),
+});
+
 function SignUp() {
   const [open, setOpen] = useState(false);
   const handleClose = () => {
@@ -38,13 +71,22 @@ function SignUp() {
     setOpen(!open);
   };
 
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {},
+  });
+
   return (
     <>
       <Button onClick={handleToggle} variant="outlined" color="secondary">
         Sign Up
       </Button>
       <div>
-        <Dialog open={open} onClose={handleClose} scroll="paper">
+        <Dialog open={open} onClose={handleClose} maxWidth="md" scroll="paper">
           <Box
             sx={{
               display: "flex",
@@ -113,6 +155,15 @@ function SignUp() {
                           variant="filled"
                           type="email"
                           fullWidth
+                          value={formik.values.email}
+                          placeholder="something@example.com"
+                          onChange={formik.handleChange}
+                          error={
+                            formik.touched.email && Boolean(formik.errors.email)
+                          }
+                          helperText={
+                            formik.touched.email && formik.errors.email
+                          }
                         />
                       </TableCell>
                     </TableRow>

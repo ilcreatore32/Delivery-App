@@ -32,3 +32,33 @@ export function PostOneVehiculo(id) {
       console.log(error);
     });
 }
+
+/* Registro de Usuario */
+export async function PostUser({
+  person_id,
+  type_id,
+  email,
+  password,
+  name,
+  lastname,
+  file,
+}) {
+  const payment = await Api.post(`/register`, {
+    body: {
+      person_id,
+      type_id,
+      email,
+      password,
+      name,
+      lastname,
+      file,
+    },
+  })
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(error.msg);
+    });
+  return payment;
+}
