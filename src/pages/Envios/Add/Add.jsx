@@ -19,6 +19,7 @@ import {
   Grid,
   Badge,
   Chip,
+  Tooltip,
 } from "@mui/material";
 
 /* Material UI Icons */
@@ -59,9 +60,13 @@ function Add() {
     let value = document.getElementsByName("quantity")[0].value;
     let product = {
       name: inputValue,
-      quantity: value[0],
+      quantity: value,
     };
     setProducts([...products, product]);
+  };
+
+  const handleDeleteProduct = () => {
+    setProducts([]);
   };
 
   return (
@@ -92,9 +97,16 @@ function Add() {
               Por favor, ingrese los datos del envío.
             </Typography>
             <Divider orientation="vertical" flexItem />
-            <IconButton onClick={handleClickOpenFile}>
-              <UploadFileTwoToneIcon size="large" />
-            </IconButton>
+            <Tooltip
+              title="Proximamente estara disponible la opcion de archivo"
+              arrow
+            >
+              <span>
+                <IconButton disabled onClick={handleClickOpenFile}>
+                  <UploadFileTwoToneIcon size="large" />
+                </IconButton>
+              </span>
+            </Tooltip>
           </DialogContentText>
           <Grid>
             <Stack
@@ -173,31 +185,47 @@ function Add() {
             sx={{
               gap: "1rem",
               display: "flex",
-              justifyContent: "center",
+              justifyContent: "space-between",
               margin: ".7rem",
+              alignItems: "center",
             }}
           >
-            <Typography variant="subtitle2" component="h3">
-              Productos agregados al Envio
-            </Typography>
-            <Badge badgeContent={products.length} color="primary" />
+            <Box
+              sx={{
+                gap: "1rem",
+                display: "flex",
+                margin: ".7rem",
+              }}
+            >
+              <Typography variant="subtitle2" component="h3">
+                Productos agregados al Envio
+              </Typography>
+              <Badge badgeContent={products.length} color="primary" />
+            </Box>
+            <Chip
+              label="Vaciar Envio"
+              sx={{border: "1px solid #000"}}
+              onClick={handleDeleteProduct}
+            />
           </Box>
           <Grid
             sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
             container
           >
             {products.map((product, index) => {
+              console.log(product);
               return (
-                <Chip
-                  label={`${product.name} ${product.quantity}`}
-                  deleteIcon={<DeleteTwoToneIcon color="primary" />}
-                  variant="outlined"
-                  onDelete={() => {
-                    products.splice(index, 1);
-                    console.log(product.quantity)
-                    setProducts([...products]);
-                  }}
-                />
+                <Tooltip title={product.quantity} arrow>
+                  <Chip
+                    label={`${product.name}`}
+                    deleteIcon={<DeleteTwoToneIcon />}
+                    variant="outlined"
+                    onDelete={() => {
+                      products.splice(index, 1);
+                      setProducts([...products]);
+                    }}
+                  />
+                </Tooltip>
               );
             })}
           </Grid>
