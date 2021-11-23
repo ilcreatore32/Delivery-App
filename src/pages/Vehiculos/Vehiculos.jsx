@@ -29,13 +29,16 @@ import { VehiculosColumns } from "../../models/DataTableColums.tsx";
 
 /* Components */
 import AppTabs from "../../components/AppTabs/AppTabs";
+import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
 import TestCardImage from "../../assets/images/test-card-image.jpg";
 
 function Vehiculos({ admin }) {
-  const [vehicles, setVehicles] = useState([]);
+  const [vehicles, setVehicles] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   let [view, setView] = useState("true");
 
   const handleChange = (e) => {
@@ -47,8 +50,10 @@ function Vehiculos({ admin }) {
   };
 
   const fetchVehicles = async () => {
+    await setLoading(true);
     const response = await GetVehicles();
     await setVehicles(response);
+    await setLoading(false);
   };
 
   useEffect(() => {
@@ -96,7 +101,18 @@ function Vehiculos({ admin }) {
                 </ToggleButton>
               </ToggleButtonGroup>
             </Paper>
-            {view ? (
+            {loading ? (
+              <Paper
+                variant="outlined"
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  margin: ".3rem auto",
+                }}
+              >
+                <Spinner loading={loading} />
+              </Paper>
+            ) : view ? (
               <RightSideComponent
                 rowId="Vehiculo_Id"
                 Columns={VehiculosColumns}
