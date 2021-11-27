@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+/* Api */
+import { GetShippments } from "../../api/Get";
 
 /* React-Router */
 import { Link } from "react-router-dom";
@@ -14,11 +17,25 @@ import { EnviosColumns } from "../../models/DataTableColums.tsx";
 
 /* Components */
 import AppTabs from "../../components/AppTabs/AppTabs";
+import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
 function Asumidos() {
- 
+  const [shippments, setShippments] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchShippments = async () => {
+    await setLoading(true);
+    const response = await GetShippments();
+    await setShippments(response);
+    await setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchShippments();
+  }, []);
+
   return (
     <>
       <AppTabs />
@@ -36,7 +53,20 @@ function Asumidos() {
                 <AddCircleTwoToneIcon size="large" />
               </IconButton>
             </Paper>
-            <RightSideComponent Columns={EnviosColumns} />
+            {loading ? (
+              <Paper
+                variant="outlined"
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  margin: ".3rem auto",
+                }}
+              >
+                <Spinner loading={loading} />
+              </Paper>
+            ) : (
+              <RightSideComponent rowId="SE_Id" Columns={EnviosColumns} Data={shippments} />
+            )}
           </Grid>
         </Grid>
       </div>

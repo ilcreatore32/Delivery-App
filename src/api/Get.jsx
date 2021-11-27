@@ -124,6 +124,23 @@ export async function GetOnePayment(id) {
   return payment;
 }
 
+/* Usuarios */
+export async function GetUsers() {
+  /* Hace falta la ruta en la API */
+  const users = await Api.get(`/users`, {
+    params: {
+      view_option: "admin",
+    },
+  })
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al consultar los Usuarios`);
+    });
+  return users;
+}
+
 /* Opciones */
 export async function GetOptions(option) {
   const payment = await Api.get(`/options`, {
