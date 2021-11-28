@@ -1,11 +1,28 @@
-.home-images {
-    height: 91vh;
-    background-size: cover;
-    background-image: url("../../assets/images/home-page-images/home.jpg");
+.full-screen {
+  /* Center the content */
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  /* Take full size */
+  height: calc(100vh - 64px);
+  width: 100%;
+
+  /* Background */
+  background: url("../../assets/images/home-page-images/home.jpg") center center /
+    cover no-repeat;
 }
 
-.backdrop {
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.37);
+.diagonal-section {
+  background-image: linear-gradient(45deg, #654ea3, #eaafc8);
+  transform: skewY(-3deg);
+  margin: 1rem auto;
+  padding: 1rem;
+}
+
+.content {
+  max-width: 50em;
+  margin: 1rem auto;
+  transform: skewY(3deg);
 }

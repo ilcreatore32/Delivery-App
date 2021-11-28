@@ -63,7 +63,7 @@ function Vehiculos({ admin }) {
   return (
     <>
       <AppTabs />
-      <Typography className="text-center mt-3 mb-3" variant="h4" component="h2">
+      <Typography align="center" variant="h4" component="h2">
         Sus Vehiculos
       </Typography>
       <div className="dashboard">

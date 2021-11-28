@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 /* React-Router */
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
@@ -21,6 +20,7 @@ import SignUp from "./components/SignUp/SignUp";
 /* Material UI */
 import {
   AppBar,
+  Paper,
   Box,
   Toolbar,
   Typography,
@@ -35,6 +35,14 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/NotificationsActiveTwoTone";
 import AccountCircle from "@mui/icons-material/AccountCircleTwoTone";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+
+/* Material UI Styles */
+import { ThemeProvider } from "@mui/material/styles";
+
+/* Themes */
+import { Light, Dark } from "./themes/theme";
 
 /* CSS */
 import "./styles/App.css";
@@ -43,6 +51,13 @@ import "./styles/Responsive.css";
 function App() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [auth, setAuth] = useLocalStorage("token", null);
+  const [mode, setMode] = useState(true);
+  const [theme, setTheme] = useState(Light);
+
+  const handleModeToggle = () => {
+    mode ? setTheme(Dark) : setTheme(Light);
+    setMode(!mode);
+  };
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -54,133 +69,148 @@ function App() {
 
   return (
     <>
-      <authContext.Provider value={{auth, setAuth}}>
-        <Router>
-          <Box sx={{ flexGrow: 1 }}>
-            <AppBar className="delivery-app-bar" position="static">
-              <Toolbar>
-                {auth ? (
-                  <>
-                    <IconButton
-                      size="large"
-                      edge="start"
-                      color="secondary"
-                      aria-label="menu"
-                      sx={{ mr: 2 }}
-                    >
-                      <MenuIcon />
-                    </IconButton>
-                  </>
-                ) : null}
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  Delivery App
-                </Typography>
-                {auth ? (
-                  <>
-                    <Box sx={{ display: "flex", gap: "1rem" }}>
-                      <Button
-                        component={Link}
-                        size="small"
-                        variant="text"
-                        to="/Envios"
-                        sx={{ padding: ".2rem" }}
+      <ThemeProvider theme={theme}>
+        <authContext.Provider value={{ auth, setAuth }}>
+          <Router>
+            <Box sx={{ flexGrow: 1 }}>
+              <AppBar position="static" enableColorOnDark>
+                <Toolbar>
+                  {auth ? (
+                    <>
+                      <IconButton
+                        size="large"
+                        edge="start"
+                        color="primary"
+                        aria-label="menu"
+                        sx={{ mr: 2 }}
                       >
-                        Envios
-                      </Button>
-                      <Button
-                        component={Link}
-                        size="small"
-                        to="/"
-                        variant="text"
-                        sx={{ padding: ".2rem" }}
-                      >
-                        Transporte
-                      </Button>
-                      <IconButton>
-                        <Badge
-                          size="sm"
-                          color="secondary"
-                          showZero
-                          badgeContent={0}
-                        >
-                          <NotificationsIcon />
-                        </Badge>
+                        <MenuIcon />
                       </IconButton>
-                    </Box>
-                  </>
-                ) : (
-                  <>
-                    <Box sx={{ display: "flex", gap: ".3rem" }}>
-                      <Login />
-                      <Login shop={true} />
-                      <SignUp />
-                    </Box>
-                  </>
-                )}
+                    </>
+                  ) : null}
+                  <Typography
+                    variant="h6"
+                    component="div"
+                    color="text.primary"
+                    sx={{ flexGrow: 1 }}
+                  >
+                    Delivery App
+                  </Typography>
+                  {auth ? (
+                    <>
+                      <Box sx={{ display: "flex", gap: "1rem" }}>
+                        <Button
+                          component={Link}
+                          size="small"
+                          variant="text"
+                          color="primary"
+                          to="/Envios"
+                          sx={{ padding: ".2rem" }}
+                        >
+                          Dashboard
+                        </Button>
+                        <IconButton onClick={handleModeToggle} color="inherit">
+                          {mode ? (
+                            <Brightness7Icon color="primary" />
+                          ) : (
+                            <Brightness4Icon color="primary" />
+                          )}
+                        </IconButton>
+                        <IconButton>
+                          <Badge
+                            size="sm"
+                            color="secondary"
+                            showZero
+                            badgeContent={0}
+                          >
+                            <NotificationsIcon color="primary" />
+                          </Badge>
+                        </IconButton>
+                      </Box>
+                    </>
+                  ) : (
+                    <>
+                      <Box sx={{ display: "flex", gap: ".3rem" }}>
+                        <Login />
+                        <Login shop={true} />
+                        <SignUp />
+                      </Box>
+                    </>
+                  )}
 
-                {auth && (
-                  <div>
-                    <IconButton
-                      size="large"
-                      aria-label="Cuenta"
-                      aria-controls="menu-appbar"
-                      aria-haspopup="true"
-                      onClick={handleMenu}
-                      color="inherit"
-                    >
-                      <AccountCircle />
-                    </IconButton>
-                    <Menu
-                      id="menu-appbar"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleClose}
-                      transformOrigin={{ horizontal: "right", vertical: "top" }}
-                      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                      MenuListProps={{
-                        "aria-labelledby": "basic-button",
-                      }}
-                      sx={{
-                        backgroundColor: "rgba(0, 0, 0, 0.20)",
-                      }}
-                    >
-                      <MenuItem
-                        component={Link}
-                        to="/Cuenta"
-                        onClick={handleClose}
+                  {auth && (
+                    <div>
+                      <IconButton
+                        size="large"
+                        aria-label="Cuenta"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
+                        color="primary"
                       >
-                        Cambiar a Cliente
-                      </MenuItem>
-                      <MenuItem
-                        component={Link}
-                        to="/Cuenta"
-                        onClick={handleClose}
-                      >
-                        Su Cuenta
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => {
-                          setAuth(false);
-                          handleClose();
+                        <AccountCircle />
+                      </IconButton>
+                      <Menu
+                        id="menu-appbar"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                        transformOrigin={{
+                          horizontal: "right",
+                          vertical: "top",
+                        }}
+                        anchorOrigin={{
+                          horizontal: "right",
+                          vertical: "bottom",
+                        }}
+                        MenuListProps={{
+                          "aria-labelledby": "basic-button",
+                        }}
+                        sx={{
+                          backgroundColor: "rgba(0, 0, 0, 0.20)",
                         }}
                       >
-                        Salir
-                      </MenuItem>
-                    </Menu>
-                  </div>
-                )}
-              </Toolbar>
-            </AppBar>
-          </Box>
-          <Box>
-            <Switch>
-              <Routes auth={auth} />
-              <Route path="*" component={NoMatch} />
-            </Switch>
-          </Box>
-        </Router>
-      </authContext.Provider>
+                        <MenuItem
+                          component={Link}
+                          to="/Cuenta"
+                          onClick={handleClose}
+                          color="primary"
+                        >
+                          Cambiar a Cliente
+                        </MenuItem>
+                        <MenuItem
+                          component={Link}
+                          to="/Cuenta"
+                          onClick={handleClose}
+                          color="primary"
+                        >
+                          Su Cuenta
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            setAuth(false);
+                            handleClose();
+                          }}
+                          color="primary"
+                        >
+                          Salir
+                        </MenuItem>
+                      </Menu>
+                    </div>
+                  )}
+                </Toolbar>
+              </AppBar>
+            </Box>
+            <Box component={Paper} elevation={0}>
+              <Switch>
+                <Routes auth={auth} />
+                <Route path="*" component={NoMatch} />
+              </Switch>
+            </Box>
+          </Router>
+        </authContext.Provider>
+      </ThemeProvider>
     </>
   );
 }
