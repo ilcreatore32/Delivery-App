@@ -1,4 +1,4 @@
-import mysql from "mysql";
+import mysql from "mysql2";
 import { promisify } from "util";
 import config from "./config";
 
@@ -28,7 +28,10 @@ pool.getConnection((err, connection) => {
   return;
 });
 
-// Promisify Pool Querys
+
+/* // Promisify Pool Querys
 pool.query = promisify(pool.query);
+// Promisify Pool Connections
+pool.getConnection = promisify(pool.getConnection) */
 
 export default pool;

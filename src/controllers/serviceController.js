@@ -233,13 +233,13 @@ export const getOneService = async function (req, res) {
   SELECT ST_Id, ST_HorarioIni, ST_HorarioFin, ST_Precio, ST_Status, ST_Descripcion,
   Vehiculo_Marca, Vehiculo_Modelo, Vehiculo_Anio, Vehiculo_Pasajeros, Vehiculo_CapacidadCarga,
   MT_Nombre, Persona_Nombre, Persona_Apellido, Persona_Id, 
-  GROUP_CONCAT(Telefono_Numero SEPARATOR '; ') AS Telefono
+  GROUP_CONCAT(Contacto_Info SEPARATOR '; ') AS ContactoInfo
 
   FROM serviciotransporte
 
   LEFT JOIN personas
     ON ST_PersonaId = Persona_Id
-  LEFT JOIN telefonos
+  LEFT JOIN contacto
     ON Telefono_PersonaId = Persona_Id
   LEFT JOIN vehiculos
     ON ST_VehiculoId = Vehiculo_Id

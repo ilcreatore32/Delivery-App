@@ -1,8 +1,10 @@
 import moment from "moment";
 import XLSX from "xlsx";
 import pool from "../database";
+import promisedPool from "../promisedPool"
 import path from "path";
 import fs from "fs";
+import { withTransaction } from "../helpers/transaction";
 
 /* Get all shippments */
 export const getShippments = async (req, res) => {
@@ -343,77 +345,6 @@ export const getShippments = async (req, res) => {
   }
 };
 
-export const addShippments = async (req, res) => {
-  if (req.file == undefined) {
-    return res.status(400).send("Por favor sube un archivo de excel");
-  }
-  let pathExcel = path.join(__dirname, "../files/excel/" + req.file.filename);
-  try {
-    //let path = __dirname + "../files/excel" + req.file.filename;
-    let workbook = XLSX.readFile(pathExcel);
-    
-    Object.values(workbook.Sheets).forEach(val => console.log(val));
-
-    /* for (const sheetName in workbook.Sheets) {
-      if (Object.hasOwnProperty.call(workbook.Sheets, sheetName)) {
-        const element = workbook.Sheets[sheetName];
-        console.log(element);
-      }
-    } */
-    /*
-    let Content = XLSX.utils.sheet_to_json(
-      workbook.Sheets[workbook.SheetNames[0]]
-    );
-    
-    readXlsxFile(pathExcel, { getSheets: true }).then((sheets) => {
-      console.log(req.file);
-      console.log(sheets);
-      // skip header
-       rows.shift();
- 
-      let tutorials = [];
-
-      rows.forEach((row) => {
-        let tutorial = {
-          id: row[0],
-          title: row[1],
-          description: row[2],
-          published: row[3],
-        };
-
-        tutorials.push(tutorial);
-      });
-
-      Tutorial.bulkCreate(tutorials)
-        .then(() => {
-          res.status(200).send({
-            message: "Uploaded the file successfully: " + req.file.originalname,
-          });
-        })
-        .catch((error) => {
-          res.status(500).send({
-            message: "Fail to import data into database!",
-            error: error.message,
-          });
-        }); 
-    });*/
-  } catch (error) {
-    fs.unlink(pathExcel, function(err) {
-      if(err && err.code == 'ENOENT') {
-          // file doens't exist
-          console.info("File doesn't exist, won't remove it.");
-      } else if (err) {
-          // other errors, e.g. maybe we don't have enough permission
-          console.error("Error occurred while trying to remove file");
-      } else {
-          console.info(`removed excel file`);
-      }
-    });
-    console.log(error); 
-    res.status(500).send({ msg: "Error en el servidor" });
-  }
-};
-
 /* Get one shippment details */
 export const getOneShippment = async function (req, res) {
   /* Extract shippment's id */
@@ -421,7 +352,7 @@ export const getOneShippment = async function (req, res) {
   /* query to get all shippment's details */
   let query_shippment = `
   SELECT SE_Id, SE_Fecha, SE_Status, SE_ValorTotal, SE_PesoTotal, SE_PersonaId, Persona_Nombre, 
-  Persona_Apellido, GROUP_CONCAT(Telefono_Numero SEPARATOR ';') Telefonos_Persona, SEST_STId
+  Persona_Apellido, GROUP_CONCAT(Contacto_Info SEPARATOR ';') Contacto_Persona, SEST_STId
   
   FROM solicitudesenvio
   
@@ -433,7 +364,7 @@ export const getOneShippment = async function (req, res) {
      ON Municipio_EFId = EF_Id
   JOIN personas
      ON SE_PersonaId = Persona_Id
-  LEFT JOIN telefonos
+  LEFT JOIN contacto
      ON Telefono_PersonaId = Persona_Id
   LEFT JOIN (SELECT SEST_SEId, SEST_STId FROM se_has_st WHERE SEST_Status = 'A') SEST
      ON SEST_SEId = SE_Id 
@@ -456,7 +387,7 @@ export const getOneShippment = async function (req, res) {
   /* Query to get shippment's asociated service*/
   let query_detail_service = `
   SELECT ST_Id, ST_HorarioIni, ST_HorarioFin, MT_Nombre, ST_Precio,
-  GROUP_CONCAT(Telefono_Numero SEPARATOR ';') Telefonos_Persona, 
+  GROUP_CONCAT(Telefono_Numero SEPARATOR ';') ContactoPersona, 
   Persona_Nombre, Persona_Apellido,
   CONCAT (Vehiculo_Marca, ' ',Vehiculo_Modelo) AS DatosMedio
 
@@ -469,7 +400,7 @@ export const getOneShippment = async function (req, res) {
   
 	JOIN personas
      ON ST_PersonaId = Persona_Id
-	LEFT JOIN telefonos
+	LEFT JOIN contacto
      ON Telefono_PersonaId = Persona_Id
   
   WHERE ST_Id = ?
@@ -690,250 +621,144 @@ export const editShippment = async function (req, res) {
 };
 
 /* Update details of a shippment */
-export const updateShippment = async function (req, res) {
-  /* Extract shippment's id */
+export const saveShippment = async function (req, res) {
+  /* Extract shippment's id (if any)*/
   const { id } = req.params;
+
   /* extract the query body */
   let {
+    SE_Id, // 14
     SE_Fecha, // '2020-05-01'
     SE_Status, // 'D'
     SE_ValorTotal, // 20.00
     SE_PesoTotal, // 20.00
     SE_ParroquiaId, // 1
-    SEST_STId, // 1
-    SEST_Status, // 'A'
     productsList, // [ [1,1,1],[1,1,1] ]  ProductoId, SEId, Cantidad
+    Persona_Id, // 20000000
+    Persona_TipoId, // v
+    Persona_Nombre, // 'Juan'
+    Persona_Apellido, // 'Perez'
+    ContactInformation, // [ [4242843235, 'T', 20000000], ['email@email.com', 'C', 20000000] ] Info, Type, PersonaId
   } = req.body;
+
+  /* Extract request options */
+  const { 
+    personAction // 'add', 'update', 'nothing'
+  } = req.query;
 
   /* Create an object with the properties */
   const shippmentDetails = {
+    SE_Id: SE_Id || id,
     SE_Fecha,
     SE_Status,
     SE_ValorTotal,
     SE_PesoTotal,
     SE_ParroquiaId,
+    SE_PersonaId: Persona_Id,
+  };
+
+  const person = {
+    Persona_Id,
+    Persona_TipoId,
+    Persona_Nombre,
+    Persona_Apellido,
   };
 
   /* Get the keys of the object */
   const keysShippment = Object.keys(shippmentDetails);
 
-  /* Query to update shippment's details */
-  let queryUpdateDetails = `
-    UPDATE solicitudesenvio
-    SET 
-    ${keysShippment.map((key) =>
-      shippmentDetails[key] === SE_Fecha
-        ? `${key}= '${shippmentDetails[key]}'`
-        : `${key} = ${shippmentDetails[key]}`
-    )}
-    WHERE SE_Id = ${id};
-  `;
-  /* Query to update the status of the services */
-  let queryUpdateStatus = `
-    UPDATE se_has_st
-    SET 
-    ${SEST_Status ? `SEST_Status = ${SEST_Status}` : ""}
-    WHERE SEST_SEId = ${id} AND SEST_STId = ${SEST_STId};
-  `;
+  /* Query to add or update person */
+  let queryPerson = ``
+  /* Query to delete the contact information */
+  let queryDeleteContactInfo = ``;
+  /* Query insert the contact information */
+  let queryContactInfo = ``;
+
+  /* insert or update person information */
+  if (personAction === 'add') {
+    queryPerson = `
+      INSERT INTO personas set ?
+    `;
+    queryContactInfo = `
+      INSERT INTO contacto (Contacto_Info, Contacto_Tipo , Contacto_PersonaId) VALUES ?
+    `;
+  } else if (personAction === 'update') {
+    queryPerson = `
+      UPDATE personas set ?
+      WHERE Persona_Id = ?
+    `;
+    queryDeleteContactInfo = `
+      DELETE FROM contacto WHERE Contacto_PersonaId = ?; 
+    `;
+    queryContactInfo = `
+      INSERT INTO contacto (Contacto_Info, Contacto_Tipo , Contacto_PersonaId) VALUES ?
+    `;
+  }
+
+  /* Query to add or update shippment */
+  let queryShippment = ``
+  if (req.method === 'POST') {
+    queryShippment = `
+      INSERT INTO solicitudesenvio set ?
+    `
+  } else if (req.method === 'PUT') {
+    queryShippment = `
+      UPDATE solicitudesenvio set ? where SE_Id = ?
+    `
+  }
+
   /* Query to delete the products */
   let queryDeleteProducts = `
-    DELETE FROM producto_has_se WHERE ProductoSE_SEId = ${id}; 
+    DELETE FROM producto_has_se WHERE ProductoSE_SEId = ?; 
   `;
   /* Query insert the products */
-  let queryUpdateProducts = `
-  INSERT INTO producto_has_se (ProductoSE_ProductoId, ProductoSE_SEId, ProductoSE_Cantidad) VALUES ?
+  let queryProducts = `
+    INSERT INTO producto_has_se (ProductoSE_ProductoId, ProductoSE_SEId, ProductoSE_Cantidad) VALUES ?
   `;
+  
   try {
-    /* Get connection */
-    pool.getConnection(function (err, connection) {
-      /* if error in the connection */
-      if (err) {
-        console.log(err);
-        return res.status(500).send("Error en el servidor");
-      }
+    let transactionResult
+    if (req.method === 'POST') {
+
+      /* Get connection */
+      const connection = await promisedPool.getConnection();
+
       /* Start transaction */
-      connection.beginTransaction(function (err) {
-        /* if error in the transaction */
-        if (err) {
-          /* Rollback the transaction */
-          connection.rollback(function () {
-            connection.release();
-          });
-        } else {
-          /* Update shippment's details */
-          connection.query(
-            queryUpdateDetails,
-            function (err, updateDetailsResult) {
-              /* if error in the query */
-              if (err) {
-                /* Rollback the transaction */
-                connection.rollback(function () {
-                  connection.release();
-                  res
-                    .status(400)
-                    .json({
-                      error: "Error al actualizar la solicitud de envío",
-                    });
-                });
-              } else {
-                /* If there is an asociated service */
-                if (SEST_Status && SEST_STId) {
-                  connection.query(
-                    queryUpdateStatus,
-                    function (err, updateStatusResult) {
-                      /* if error in the query */
-                      if (err) {
-                        /* Rollback the transaction */
-                        connection.rollback(function () {
-                          connection.release();
-                          res
-                            .status(400)
-                            .json({
-                              error:
-                                "Error al actualizar la solicitud de envío",
-                            });
-                        });
-                      } else {
-                        /* Delete the products */
-                        connection.query(
-                          queryDeleteProducts,
-                          function (err, deleteProductsResult) {
-                            /* if error in the query */
-                            if (err) {
-                              /* Rollback the transaction */
-                              connection.rollback(function () {
-                                connection.release();
-                                res
-                                  .status(400)
-                                  .json({
-                                    error:
-                                      "Error al actualizar la solicitud de envío",
-                                  });
-                              });
-                            } else {
-                              /* Insert the products */
-                              connection.query(
-                                queryUpdateProducts,
-                                [productsList],
-                                function (err, updateProductsResult) {
-                                  /* if error in the query */
-                                  if (err) {
-                                    /* Rollback the transaction */
-                                    connection.rollback(function () {
-                                      connection.release();
-                                      res
-                                        .status(400)
-                                        .json({
-                                          error:
-                                            "Error al actualizar la solicitud de envío",
-                                        });
-                                    });
-                                  } else {
-                                    /* Commit the transaction */
-                                    connection.commit(function (err) {
-                                      /* if error in the commit */
-                                      if (err) {
-                                        /* Rollback the transaction */
-                                        connection.rollback(function () {
-                                          connection.release();
-                                          res
-                                            .status(400)
-                                            .json({
-                                              error:
-                                                "Error al actualizar la solicitud de envío",
-                                            });
-                                        });
-                                      } else {
-                                        /* Send the response */
-                                        res
-                                          .status(200)
-                                          .json({
-                                            message: "Solicitud Actualizada",
-                                          });
-                                      }
-                                    });
-                                  }
-                                }
-                              );
-                            }
-                          }
-                        );
-                      }
-                    }
-                  );
-                } else {
-                  /* Delete the products */
-                  connection.query(
-                    queryDeleteProducts,
-                    function (err, deleteProductsResult) {
-                      /* if error in the query */
-                      if (err) {
-                        /* Rollback the transaction */
-                        connection.rollback(function () {
-                          connection.release();
-                          res
-                            .status(400)
-                            .json({
-                              error:
-                                "Error al actualizar la solicitud de envío",
-                            });
-                        });
-                      } else {
-                        /* Insert the products */
-                        connection.query(
-                          queryUpdateProducts,
-                          [productsList],
-                          function (err, updateProductsResult) {
-                            /* if error in the query */
-                            if (err) {
-                              /* Rollback the transaction */
-                              connection.rollback(function () {
-                                connection.release();
-                                res
-                                  .status(400)
-                                  .json({
-                                    error:
-                                      "Error al actualizar la solicitud de envío",
-                                  });
-                              });
-                            } else {
-                              /* Commit the transaction */
-                              connection.commit(function (err) {
-                                /* if error in the commit */
-                                if (err) {
-                                  /* Rollback the transaction */
-                                  connection.rollback(function () {
-                                    connection.release();
-                                    res
-                                      .status(400)
-                                      .json({
-                                        error:
-                                          "Error al actualizar la solicitud de envío",
-                                      });
-                                  });
-                                } else {
-                                  /* Send the response */
-                                  res
-                                    .status(200)
-                                    .json({ message: "Solicitud Actualizada" });
-                                }
-                              });
-                            }
-                          }
-                        );
-                      }
-                    }
-                  );
-                }
-              }
-            }
-          );
-        }
-      });
-    });
+      transactionResult = await withTransaction(connection, res ,async () => {
+        if (queryPerson) await connection.query(queryPerson, person);
+
+        if (queryDeleteContactInfo) await connection.query(queryDeleteContactInfo, [Persona_Id]);
+        if (queryContactInfo) await connection.query(queryContactInfo, [ContactInformation]);
+        if (queryShippment) await connection.query(queryShippment, shippmentDetails);
+        if (queryProducts) await connection.query(queryProducts, [productsList]);
+      })
+
+    } else if (req.method === 'PUT') {
+
+      /* Get connection */
+      const connection = await promisedPool.getConnection();
+
+      /* Start transaction */
+      transactionResult = await withTransaction(connection, res, async () => {
+        if (queryPerson) await connection.query(queryPerson, person);
+        if (queryDeleteContactInfo) await connection.query(queryDeleteContactInfo, [Persona_Id]);
+        if (queryContactInfo) await connection.query(queryContactInfo, [ContactInformation]);
+        if (queryShippment) await connection.query(queryShippment, [shippmentDetails, id]);
+        if (queryDeleteProducts) await connection.query(queryDeleteProducts, [SE_Id]);
+        if (queryProducts) await connection.query(queryProducts, [productsList]);
+      })
+    }
+    if (transactionResult) {
+      res
+        .status(200)
+        .json({
+          message: "Solicitud de envío actualizada",
+        });
+    }
+
   } catch (error) {
     /* error in the server */
-    console.log(err);
+    console.log(error);
     res.status(500).send("Error en el servidor");
   }
 };
