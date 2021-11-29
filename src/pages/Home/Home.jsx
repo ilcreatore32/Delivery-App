@@ -1,17 +1,33 @@
-import React from "react";
+import { useContext, useEffect, useCallback } from "react";
+
+/* Context */
+import { authContext } from "../../context/authContext";
+import { appMenuContext } from "../../context/appMenuContext";
 
 /* Material UI */
-import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-} from "@mui/material";
+import { Box, Typography, Button, Paper } from "@mui/material";
+
+/* Components */
+import AppTabs from "../../components/AppTabs/AppTabs";
 
 /* CSS */
 import "./Home.css";
 
 function Home() {
+  const AuthContext = useContext(authContext);
+  const AppMenuContext = useContext(appMenuContext);
+
+  const welcome = useCallback(() => {
+    let auth = AuthContext.auth;
+    if (auth) {
+      AppMenuContext.setAppMenu(true);
+    }
+  }, [AuthContext, AppMenuContext]);
+
+  useEffect(() => {
+    welcome();
+  }, [welcome]);
+
   /* const [users, setUsers] = React.useState([]);
 
   let fetchUsers = async (nicknames) => {
@@ -40,6 +56,8 @@ function Home() {
             display: "flex",
             flexDirection: "column",
             gap: "1rem",
+            flexWrap: "wrap",
+            overflowWrap: "anywhere",
           }}
         >
           <Paper
@@ -48,30 +66,63 @@ function Home() {
               padding: "1rem",
             }}
           >
-            <Typography variant="h6" component="span">
-              Welcome to
-            </Typography>
-            <Typography variant="h2" component="h1">
-              Delivery App
-            </Typography>
-            <Typography variant="body2" component="p" sx={{ margin: "2rem 0" }}>
-              Sistema Web de Auto-gestión de envíos a nivel nacional, usando el
-              modelo de negocio Crowdshipping.
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                margin: "2rem 0",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "1rem",
-              }}
-            >
-              <Button variant="outlined">Get Started</Button>
-              <Button variant="outlined">Sign in</Button>
-            </Box>
+            {AuthContext.auth ? (
+              <>
+                <Typography variant="h6" color="primary" component="span">
+                  Bienvenido.
+                </Typography>
+                {AppMenuContext.appMenu ? (
+                  <Typography
+                    variant="subtitle2"
+                    component="p"
+                    sx={{
+                      display: "flex",
+                      margin: "0",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    A donde te diriges?
+                  </Typography>
+                ) : null}
+                <AppTabs />
+              </>
+            ) : (
+              <>
+                <Typography variant="h6" color="primary" component="span">
+                  Bienvenido
+                </Typography>
+                <Typography variant="h2" component="h1">
+                  Delivery App
+                </Typography>
+                <Typography
+                  variant="body2"
+                  component="p"
+                  sx={{ margin: "2rem 0" }}
+                >
+                  Sistema Web de Auto-gestión de envíos a nivel nacional, usando
+                  el modelo de negocio Crowdshipping.
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    margin: "2rem 0",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "1rem",
+                  }}
+                >
+                  <Button variant="outlined">Comenzar</Button>
+                </Box>
+              </>
+            )}
           </Paper>
         </Box>
+      </Box>
+      <Box container>
+        <Typography variant="h4" color="primary" component="h2">
+          Quienes Somos?
+        </Typography>
       </Box>
       {/* <Box
         sx={{

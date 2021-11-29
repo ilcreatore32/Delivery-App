@@ -60,7 +60,7 @@ export const EnviosColumns: GridColDef[] = [
     renderCell: (thisRow) => {
       return (
         <IconButton component={Link} to={`/Envios/Editar/${thisRow.row.SE_Id}`}>
-          <EditTwoToneIcon />
+          <EditTwoToneIcon color="info" />
         </IconButton>
       );
     },
@@ -72,7 +72,7 @@ export const EnviosColumns: GridColDef[] = [
     renderCell: (thisRow) => {
       return (
         <IconButton component={Link} to={`/Envios/Eliminar/${thisRow.row.SE_Id}`}>
-          <DeleteTwoToneIcon />
+          <DeleteTwoToneIcon color="error" />
         </IconButton>
       );
     },

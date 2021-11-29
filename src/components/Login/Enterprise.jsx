@@ -11,10 +11,12 @@ import {
   TextField,
   Box,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 
 /* Material UI Icons */
 import CloseIcon from "@mui/icons-material/CloseTwoTone";
+import StoreAccess from "@mui/icons-material/StoreRounded";
 
 /* CSS */
 import "./Login.css";
@@ -31,9 +33,11 @@ function Login({ shop }) {
 
   return (
     <>
-      <Button onClick={handleToggle} variant="outlined" color="secondary">
-        Shop Sign In
-      </Button>
+      <Tooltip title="Accesso de Tienda" arrow>
+        <IconButton onClick={handleToggle} color="primary">
+          <StoreAccess />
+        </IconButton>
+      </Tooltip>
       <div>
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

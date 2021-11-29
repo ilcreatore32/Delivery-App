@@ -1,29 +1,46 @@
 .paper-style {
-    padding: 20px;
-    height: fit-content;
-    width: 100%;
-    margin: 20px auto;
+  padding: 20px;
+  height: fit-content;
+  width: 100%;
+  margin: 20px auto;
 }
 
 .logo {
-    width: 60px;
+  width: 60px;
 }
 
-.login-inputs{
-    margin: 1rem auto;
+.login-inputs {
+  margin: 1rem auto;
 }
 
 .login-links {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-content: center;
-    align-items: flex-start;
-    justify-content: center;
-    gap: .5rem;
-    margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem;
 }
 
 .login-link {
-    font-size: 13px !important;
+  font-size: 13px !important;
+}
+
+/* Glassmorphism effect */
+.dark {
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  background-color: rgba(17, 25, 40, 0.75) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.125) !important;
+}
+
+.light {
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  background-color: rgba(255, 255, 255, 0.75) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(209, 213, 219, 0.3) !important;
 }

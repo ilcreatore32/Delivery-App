@@ -25,7 +25,7 @@ function LeftSideComponent({
   return (
     <>
       <div className="left-side-component">
-        <Paper variant="outlined" sx={{ backgroundColor: "#2a232317" }}>
+        <Paper elevation={8}>
           {envios ? (
             <Envios asumidos={asumidos} admin={admin} />
           ) : servicios ? (

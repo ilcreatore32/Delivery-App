@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /* API */
 import { GetOneShippment } from "../../../api/Get";
@@ -85,7 +85,7 @@ function Details() {
   };
   */
 
-  const fetchShippment = async () => {
+  const fetchShippment = useCallback(async () => {
     await setLoading(true);
     try {
       const response = await GetOneShippment(id);
@@ -94,17 +94,15 @@ function Details() {
       await setShippmentDetails(shippmentDetails);
       await setproductsList(productsList);
       await setServicesAvailable(servicesAvailable);
-      console.log(shippmentDetails, productsList, servicesAvailable);
-      console.log(productsList);
     } catch (error) {
       console.log(error);
     }
     await setLoading(false);
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchShippment();
-  }, []);
+  }, [fetchShippment]);
 
   return (
     <>
@@ -188,7 +186,6 @@ function Details() {
                         return (
                           <>
                             <TableRow
-                            
                               sx={{
                                 "&:last-child td, &:last-child th": {
                                   border: 0,
@@ -231,7 +228,6 @@ function Details() {
                     width: "100%",
                     bgcolor: "background.paper",
                   }}
-                  
                 >
                   <ListSubheader
                     sx={{
@@ -298,7 +294,7 @@ function Details() {
                   {servicesAvailable.map((service) => {
                     return (
                       <ListItem
-                      key={service.ST_Id}
+                        key={service.ST_Id}
                         divider
                         secondaryAction={
                           <IconButton edge="end" aria-label="Eliminar Ofrecer">

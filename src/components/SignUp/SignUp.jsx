@@ -5,7 +5,6 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 
 /* API */
-import { Login as loginPersonal } from "../../api/Login";
 
 /* Material UI */
 import {
@@ -25,20 +24,20 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Tooltip,
 } from "@mui/material";
 
 /* Material UI Icons */
 import CloseIcon from "@mui/icons-material/CloseTwoTone";
 import UploadFileTwoToneIcon from "@mui/icons-material/UploadFileTwoTone";
+import CreateUser from "@mui/icons-material/AppRegistrationRounded";
 
 /* CSS */
 import "./SignUp.css";
 import logo from "../../assets/logo.png";
 
 const validationSchema = yup.object({
-  person_id: yup
-  .string("algo")
-  .required("Complete este Campo"),
+  person_id: yup.string("algo").required("Complete este Campo"),
   type_id: yup
     .string("Enter your password")
     .min(4, "Minimum 4 characters")
@@ -82,9 +81,11 @@ function SignUp() {
 
   return (
     <>
-      <Button onClick={handleToggle} variant="outlined" color="secondary">
-        Sign Up
-      </Button>
+      <Tooltip title="Registrar" arrow>
+        <IconButton onClick={handleToggle} color="primary">
+          <CreateUser />
+        </IconButton>
+      </Tooltip>
       <div>
         <Dialog open={open} onClose={handleClose} maxWidth="md" scroll="paper">
           <Box

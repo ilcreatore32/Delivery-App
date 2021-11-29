@@ -20,7 +20,7 @@ function EnviosTransportista(Shippments) {
   const [shippments, setShippments] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchShippment = async () => {
+  const fetchShippments = async () => {
     await setLoading(true);
     const response = await GetShippments();
     await setShippments(response);
@@ -28,7 +28,7 @@ function EnviosTransportista(Shippments) {
   };
 
   useEffect(() => {
-    fetchShippment();
+    fetchShippments();
   }, []);
 
   return (

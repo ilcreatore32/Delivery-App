@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import { useContext, useState, useRef } from "react";
 
 /* Formik */
 import { useFormik } from "formik";
@@ -8,7 +8,7 @@ import * as yup from "yup";
 import { Login as loginPersonal } from "../../api/Login";
 
 /* Context */
-import {authContext} from "../../context/authContext"
+import { authContext } from "../../context/authContext";
 
 /* Material UI */
 import {
@@ -24,10 +24,15 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Tooltip,
 } from "@mui/material";
 
 /* Material UI Icons */
 import CloseIcon from "@mui/icons-material/CloseTwoTone";
+import PersonalAccess from '@mui/icons-material/FaceRetouchingNaturalRounded';
+
+/* Material UI Styles */
+import { useTheme } from "@mui/material/styles";
 
 /* CSS */
 import "./Login.css";
@@ -64,8 +69,10 @@ function Login({ shop }) {
   });
 
   const [open, setOpen] = useState(false);
+  const theme = useTheme();
+  const mode = useRef(theme.palette.mode);
   const AuthContext = useContext(authContext);
-  
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -75,9 +82,11 @@ function Login({ shop }) {
 
   return (
     <>
-      <Button onClick={handleToggle} variant="outlined" color="secondary">
-        Sign In
-      </Button>
+    <Tooltip title="Acceso Personal" arrow>
+      <IconButton onClick={handleToggle} color="primary">
+        <PersonalAccess />
+      </IconButton>
+      </Tooltip>
       <div>
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -88,7 +97,7 @@ function Login({ shop }) {
             className="login-component"
             onSubmit={formik.handleSubmit}
           >
-            <Paper elevation={0} className="paper-style">
+            <Paper elevation={0} className={`paper-style ${mode}`}>
               <Box
                 sx={{
                   display: "flex",
