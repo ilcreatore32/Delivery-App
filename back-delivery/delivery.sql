@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-11-2021 a las 00:40:24
+-- Tiempo de generación: 30-11-2021 a las 01:14:46
 -- Versión del servidor: 10.4.20-MariaDB
 -- Versión de PHP: 8.0.9
 
@@ -43,6 +43,30 @@ INSERT INTO `areaoperaciones` (`AO_EFId`, `AO_MunicipioId`, `AO_ParroquiaId`, `A
 (1, 1, 1, 7),
 (1, 4, 2, 4),
 (1, 4, 2, 7);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `contacto`
+--
+
+CREATE TABLE `contacto` (
+  `Contacto_Info` varchar(100) NOT NULL,
+  `Contacto_Tipo` char(1) NOT NULL DEFAULT '',
+  `Contacto_PersonaId` int(9) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `contacto`
+--
+
+INSERT INTO `contacto` (`Contacto_Info`, `Contacto_Tipo`, `Contacto_PersonaId`) VALUES
+('4126587931', 'T', 13969711),
+('4167953268', 'T', 13969711),
+('4242843235', 'T', 20000000),
+('email@email.com', 'C', 20000000),
+('4169872354', 'T', 28044244),
+('4242843235', 'T', 28044244);
 
 -- --------------------------------------------------------
 
@@ -194,6 +218,7 @@ CREATE TABLE `personas` (
   `Persona_TipoId` char(1) NOT NULL,
   `Persona_Nombre` varchar(100) NOT NULL,
   `Persona_Apellido` varchar(70) NOT NULL,
+  `Persona_Status` char(1) NOT NULL DEFAULT 'N',
   `Persona_Archivo` mediumblob DEFAULT NULL COMMENT 'Archivo del documento de identidad'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -201,11 +226,13 @@ CREATE TABLE `personas` (
 -- Volcado de datos para la tabla `personas`
 --
 
-INSERT INTO `personas` (`Persona_Id`, `Persona_TipoId`, `Persona_Nombre`, `Persona_Apellido`, `Persona_Archivo`) VALUES
-(13969711, 'v', 'Jose Carlos', 'Ramirez', NULL),
-(25449375, 'v', 'Jeferson ', 'Perez', NULL),
-(27888244, 'V', 'Example2', 'rasm', NULL),
-(28044244, 'V', 'Example', 'rasm', NULL);
+INSERT INTO `personas` (`Persona_Id`, `Persona_TipoId`, `Persona_Nombre`, `Persona_Apellido`, `Persona_Status`, `Persona_Archivo`) VALUES
+(13969711, 'v', 'Jose Carlos', 'Ramirez', 'N', NULL),
+(20000000, 'V', 'Charles', 'Martin', 'N', NULL),
+(25449375, 'v', 'Jeferson ', 'Perez', 'N', NULL),
+(27888244, 'V', 'Example2', 'rasm', 'N', NULL),
+(28044244, 'V', 'Example', 'rasm', 'N', NULL),
+(28777277, 'V', 'Ubaldo', 'PEREZ', 'N', NULL);
 
 -- --------------------------------------------------------
 
@@ -250,8 +277,10 @@ CREATE TABLE `producto_has_se` (
 INSERT INTO `producto_has_se` (`ProductoSE_ProductoId`, `ProductoSE_SEId`, `ProductoSE_Cantidad`) VALUES
 (1, 8, 3),
 (1, 11, 5),
+(1, 14, 1),
 (2, 8, 3),
-(2, 11, 5);
+(2, 11, 5),
+(2, 14, 1);
 
 -- --------------------------------------------------------
 
@@ -296,7 +325,7 @@ CREATE TABLE `se_has_st` (
 --
 
 INSERT INTO `se_has_st` (`SEST_SEId`, `SEST_STId`, `SEST_Status`) VALUES
-(8, 4, '1'),
+(8, 4, 'A'),
 (11, 4, '2');
 
 -- --------------------------------------------------------
@@ -309,8 +338,8 @@ CREATE TABLE `solicitudesenvio` (
   `SE_Id` int(10) UNSIGNED NOT NULL,
   `SE_Fecha` date NOT NULL,
   `SE_Status` char(1) NOT NULL DEFAULT 'D',
-  `SE_ValorTotal` decimal(12,2) NOT NULL,
-  `SE_PesoTotal` decimal(6,2) NOT NULL,
+  `SE_ValorTotal` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `SE_PesoTotal` decimal(6,2) NOT NULL DEFAULT 0.00,
   `SE_PersonaId` int(9) UNSIGNED NOT NULL,
   `SE_ParroquiaId` smallint(4) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -321,7 +350,8 @@ CREATE TABLE `solicitudesenvio` (
 
 INSERT INTO `solicitudesenvio` (`SE_Id`, `SE_Fecha`, `SE_Status`, `SE_ValorTotal`, `SE_PesoTotal`, `SE_PersonaId`, `SE_ParroquiaId`) VALUES
 (8, '1999-09-25', '1', '33.00', '7.50', 13969711, 1),
-(11, '2012-09-25', '1', '55.00', '12.50', 25449375, 1);
+(11, '2012-09-25', '1', '55.00', '12.50', 25449375, 1),
+(14, '2020-05-01', 'D', '20.00', '20.00', 20000000, 1);
 
 -- --------------------------------------------------------
 
@@ -345,28 +375,6 @@ CREATE TABLE `suscripcion` (
 
 INSERT INTO `suscripcion` (`Suscripcion_Id`, `Suscripcion_Status`, `Suscripcion_Monto`, `Suscripcion_FechaI`, `Suscripcion_FechaV`, `Suscripcion_PersonaId`, `Suscripcion_TSId`) VALUES
 (7, 'S', '50.00', '2021-10-19', '2021-11-19', 28044244, 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `telefonos`
---
-
-CREATE TABLE `telefonos` (
-  `Telefono_Numero` char(10) NOT NULL,
-  `Telefono_Codigo` char(3) NOT NULL,
-  `Telefono_PersonaId` int(9) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Volcado de datos para la tabla `telefonos`
---
-
-INSERT INTO `telefonos` (`Telefono_Numero`, `Telefono_Codigo`, `Telefono_PersonaId`) VALUES
-('4126587931', '412', 13969711),
-('4167953268', '416', 13969711),
-('4169872354', '416', 28044244),
-('4242843235', '424', 28044244);
 
 -- --------------------------------------------------------
 
@@ -463,6 +471,12 @@ ALTER TABLE `areaoperaciones`
   ADD KEY `fk_AreaOperaciones_Municipios1_idx` (`AO_MunicipioId`),
   ADD KEY `fk_AreaOperaciones_Parroquias1_idx` (`AO_ParroquiaId`),
   ADD KEY `fk_AreaOperaciones_ServicioTransporte1_idx` (`AO_STId`);
+
+--
+-- Indices de la tabla `contacto`
+--
+ALTER TABLE `contacto`
+  ADD PRIMARY KEY (`Contacto_PersonaId`,`Contacto_Info`);
 
 --
 -- Indices de la tabla `direcciondetalle`
@@ -562,13 +576,6 @@ ALTER TABLE `suscripcion`
   ADD KEY `fk_Suscripcion_Tipo_Suscripcion1_idx` (`Suscripcion_TSId`);
 
 --
--- Indices de la tabla `telefonos`
---
-ALTER TABLE `telefonos`
-  ADD PRIMARY KEY (`Telefono_Numero`),
-  ADD KEY `fk_Telefonos_Personas1_idx` (`Telefono_PersonaId`);
-
---
 -- Indices de la tabla `tipo_suscripcion`
 --
 ALTER TABLE `tipo_suscripcion`
@@ -636,12 +643,6 @@ ALTER TABLE `serviciotransporte`
   MODIFY `ST_Id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT de la tabla `solicitudesenvio`
---
-ALTER TABLE `solicitudesenvio`
-  MODIFY `SE_Id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
 -- AUTO_INCREMENT de la tabla `suscripcion`
 --
 ALTER TABLE `suscripcion`
@@ -671,6 +672,12 @@ ALTER TABLE `areaoperaciones`
   ADD CONSTRAINT `fk_AreaOperaciones_Municipios1` FOREIGN KEY (`AO_MunicipioId`) REFERENCES `municipios` (`Municipio_Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_AreaOperaciones_Parroquias1` FOREIGN KEY (`AO_ParroquiaId`) REFERENCES `parroquias` (`Parroquia_Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_AreaOperaciones_ServicioTransporte1` FOREIGN KEY (`AO_STId`) REFERENCES `serviciotransporte` (`ST_Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Filtros para la tabla `contacto`
+--
+ALTER TABLE `contacto`
+  ADD CONSTRAINT `FK_Persona_Id` FOREIGN KEY (`Contacto_PersonaId`) REFERENCES `personas` (`Persona_Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `direcciondetalle`
@@ -731,12 +738,6 @@ ALTER TABLE `solicitudesenvio`
 ALTER TABLE `suscripcion`
   ADD CONSTRAINT `fk_Suscripcion_Personas1` FOREIGN KEY (`Suscripcion_PersonaId`) REFERENCES `personas` (`Persona_Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_Suscripcion_Tipo_Suscripcion1` FOREIGN KEY (`Suscripcion_TSId`) REFERENCES `tipo_suscripcion` (`TS_Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Filtros para la tabla `telefonos`
---
-ALTER TABLE `telefonos`
-  ADD CONSTRAINT `fk_Telefonos_Personas1` FOREIGN KEY (`Telefono_PersonaId`) REFERENCES `personas` (`Persona_Id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `usuarios`
