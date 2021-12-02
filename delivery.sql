@@ -26,6 +26,9 @@ SET time_zone = "+00:00";
 --
 -- Estructura de tabla para la tabla `areaoperaciones`
 --
+CREATE DATABASE `delivery`;
+
+USE `delivery`;
 
 CREATE TABLE `areaoperaciones` (
   `AO_EFId` tinyint(2) UNSIGNED NOT NULL,

@@ -105,7 +105,7 @@ export const getShippments = async (req, res) => {
     case "admin":
       /* Check user's permissions'*/
       if (req.user.permission !== "A") {
-        return res.status(401).json({
+        return res.status(403).json({
           message: "No autorizado",
         });
       }
