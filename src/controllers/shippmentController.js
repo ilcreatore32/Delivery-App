@@ -322,7 +322,7 @@ export const getShippments = async (req, res) => {
       queryShippment = "";
   }
 
-  try {
+  try { 
     /* Get all data */
     await pool.query(queryShippment, function (error, results) {
       /* if error in the query */

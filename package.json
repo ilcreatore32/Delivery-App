@@ -4,9 +4,8 @@
   "description": "Back-end of the delivery web application developed by Berman Weishler and Jesús Rivas for our final college project.",
   "main": "index.js",
   "scripts": {
-    "babel-node": "babel-node --presets=@babel/preset-env",
-    "dev": "nodemon --exec npm run babel-node src/index.js",
-    "start": "node dist/index.js",
+    "dev": "nodemon src/index.js --exec babel-node",
+    "start": "node src/index.js",
     "build": "babel src -d dist"
   },
   "keywords": [

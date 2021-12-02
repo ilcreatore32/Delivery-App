@@ -31,7 +31,7 @@ export const getPayments = async (req, res) => {
         case "admin":
           /* Check user's permissions'*/
           if (req.user.permission !== 'A') {
-            return res.status(403).json({
+            return res.status(401).json({
               message: "No autorizado"
             });
           }

@@ -29,9 +29,9 @@ pool.getConnection((err, connection) => {
 });
 
 
-/* // Promisify Pool Querys
+// Promisify Pool Querys
 pool.query = promisify(pool.query);
 // Promisify Pool Connections
-pool.getConnection = promisify(pool.getConnection) */
+pool.getConnection = promisify(pool.getConnection) 
 
 export default pool;
