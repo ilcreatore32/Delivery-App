@@ -127,6 +127,7 @@ export const savePayment = async function (req, res) {
         PS_Referencia,
         PS_ArchivoReferencia,
         PS_SuscripcionId
+        
     }
 
     /* Query to update payment's details */
