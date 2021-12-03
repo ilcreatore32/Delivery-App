@@ -20,11 +20,11 @@ export const getUsers = async (req, res) => {
     /* build the query */
     let queryUsers = `
         SELECT Persona_Nombre, Persona_Apellido, Persona_Id, Usuario_Correo, Suscripcion_Id, 
-        Suscripcion_Status, TS_Nombre
+        Suscripcion_Status, TS_Id, TS_Nombre
         FROM personas
-            JOIN usuarios ON Persona_Id = Usuario_Id
-            JOIN suscripcion ON Persona_Id = Suscripcion_PersonaId
-            JOIN tipo_suscripcion ON Suscripcion_TSId = TS_Id
+            RIGHT JOIN usuarios ON Persona_Id = Usuario_Id
+            LEFT JOIN suscripcion ON Persona_Id = Suscripcion_PersonaId
+            LEFT JOIN tipo_suscripcion ON Suscripcion_TSId = TS_Id
         WHERE 1=1
         ${
             person_id

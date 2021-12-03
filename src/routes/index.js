@@ -7,6 +7,7 @@ import payment from "./paymentRoute";
 import options from "./optionsRoute";
 import auth from "./authRoute";
 import register from "./registerRoute";
+import user from "./usersRouter";
 /* Importing middleware */
 import { authMiddleware } from "../middlewares/auth";
 
@@ -19,5 +20,6 @@ router.use("/payment", authMiddleware, payment);
 router.use("/options", authMiddleware, options);
 router.use("/auth", auth);
 router.use("/register", authMiddleware, register);
+router.use("/user", authMiddleware, user);
 
 export default router;

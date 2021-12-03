@@ -4,7 +4,7 @@ import {
   getUsers
 } from '../controllers/userController';
 
-// api/payment
+// api/user
 //all the routes
 
 const router = Router();
