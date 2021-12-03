@@ -105,7 +105,7 @@ export const getShippments = async (req, res) => {
     case "admin":
       /* Check user's permissions'*/
       if (req.user.permission !== "A") {
-        return res.status(401).json({
+        return res.status(403).json({
           message: "No autorizado",
         });
       }
@@ -322,7 +322,7 @@ export const getShippments = async (req, res) => {
       queryShippment = "";
   }
 
-  try {
+  try { 
     /* Get all data */
     await pool.query(queryShippment, function (error, results) {
       /* if error in the query */

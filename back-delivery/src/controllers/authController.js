@@ -29,7 +29,7 @@ export const authenticateUser = async (req, res) => {
   
       /* create token */
       jwt.sign(payload, process.env.SECRETA, {
-        expiresIn: 3600 // 1 hora
+        expiresIn: '24h' // 1 day
       }, (error, token) => {
         if (error) throw error;
         /* send token */
