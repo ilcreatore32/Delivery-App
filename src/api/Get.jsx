@@ -127,11 +127,7 @@ export async function GetOnePayment(id) {
 /* Usuarios */
 export async function GetUsers() {
   /* Hace falta la ruta en la API */
-  const users = await Api.get(`/users`, {
-    params: {
-      view_option: "admin",
-    },
-  })
+  const users = await Api.get(`/user`)
     .then((result) => {
       return result.data;
     })

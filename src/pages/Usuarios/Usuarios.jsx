@@ -65,7 +65,7 @@ function Usuarios() {
                 <Spinner loading={loading} />
               </Paper>
             ) : (
-              <RightSideComponent Columns={UsuariosColumns} Data={users} />
+              <RightSideComponent Columns={UsuariosColumns} Data={users} rowId="Persona_Id" />
             )}
           </Grid>
         </Grid>

@@ -13,9 +13,9 @@ function RightSideComponent({ rowId, Columns, Data }) {
 
   const getRowId = (row, rowId) => {
     let id;
-    for(const [key, value] of Object.entries(row)){
+    for (const [key, value] of Object.entries(row)) {
       if (key === rowId) {
-        return id = value;
+        return (id = value);
       }
     }
     return id;
@@ -23,17 +23,21 @@ function RightSideComponent({ rowId, Columns, Data }) {
 
   return (
     <>
-      <DataGrid
-        rows={Data ? Data : rows}
-        columns={Columns ? Columns : columns}
-        pageSize={10}
-        rowsPerPageOptions={[10]}
-        autoWidth
-        getRowId={(row) => getRowId(row, rowId)}
-        components={{
-          Toolbar: GridToolbar,
-        }}
-      />
+      <div style={{ display: "flex", height: "100%" }}>
+        <div style={{ height: "70%", flexGrow: 1 }}>
+          <DataGrid
+            rows={Data ? Data : rows}
+            columns={Columns ? Columns : columns}
+            pageSize={10}
+            rowsPerPageOptions={[10]}
+            autoWidth
+            getRowId={(row) => getRowId(row, rowId)}
+            components={{
+              Toolbar: GridToolbar,
+            }}
+          />
+        </div>
+      </div>
     </>
   );
 }

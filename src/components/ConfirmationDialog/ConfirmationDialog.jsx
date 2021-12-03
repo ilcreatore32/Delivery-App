@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -6,8 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
-import Typography from '@mui/material/Typography';
-
+import Typography from "@mui/material/Typography";
 
 function ConfirmationDialog({ buttonText, title, message, children }) {
   const [open, setOpen] = useState(false);
@@ -28,9 +27,9 @@ function ConfirmationDialog({ buttonText, title, message, children }) {
         <DialogTitle>{title}</DialogTitle>
         <Divider />
         <DialogContent>
-          <DialogContentText><Typography variant="body2">
-          {message}
-        </Typography></DialogContentText>
+          <DialogContentText>
+            <Typography variant="body2">{message}</Typography>
+          </DialogContentText>
         </DialogContent>
         <Divider />
         <DialogActions>

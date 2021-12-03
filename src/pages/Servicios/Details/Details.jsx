@@ -1,8 +1,10 @@
-import React from "react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /* React-Router */
 import { Link, useParams } from "react-router-dom";
+
+/* API */
+import { GetOneService } from "../../../api/Get";
 
 /* Material UI */
 import {
@@ -25,9 +27,30 @@ import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
+/* Components */
+import Spinner from "../../../components/Spinner/Spinner";
+
 function Details() {
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [service, setService] = useState({});
   const { id } = useParams();
+
+  const fetchService = useCallback(async () => {
+    await setLoading(true);
+    try {
+      const response = await GetOneService(id);
+      await setService(response);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+    await setLoading(false);
+  }, [id]);
+
+  useEffect(() => {
+    fetchService();
+  }, [fetchService]);
 
   return (
     <>

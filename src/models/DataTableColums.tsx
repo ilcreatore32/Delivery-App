@@ -19,26 +19,41 @@ export const EnviosColumns: GridColDef[] = [
   {
     headerName: "Id",
     field: "SE_Id",
+    headerAlign: "center",
+    align: "center",
+    width: 100,
     sortable: true,
   },
   {
     headerName: "Fecha",
     field: "SE_Fecha",
+    headerAlign: "center",
+    align: "center",
+    width: 200,
     sortable: true,
   },
   {
     headerName: "Valor del Pedido",
     field: "SE_ValorTotal",
+    headerAlign: "center",
+    align: "center",
+    width: 190,
     sortable: true,
   },
   {
     headerName: "Peso Total",
     field: "SE_PesoTotal",
+    headerAlign: "center",
+    align: "center",
+    width: 150,
     sortable: true,
   },
   {
     headerName: "Productos",
     field: "Productos_Envio",
+    headerAlign: "center",
+    align: "center",
+    width: 200,
     sortable: true,
   },
   {
@@ -47,7 +62,10 @@ export const EnviosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Envios/Detalles/${thisRow.row.SE_Id}`}>
+        <IconButton
+          component={Link}
+          to={`/Envios/Detalles/${thisRow.row.SE_Id}`}
+        >
           <VisibilityTwoToneIcon />
         </IconButton>
       );
@@ -71,7 +89,10 @@ export const EnviosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Envios/Eliminar/${thisRow.row.SE_Id}`}>
+        <IconButton
+          component={Link}
+          to={`/Envios/Eliminar/${thisRow.row.SE_Id}`}
+        >
           <DeleteTwoToneIcon color="error" />
         </IconButton>
       );
@@ -137,7 +158,10 @@ export const ServiciosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Servicios/Editar/${thisRow.row.ST_Id}`}>
+        <IconButton
+          component={Link}
+          to={`/Servicios/Editar/${thisRow.row.ST_Id}`}
+        >
           <EditTwoToneIcon />
         </IconButton>
       );
@@ -218,7 +242,10 @@ export const VehiculosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Vehiculos/Editar/${thisRow.row.Vehiculo_Id}`}>
+        <IconButton
+          component={Link}
+          to={`/Vehiculos/Editar/${thisRow.row.Vehiculo_Id}`}
+        >
           <EditTwoToneIcon />
         </IconButton>
       );
@@ -279,7 +306,10 @@ export const PagosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Pagos/Detalles/${thisRow.row.PS_Id}`}>
+        <IconButton
+          component={Link}
+          to={`/Pagos/Detalles/${thisRow.row.PS_Id}`}
+        >
           <VisibilityTwoToneIcon />
         </IconButton>
       );
@@ -303,7 +333,10 @@ export const PagosColumns: GridColDef[] = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton component={Link} to={`/Pagos/Eliminar/${thisRow.row.PS_Id}`}>
+        <IconButton
+          component={Link}
+          to={`/Pagos/Eliminar/${thisRow.row.PS_Id}`}
+        >
           <DeleteTwoToneIcon />
         </IconButton>
       );
@@ -314,33 +347,32 @@ export const PagosColumns: GridColDef[] = [
 /* Usuarios Columns */
 export const UsuariosColumns: GridColDef[] = [
   {
-    headerName: "id",
-    field: "id",
+    headerName: "Cedula",
+    field: "Persona_Id",
+    headerAlign: "center",
+    align: "center",
     sortable: true,
   },
   {
-    headerName: "Cédula",
-    field: "Cedula",
+    headerName: "Nombre",
+    field: "Persona_Nombre",
+    headerAlign: "center",
+    align: "center",
     sortable: true,
   },
   {
-    headerName: "Nombre Completo",
-    field: "Nombre",
+    headerName: "Apellido",
+    field: "Persona_Apellido",
     sortable: true,
   },
   {
     headerName: "Correo",
-    field: "Correo",
-    sortable: true,
-  },
-  {
-    headerName: "Subscripción",
-    field: "Subscripcion",
+    field: "Usuario_Correo",
     sortable: true,
   },
   {
     headerName: "Estatus",
-    field: "Estatus",
+    field: "Suscripcion_Status",
     sortable: true,
   },
   {

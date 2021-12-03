@@ -229,12 +229,12 @@ function App() {
                   </Toolbar>
                 </AppBar>
               </Box>
-              <Box component={Paper} elevation={0}>
+              <Paper square elevation={5}>
                 <Switch>
                   <Routes auth={auth} />
                   <Route path="*" component={NoMatch} />
                 </Switch>
-              </Box>
+              </Paper>
             </Router>
           </appMenuContext.Provider>
         </authContext.Provider>
