@@ -365,7 +365,7 @@ export const getOneShippment = async function (req, res) {
   JOIN personas
      ON SE_PersonaId = Persona_Id
   LEFT JOIN contacto
-     ON Telefono_PersonaId = Persona_Id
+     ON Contacto_PersonaId = Persona_Id
   LEFT JOIN (SELECT SEST_SEId, SEST_STId FROM se_has_st WHERE SEST_Status = 'A') SEST
      ON SEST_SEId = SE_Id 
   
@@ -401,7 +401,7 @@ export const getOneShippment = async function (req, res) {
 	JOIN personas
      ON ST_PersonaId = Persona_Id
 	LEFT JOIN contacto
-     ON Telefono_PersonaId = Persona_Id
+     ON Contacto_PersonaId = Persona_Id
   
   WHERE ST_Id = ?
   `;

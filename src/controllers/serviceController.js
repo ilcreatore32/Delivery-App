@@ -240,7 +240,7 @@ export const getOneService = async function (req, res) {
   LEFT JOIN personas
     ON ST_PersonaId = Persona_Id
   LEFT JOIN contacto
-    ON Telefono_PersonaId = Persona_Id
+    ON Contacto_PersonaId = Persona_Id
   LEFT JOIN vehiculos
     ON ST_VehiculoId = Vehiculo_Id
   LEFT JOIN mediotransporte
