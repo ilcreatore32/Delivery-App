@@ -130,7 +130,7 @@ export const editUser = async function (req, res) {
   
     /* extract the query params */
     let queryUserDetails = `
-      SELECT Persona_Id, Persona_Nombre, Persona_Apellido, 
+      SELECT Persona_Id, Persona_TipoId Persona_Nombre, Persona_Apellido, 
       Usuario_Correo, TS_Id, TS_Nombre, Suscripcion_Monto,
       ${
           view_option === 'admin' 
@@ -175,28 +175,37 @@ export const editUser = async function (req, res) {
 export const saveUser = async function (req, res) {
   /* Extract payment's id */
   let { id } = req.params;
-
   /* extract the query body */
   let {
-    PS_Status = "P", // E.g 'P'
-    PS_Metodo, // E.g 'T'
-    PS_Fecha, // E.g '2020-01-01'
-    PS_Monto, // E.g '50.00'
-    PS_Referencia, // E.g '123456789'
-    PS_ArchivoReferencia,
-    PS_SuscripcionId, // E.g 1
+    Persona_Id,
+    Persona_TipoId,
+    Persona_Nombre,
+    Persona_Apellido,
+    Usuario_Correo,
+    TS_Id,
+    Suscripcion_Id,
+    Suscripcion_Monto,
+    Suscripcion_Status,
+    Suscripcion_FechaI,
+    Suscripcion_FechaV,
+    contactos
   } = req.body;
 
   /* Create an object with the properties */
-  const paymentDetail = {
-    PS_Status,
-    PS_Metodo,
-    PS_Fecha,
-    PS_Monto,
-    PS_Referencia,
-    PS_ArchivoReferencia,
-    PS_SuscripcionId,
-  };
+  const user = {
+    Persona_Id,
+    Persona_TipoId,
+    Persona_Nombre,
+    Persona_Apellido,
+    Usuario_Correo
+  };/* 
+  const suscrition = {
+    Suscripcion_Id,
+    Suscripcion_Monto,
+    Suscripcion_Status,
+    Suscripcion_FechaI,
+    Suscripcion_FechaV
+  } */
 
   /* Query to update payment's details */
   let queryPayments = `
@@ -210,13 +219,29 @@ export const saveUser = async function (req, res) {
     `;
   }
   try {
-    /* Save payment */
-    await pool.query(queryPayments, paymentDetail, function (error, results) {
-      /* if error in the query */
-      if (error) return res.status(400).json(error);
-      /* send results */
-      res.status(200).json({ message: "Operación Exitosa" });
-    });
+    /* Get connection */
+    const connection = await promisedPool.getConnection();
+    /* Get all data */
+    let transactionResult = await withTransaction(connection, res ,async () => {
+        if (!Suscripcion_Id && TS_Id) {
+          
+        } else if (Suscripcion_Id && TS_Id) {
+
+        } else if (!Suscripcion_Id && !TS_Id) {
+
+        } else if (Suscripcion_Id && !TS_Id) {
+
+        }
+
+        const [user, fields] = await connection.query(queryUserDetails, id);
+        const [contact, fields2] = await connection.query(queryContact, id);
+        return {user : user[0], contact : contact};
+    })
+    if (transactionResult) {
+        res
+          .status(200)
+          .json(transactionResult);
+      }
   } catch (error) {
     /* error in the server */
     console.log(err);
