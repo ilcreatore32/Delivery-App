@@ -1,3 +1,4 @@
+import moment from "moment";
 import pool from "../database";
 import { withTransaction } from "../helpers/transaction";
 import promisedPool from "../promisedPool";
@@ -135,7 +136,7 @@ export const editUser = async function (req, res) {
       ${
           view_option === 'admin' 
           ? `Suscripcion_Status,
-          Suscripcion_FechaI, Suscripcion_FechaV` 
+          Suscripcion_FechaI, Suscripcion_FechaV,` 
           : ''
       }
       Suscripcion_Id 
@@ -185,19 +186,18 @@ export const saveUser = async function (req, res) {
     TS_Id,
     Suscripcion_Id,
     Suscripcion_Monto,
-    Suscripcion_Status,
-    Suscripcion_FechaI,
-    Suscripcion_FechaV,
+    Suscripcion_Status = "P",
+    Suscripcion_FechaI = moment().format("YYYY-MM-DD"),
+    Suscripcion_FechaV = moment().add(1, 'month').format("YYYY-MM-DD"), 
     contactos
   } = req.body;
 
   /* Create an object with the properties */
-  const user = {
+  const person = {
     Persona_Id,
     Persona_TipoId,
     Persona_Nombre,
     Persona_Apellido,
-    Usuario_Correo
   };/* 
   const suscrition = {
     Suscripcion_Id,
@@ -206,6 +206,26 @@ export const saveUser = async function (req, res) {
     Suscripcion_FechaI,
     Suscripcion_FechaV
   } */
+
+  let queryUpdatePerson = `
+    UPDATE personas SET ? WHERE Persona_Id = ?
+  `;
+
+  let queryUser = `
+    UPDATE usuarios SET Usuario_Id = ?, Usuario_Correo = ? WHERE Usuario_PersonaId = ?
+  `;
+
+  let queryTypeSuscription = `
+    SELECT TS_Monto FROM tipo_suscripcion WHERE TS_Id = ?
+  `;
+
+  const queryInsertSuscription = `
+    INSERT INTO suscripcion SET ?
+  `;
+
+  const queryUpdateSuscription = `
+    UPDATE suscripcion SET ? WHERE Suscripcion_Id = ?
+  `;
 
   /* Query to update payment's details */
   let queryPayments = `
@@ -218,13 +238,27 @@ export const saveUser = async function (req, res) {
       INSERT INTO pago_suscripcion SET ? 
     `;
   }
+
   try {
     /* Get connection */
     const connection = await promisedPool.getConnection();
     /* Get all data */
     let transactionResult = await withTransaction(connection, res ,async () => {
+        console.log(Suscripcion_FechaI, Suscripcion_FechaV);
         if (!Suscripcion_Id && TS_Id) {
-          
+            const [typeSuscription, fields] = await connection.query(queryTypeSuscription, TS_Id);
+            const newSuscription = {
+                Suscripcion_PersonaId: Persona_Id,
+                Suscripcion_TSId: TS_Id,
+                Suscripcion_Monto: typeSuscription[0].TS_Monto,
+                Suscripcion_Status: Suscripcion_Status,
+                Suscripcion_FechaI: Suscripcion_FechaI,
+                Suscripcion_FechaV: Suscripcion_FechaV
+            }
+            const [suscriptionResult] = await connection.query(queryInsertSuscription, newSuscription);
+            console.log(suscriptionResult);
+            await connection.rollback()
+
         } else if (Suscripcion_Id && TS_Id) {
 
         } else if (!Suscripcion_Id && !TS_Id) {
@@ -236,13 +270,13 @@ export const saveUser = async function (req, res) {
         const [user, fields] = await connection.query(queryUserDetails, id);
         const [contact, fields2] = await connection.query(queryContact, id);
         return {user : user[0], contact : contact};
-    })
+    }) 
     if (transactionResult) {
         res
           .status(200)
           .json(transactionResult);
       }
-  } catch (error) {
+  } catch (err) {
     /* error in the server */
     console.log(err);
     res.status(500).send("Error en el servidor");
