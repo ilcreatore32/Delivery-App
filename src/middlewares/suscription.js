@@ -25,8 +25,13 @@ export const suscriptionMiddleware = async (req, res, next) => {
           return res
             .status(400)
             .json({ error: "Error al consultar en la base de datos" });
+        /* if the user is suscribed */
+        if (results.length > 0) {
         req.status = results[0].Suscripcion_Status;
         next();
+        } else {
+          res.status(400).json({ error: "Error al consultar la suscripcion en la base de datos" });
+        }
       });
     });
   } catch (err) {

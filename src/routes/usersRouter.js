@@ -4,7 +4,7 @@ import {
   getUsers,
   getOneUser,
   editUser,
-  saveUser
+  updateUser
 } from '../controllers/userController';
 
 // api/user
@@ -14,6 +14,6 @@ const router = Router();
 router.get('/', getUsers)
 router.get('/:id', getOneUser)
 router.get('/edit/:id', editUser)
-router.put('/:id', saveUser)
+router.put('/:id', updateUser)
  
 export default router;

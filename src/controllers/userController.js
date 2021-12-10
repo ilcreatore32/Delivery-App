@@ -171,24 +171,25 @@ export const editUser = async function (req, res) {
   }
 };
 
-/* Save a payment's information */
-export const saveUser = async function (req, res) {
-  /* Extract payment's id */
+/* update a user's information */
+export const updateUser = async function (req, res) {
+  /* Extract user's id */
   let { id } = req.params;
   /* extract the query body */
   let {
-    Persona_Id,
-    Persona_TipoId,
-    Persona_Nombre,
-    Persona_Apellido,
-    Usuario_Correo,
-    TS_Id,
-    Suscripcion_Id,
-    Suscripcion_Monto,
-    Suscripcion_Status = "P",
-    Suscripcion_FechaI = moment().format("YYYY-MM-DD"),
-    Suscripcion_FechaV = moment().add(1, "month").format("YYYY-MM-DD"),
-    contactos,
+    Persona_Id, // 20000000
+    Persona_TipoId, // V
+    Persona_Nombre, // Juan
+    Persona_Apellido, // Perez
+    Usuario_Correo, // email@email.com
+    Usuario_Status = "A", // A
+    TS_Id, // 1
+    Suscripcion_Id, // 1
+    Suscripcion_Monto, // 100.00
+    Suscripcion_Status = "P", // P
+    Suscripcion_FechaI = moment().format("YYYY-MM-DD"), // 2020-01-01
+    Suscripcion_FechaV = moment().add(1, "month").format("YYYY-MM-DD"), // 2020-01-02
+    contactos, // [["email@email.net", "C"], ["4242843235", "T"]]
   } = req.body;
 
   /* Create an object with the properties */
@@ -196,7 +197,7 @@ export const saveUser = async function (req, res) {
     Persona_Id,
     Persona_TipoId,
     Persona_Nombre,
-    Persona_Apellido, 
+    Persona_Apellido,
   };
 
   let queryUpdatePerson = `
@@ -204,7 +205,7 @@ export const saveUser = async function (req, res) {
   `;
 
   let queryUser = `
-    UPDATE usuarios SET Usuario_Id = ?, Usuario_Correo = ? WHERE Usuario_PersonaId = ?
+    UPDATE usuarios SET Usuario_Id = ?, Usuario_Correo = ?, Usuario_Status = ? WHERE Usuario_Id = ?
   `;
 
   let queryAmountNewSuscription = `
@@ -219,31 +220,36 @@ export const saveUser = async function (req, res) {
     UPDATE suscripcion SET ? WHERE Suscripcion_Id = ?
   `;
 
-  /* Query to update payment's details */
-  let queryPayments = `
-    UPDATE pago_suscripcion
-    SET ? WHERE PS_Id = ${id};
-  `;
-  /* if method is post, then insert a new payment */
-  if (req.method === "POST") {
-    queryPayments = `
-      INSERT INTO pago_suscripcion SET ? 
+  const queryDeleteContactInfo = `
+      DELETE FROM contacto WHERE Contacto_PersonaId = ?; 
     `;
-  }
+  const queryContactInfo = `
+      INSERT INTO contacto (Contacto_Info, Contacto_Tipo, Contacto_PersonaId) VALUES ?
+    `;
 
   try {
     /* Get connection */
     const connection = await promisedPool.getConnection();
     /* Get all data */
     let transactionResult = await withTransaction(connection, res, async () => {
-      console.log(Suscripcion_FechaI, Suscripcion_FechaV);
       /* Update person's data */
-      const [result, fields] = await connection.query(queryUpdatePerson, [person, Persona_Id]);
+      const [result, fields] = await connection.query(queryUpdatePerson, [
+        person,
+        id,
+      ]);
       /* Update user's data */
-      const [result2, fields2] = await connection.query(queryUser, [Persona_Id, Usuario_Correo, Persona_Id]);
+      const [result2, fields2] = await connection.query(queryUser, [
+        Persona_Id,
+        Usuario_Correo,
+        Usuario_Status,
+        Persona_Id,
+      ]);
       if (!Suscripcion_Id && TS_Id) {
         /* New Suscription */
-        const [amountNewSuscription] = await connection.query(queryAmountNewSuscription,TS_Id);
+        const [amountNewSuscription] = await connection.query(
+          queryAmountNewSuscription,
+          TS_Id
+        );
         const newSuscription = {
           Suscripcion_PersonaId: Persona_Id,
           Suscripcion_TSId: TS_Id,
@@ -256,8 +262,6 @@ export const saveUser = async function (req, res) {
           queryInsertSuscription,
           newSuscription
         );
-        console.log(suscriptionResult);
-        await connection.rollback();
       } else if (Suscripcion_Id) {
         /* Update Suscription */
         const newSuscription = {
@@ -273,12 +277,20 @@ export const saveUser = async function (req, res) {
           [newSuscription, Suscripcion_Id]
         );
       }
-      
-      await connection.rollback();
-      return { user: user[0], contact: contact };
+      if (contactos) {
+        await connection.query(queryDeleteContactInfo, [Persona_Id]);
+        contactos.map((contacto) => {
+          contacto.push(Persona_Id);
+        });
+        const [result3] = await connection.query(queryContactInfo, [contactos]);
+      }
     });
     if (transactionResult) {
-      res.status(200).json(transactionResult);
+      res
+        .status(200)
+        .json({
+          message: "Usuario actualizado correctamente",
+        });
     }
   } catch (err) {
     /* error in the server */
