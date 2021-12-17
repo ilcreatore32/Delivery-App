@@ -23,7 +23,8 @@ export const authenticateUser = async (req, res) => {
       const payload = {
         user: {
           id: results[0].Usuario_Id,
-          permission: results[0].Usuario_Permisos
+          permission: results[0].Usuario_Permisos,
+          status: results[0].Usuario_Status
         }
       }
   

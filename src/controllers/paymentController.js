@@ -148,6 +148,7 @@ export const getOnePayment = async function (req, res) {
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       /* if there is no data */
       if (results.length === 0 || results[0].PS_Id === null) return res.status(404).json({error: "No posee pagos"})
+      if (results[0].PS_ArchivoReferencia) results[0].PS_ArchivoReferencia = results[0].PS_ArchivoReferencia.toString("base64")
       /* send results */
       res.status(200).json( results[0] )
     });
@@ -170,10 +171,7 @@ export const savePayment = async function (req, res) {
     PS_Fecha, // E.g '2020-01-01'
     PS_Monto, // E.g '50.00'
     PS_Referencia, // E.g '123456789'
-    PS_ArchivoReferencia,
-    PS_SuscripcionId // E.g 1
   } = req.body
-
   /* Create an object with the properties */
   const paymentDetail = {
     PS_Status,
@@ -181,8 +179,7 @@ export const savePayment = async function (req, res) {
     PS_Fecha,
     PS_Monto,
     PS_Referencia,
-    PS_ArchivoReferencia,
-    PS_SuscripcionId
+    PS_ArchivoReferencia: req.file ? req.file.buffer : null,
   }
   
   /* Query to update payment's details */

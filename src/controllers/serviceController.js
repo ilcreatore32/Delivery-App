@@ -223,6 +223,7 @@ export const getServices = async (req, res) => {
 export const getOneService = async function (req, res) {
   /* Extract service's id */
   const { id } = req.params;
+  console.log(req.user.status)
   /* extract the query params */
   let { 
     view_option, // E.g. 'Client' 'Admin' or 'Carrier'

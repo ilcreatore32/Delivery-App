@@ -132,7 +132,7 @@ export const editUser = async function (req, res) {
 
   /* extract the query params */
   let queryUserDetails = `
-      SELECT Persona_Id, Persona_TipoId Persona_Nombre, Persona_Apellido, 
+      SELECT Persona_Id, Persona_TipoId Persona_Nombre, Persona_Apellido, Persona_Archivo,
       Usuario_Correo, TS_Id, TS_Nombre, Suscripcion_Monto,
       ${
         view_option === "admin"
@@ -157,7 +157,8 @@ export const editUser = async function (req, res) {
     const connection = await promisedPool.getConnection();
     /* Get all data */
     let transactionResult = await withTransaction(connection, res, async () => {
-      const [user, fields] = await connection.query(queryUserDetails, id);
+      let [user, fields] = await connection.query(queryUserDetails, id);
+      if (user[0].Persona_Archivo) user[0].Persona_Archivo = user[0].Persona_Archivo.toString("base64")
       const [contact, fields2] = await connection.query(queryContact, id);
       return { user: user[0], contact: contact };
     });
@@ -183,7 +184,7 @@ export const updateUser = async function (req, res) {
     Persona_Apellido, // Perez
     Usuario_Correo, // email@email.com
     Usuario_Status = "A", // A
-    TS_Id, // 1
+    TS_Id, // 1 
     Suscripcion_Id, // 1
     Suscripcion_Monto, // 100.00
     Suscripcion_Status = "P", // P
@@ -198,6 +199,7 @@ export const updateUser = async function (req, res) {
     Persona_TipoId,
     Persona_Nombre,
     Persona_Apellido,
+    Persona_Archivo: req.file ? req.file.buffer : null,
   };
 
   let queryUpdatePerson = `
@@ -277,13 +279,11 @@ export const updateUser = async function (req, res) {
           [newSuscription, Suscripcion_Id]
         );
       }
-      if (contactos) {
         await connection.query(queryDeleteContactInfo, [Persona_Id]);
         contactos.map((contacto) => {
           contacto.push(Persona_Id);
         });
-        const [result3] = await connection.query(queryContactInfo, [contactos]);
-      }
+        await connection.query(queryContactInfo, [contactos]);
     });
     if (transactionResult) {
       res
