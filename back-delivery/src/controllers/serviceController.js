@@ -31,7 +31,6 @@ export const getServices = async (req, res) => {
               message: "No autorizado"
             });
           }
-          console.log(req.user.id);
           /* Query to get all services */
           queryServices =
           `
@@ -223,6 +222,7 @@ export const getServices = async (req, res) => {
 export const getOneService = async function (req, res) {
   /* Extract service's id */
   const { id } = req.params;
+  console.log(req.user.status)
   /* extract the query params */
   let { 
     view_option, // E.g. 'Client' 'Admin' or 'Carrier'
@@ -240,7 +240,7 @@ export const getOneService = async function (req, res) {
   LEFT JOIN personas
     ON ST_PersonaId = Persona_Id
   LEFT JOIN contacto
-    ON Telefono_PersonaId = Persona_Id
+    ON Contacto_PersonaId = Persona_Id
   LEFT JOIN vehiculos
     ON ST_VehiculoId = Vehiculo_Id
   LEFT JOIN mediotransporte

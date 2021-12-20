@@ -39,6 +39,9 @@ function Add() {
   const [value, setValue] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [products, setProducts] = useState([]);
+  const [federalEntities, setFederalEntities] = useState([]);
+  const [municipalities, setMunicipalities] = useState([]);
+  const [parishes, setParishes] = useState([])
 
   const handleClickOpen = () => {
     setOpen(true);

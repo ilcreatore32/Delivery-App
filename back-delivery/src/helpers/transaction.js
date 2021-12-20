@@ -1,7 +1,8 @@
 export async function withTransaction( connection, res, callback ) {
+    let result
     try {
       await connection.beginTransaction();
-      await callback();
+      result = await callback();
       await connection.commit();
     } catch ( err ) {
       await connection.rollback();
@@ -11,6 +12,6 @@ export async function withTransaction( connection, res, callback ) {
       throw err;
     } finally {
       await connection.release();
-      return true
+      return result || true
     }
   }

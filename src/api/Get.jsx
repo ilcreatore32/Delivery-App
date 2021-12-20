@@ -138,8 +138,8 @@ export async function GetUsers() {
 }
 
 /* Opciones */
-export async function GetOptions(option) {
-  const payment = await Api.get(`/options`, {
+export async function GetUbication(option) {
+  const ubication = await Api.get(`/ubication`, {
     params: {
       option,
     },
@@ -150,5 +150,5 @@ export async function GetOptions(option) {
     .catch((error) => {
       console.log(`Error al consultar la opción: #${option}`);
     });
-  return payment;
+  return ubication;
 }

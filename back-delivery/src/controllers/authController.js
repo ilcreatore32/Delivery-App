@@ -23,13 +23,14 @@ export const authenticateUser = async (req, res) => {
       const payload = {
         user: {
           id: results[0].Usuario_Id,
-          permission: results[0].Usuario_Permisos
+          permission: results[0].Usuario_Permisos,
+          status: results[0].Usuario_Status
         }
       }
   
       /* create token */
       jwt.sign(payload, process.env.SECRETA, {
-        expiresIn: '24h' // 1 day
+        expiresIn: '1d' // 1 day
       }, (error, token) => {
         if (error) throw error;
         /* send token */

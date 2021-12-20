@@ -365,7 +365,7 @@ export const getOneShippment = async function (req, res) {
   JOIN personas
      ON SE_PersonaId = Persona_Id
   LEFT JOIN contacto
-     ON Telefono_PersonaId = Persona_Id
+     ON Contacto_PersonaId = Persona_Id
   LEFT JOIN (SELECT SEST_SEId, SEST_STId FROM se_has_st WHERE SEST_Status = 'A') SEST
      ON SEST_SEId = SE_Id 
   
@@ -401,7 +401,7 @@ export const getOneShippment = async function (req, res) {
 	JOIN personas
      ON ST_PersonaId = Persona_Id
 	LEFT JOIN contacto
-     ON Telefono_PersonaId = Persona_Id
+     ON Contacto_PersonaId = Persona_Id
   
   WHERE ST_Id = ?
   `;
@@ -770,7 +770,7 @@ export const deleteShippment = async function (req, res) {
   /* Query to delete the shippment */
   let queryUpdateStatus = `
     UPDATE solicitudesenvio
-    SET SE_Status = 0
+    SET SE_Status = E
     WHERE SE_Id = ${id};
   `;
 
@@ -794,3 +794,74 @@ export const deleteShippment = async function (req, res) {
     res.status(500).send("Error en el servidor");
   }
 };
+
+export const updateStatusShippment = async function (req, res) {
+  /* Get the id of the shippment */
+  const { id } = req.params;
+  /* Get the status of the shippment */
+  const { status } = req.body;
+  /* Query to update the status of the shippment */
+  let queryUpdateStatus = `
+    UPDATE solicitudesenvio
+    SET SE_Status = ?
+    WHERE SE_Id = ?;
+  `;
+
+  try {
+    /* Update the status of the shippment */
+    await pool.query(
+      queryUpdateStatus,
+      [status, id],
+      function (errShippment, shippmentResult) {
+        /* if error in the query */
+        if (errShippment)
+          return res
+            .status(400)
+            .json({ error: "Error al consultar en la base de datos" });
+        /* Send the response */
+        res.status(200).json({ message: "Solicitud Actualizada" });
+      }
+    );
+  } catch (err) {
+    /* error in the server */
+    console.log(err);
+    res.status(500).send("Error en el servidor");
+  }
+}
+
+export const updateServicesAsociatedStatus = async function (req, res) {
+  /* Get the id of the shippment */
+  const { id } = req.params;
+  /* Get the status of the shippment */
+  const { 
+    status,
+    serviceId
+  } = req.body;
+  /* Query to update the status of the shippment */
+  let queryUpdateStatus = `
+    UPDATE se_has_st
+    SET SEST_Status = ?
+    WHERE SEST_SEId = ? AND SEST_STId;
+  `;
+
+  try {
+    /* Update the status of the shippment */
+    await pool.query(
+      queryUpdateStatus,
+      [status, id, serviceId],
+      function (errShippment, shippmentResult) {
+        /* if error in the query */
+        if (errShippment)
+          return res
+            .status(400)
+            .json({ error: "Error al consultar en la base de datos" });
+        /* Send the response */
+        res.status(200).json({ message: "Estatus de la oferta de servicio actualizada" });
+      }
+    );
+  } catch (err) {
+    /* error in the server */
+    console.log(err);
+    res.status(500).send("Error en el servidor");
+  }
+}
