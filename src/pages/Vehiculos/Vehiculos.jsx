@@ -1,5 +1,7 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+
+/* Context */
+import { filterMenuContext } from "../../context/filterMenuContext";
 
 /* API */
 import { GetVehicles } from "../../api/Get";
@@ -38,6 +40,7 @@ import TestCardImage from "../../assets/images/test-card-image.jpg";
 function Vehiculos({ admin }) {
   const [vehicles, setVehicles] = useState(null);
   const [loading, setLoading] = useState(false);
+  const FilterMenuContext = useContext(filterMenuContext);
 
   let [view, setView] = useState("true");
 
@@ -67,11 +70,13 @@ function Vehiculos({ admin }) {
         Sus Vehiculos
       </Typography>
       <div className="dashboard">
-        <Grid container spacing={3}>
-          <Grid item xs={6} md={4}>
-            <LeftSideComponent vehiculos={true} />
-          </Grid>
-          <Grid item xs={6} md={8}>
+        <Box className="flex-container" container>
+          {FilterMenuContext.filterMenu ? (
+            <Box className="flex-item">
+              <LeftSideComponent vehiculos={true} />
+            </Box>
+          ) : null}
+          <Box className="flex-item">
             <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
               {admin ? (
                 <>
@@ -171,8 +176,8 @@ function Vehiculos({ admin }) {
                 </Box>
               </>
             )}
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </div>
     </>
   );

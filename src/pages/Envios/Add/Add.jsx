@@ -72,7 +72,7 @@ function Add() {
   return (
     <>
       <IconButton onClick={handleClickOpen}>
-        <AddCircleTwoToneIcon size="large" color="primary" />
+        <AddCircleTwoToneIcon color="primary" />
       </IconButton>
       <Dialog
         open={open}

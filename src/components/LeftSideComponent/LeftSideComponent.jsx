@@ -1,7 +1,10 @@
-import React from "react";
+import { useContext } from "react";
+
+/* Context */
+import { filterMenuContext } from "../../context/filterMenuContext";
 
 /* Material UI */
-import { Paper } from "@mui/material";
+import { Paper, Collapse } from "@mui/material";
 
 /* Components */
 import Envios from "./Envios/Envios";
@@ -22,9 +25,10 @@ function LeftSideComponent({
   usuarios,
   admin,
 }) {
+  const FilterMenuContext = useContext(filterMenuContext);
   return (
     <>
-      <div className="left-side-component">
+      <Collapse in={FilterMenuContext.filterMenu}>
         <Paper elevation={8}>
           {envios ? (
             <Envios asumidos={asumidos} admin={admin} />
@@ -38,7 +42,7 @@ function LeftSideComponent({
             <Usuarios admin={admin} />
           ) : null}
         </Paper>
-      </div>
+      </Collapse>
     </>
   );
 }

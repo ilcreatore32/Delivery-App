@@ -28,6 +28,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 /* Components */
+import AppTabs from "../../../components/AppTabs/AppTabs";
 import Spinner from "../../../components/Spinner/Spinner";
 
 function Details() {
@@ -54,114 +55,134 @@ function Details() {
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <AppTabs />
+      <Paper
+        elevation={3}
+        sx={{
+          margin: "1rem",
+          padding: "1rem",
+        }}
+      >
+        <Typography align="center" variant="h4" component="h2">
+          Detalles de Servicio
+        </Typography>
+        <TableContainer
+          component={Paper}
+          variant="outlined"
+          sx={{ margin: "2rem 0" }}
+        >
+          <Table>
+            <TableBody>
+              <TableRow>
+                <TableCell component="th">Horario</TableCell>
+                <TableCell align="center">7am a 8pm</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th">Disponibilidad</TableCell>
+                <TableCell align="center">Disponible</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th">Precio</TableCell>
+                <TableCell align="center">50$</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th">Medio de Transporte</TableCell>
+                <TableCell align="center">Carro</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th">Marca</TableCell>
+                <TableCell align="center">Ford</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th">Modelo</TableCell>
+                <TableCell align="center">Fiesta</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th">Año</TableCell>
+                <TableCell align="center">2003</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th">Capacidad de Pasajeros</TableCell>
+                <TableCell align="center">5</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th">Capacidad de Carga</TableCell>
+                <TableCell align="center">100Kg</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box
+          sx={{
+            padding: ".5rem",
+          }}
+        >
+          <Typography variant="subtitle1" component="h2">
+            Descripción del Servicio:
+          </Typography>
+          <Paper
+            variant="outlined"
+            sx={{
+              padding: "1rem",
+            }}
+          >
+            <Typography variant="body1" component="p">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo,
+              cumque velit, similique suscipit id fugiat ducimus reiciendis
+              sapiente sit quasi quibusdam ratione, placeat eaque vero qui!
+              Illum beatae optio totam?
+            </Typography>
+          </Paper>
+        </Box>
+        <Box
+          sx={{
+            padding: "1rem",
+          }}
+        >
+          <Typography align="center" variant="h6" component="h3">
+            Areas de Operaciones
+          </Typography>
+          <TableContainer component={Paper} variant="outlined">
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Entidad Federal</TableCell>
+                  <TableCell align="center">Municipio</TableCell>
+                  <TableCell align="center">Parroquia</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                  }}
+                >
+                  <TableCell align="center">Distrito Capital</TableCell>
+                  <TableCell align="center">Libertador</TableCell>
+                  <TableCell align="center">Sucre</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </Paper>
+    </>
+  );
+}
+
+export default Details;
+
+/**
+  <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box sx={{ width: "100%", padding: ".5rem" }}>
           <Paper sx={{ padding: "1rem" }} variant="outlined">
             <Box>
               <Typography align="center" variant="h4" component="h1">
                 Detalles del Servicio de Transporte
               </Typography>
-              <TableContainer
-                component={Paper}
-                variant="outlined"
-                sx={{ margin: "2rem 0" }}
-              >
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell component="th">Horario</TableCell>
-                      <TableCell align="center">7am a 8pm</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Disponibilidad</TableCell>
-                      <TableCell align="center">Disponible</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Precio</TableCell>
-                      <TableCell align="center">50$</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Medio de Transporte</TableCell>
-                      <TableCell align="center">Carro</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Marca</TableCell>
-                      <TableCell align="center">Ford</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Modelo</TableCell>
-                      <TableCell align="center">Fiesta</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">año</TableCell>
-                      <TableCell align="center">2003</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">
-                        Capacidad de Pasajeros
-                      </TableCell>
-                      <TableCell align="center">5</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell component="th">Capacidad de Carga</TableCell>
-                      <TableCell align="center">100Kg</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box
-                sx={{
-                  padding: "1rem",
-                }}
-              >
-                <Typography variant="subtitle1" component="h2">
-                  Descripción del Servicio:
-                </Typography>
-                <Paper
-                  variant="outlined"
-                  sx={{
-                    padding: "1rem",
-                  }}
-                >
-                  <Typography variant="body1" component="p">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Illo, cumque velit, similique suscipit id fugiat ducimus
-                    reiciendis sapiente sit quasi quibusdam ratione, placeat
-                    eaque vero qui! Illum beatae optio totam?
-                  </Typography>
-                </Paper>
-              </Box>
-              <Box
-                sx={{
-                  padding: "1rem",
-                }}
-              >
-                <Typography align="center" variant="h6" component="h3">
-                  Areas de Operaciones
-                </Typography>
-                <TableContainer component={Paper} variant="outlined">
-                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell align="center">Entidad Federal</TableCell>
-                        <TableCell align="center">Municipio</TableCell>
-                        <TableCell align="center">Parroquia</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      <TableRow
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell align="center">Distrito Capital</TableCell>
-                        <TableCell align="center">Libertador</TableCell>
-                        <TableCell align="center">Sucre</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
+              
+          
+              
               <Box
                 sx={{
                   padding: "1rem",
@@ -297,8 +318,4 @@ function Details() {
           </Paper>
         </Box>
       </Box>
-    </>
-  );
-}
-
-export default Details;
+ */

@@ -34,24 +34,6 @@ html::-webkit-scrollbar-track:active {
   background: #32373b;
 }
 
-/*  Link 
-.MuiButtonBase-root {
-  color: #5b36b4 !important;
-}
-
-.MuiSvgIcon-colorSecondary {
-  color: #33cc96 !important;
-}
-
- App bars 
-.delivery-app-bar {
-  background-color: #23272a !important;
-}
-
-.delivery-secundary-bar {
-  background-color: #8a71ff70 !important;
-} */
-
 /* No Match */
 .noMatch {
   text-align: center;
@@ -78,3 +60,50 @@ html::-webkit-scrollbar-track:active {
 .swal2-container {
   z-index: 100000;
 }
+
+.flex-container {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-content: center;
+  -ms-flex-line-pack: center;
+  align-content: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  }
+
+.flex-item:nth-child(1) {
+  -webkit-order: 0;
+  -ms-flex-order: 0;
+  order: 0;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  -webkit-align-self: auto;
+  -ms-flex-item-align: auto;
+  align-self: auto;
+  }
+
+.flex-item:nth-child(2) {
+  -webkit-order: 0;
+  -ms-flex-order: 0;
+  order: 0;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  -webkit-align-self: auto;
+  -ms-flex-item-align: auto;
+  align-self: auto;
+  }
+
+  

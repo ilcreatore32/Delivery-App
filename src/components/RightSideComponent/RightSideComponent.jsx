@@ -1,12 +1,22 @@
-import React from "react";
+import { useContext } from "react";
+
+/* Material UI */
+import { Paper, IconButton } from "@mui/material";
+
+/* Context */
+import { filterMenuContext } from "../../context/filterMenuContext";
+
+/* Material Icons */
+import ManageSearch from "@mui/icons-material/ManageSearch";
+import CloseIcon from "@mui/icons-material/Close";
 
 /* React-Datatable */
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 
 /* CSS */
 import "./RightSideComponent.css";
 
-function RightSideComponent({ rowId, Columns, Data }) {
+function RightSideComponent({ rowId, Columns, Data, children }) {
   const rows = [];
 
   const columns = [];
@@ -21,10 +31,26 @@ function RightSideComponent({ rowId, Columns, Data }) {
     return id;
   };
 
+  const FilterMenuContext = useContext(filterMenuContext);
+
   return (
     <>
-      <div style={{ display: "flex", height: "100%" }}>
-        <div style={{ height: "70%", flexGrow: 1 }}>
+      <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
+        <IconButton
+          onClick={() =>
+            FilterMenuContext.setFilterMenu(!FilterMenuContext.filterMenu)
+          }
+        >
+          {FilterMenuContext.filterMenu ? (
+            <CloseIcon color="primary" />
+          ) : (
+            <ManageSearch color="primary" />
+          )}
+        </IconButton>
+        {children}
+      </Paper>
+      <div style={{ display: "flex", height: "80vh" }}>
+        <div style={{ height: "100%", flexGrow: 1 }}>
           <DataGrid
             rows={Data ? Data : rows}
             columns={Columns ? Columns : columns}
@@ -32,9 +58,16 @@ function RightSideComponent({ rowId, Columns, Data }) {
             rowsPerPageOptions={[10]}
             autoWidth
             getRowId={(row) => getRowId(row, rowId)}
-            components={{
-              Toolbar: GridToolbar,
-            }}
+
+            /* filterModel={{
+              items: [
+                {
+                  columnField: "SE_Id",
+                  operatorValue: "contains",
+                  value: "11",
+                },
+              ],
+            }} */
           />
         </div>
       </div>

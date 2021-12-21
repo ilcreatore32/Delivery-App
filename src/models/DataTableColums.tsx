@@ -57,44 +57,34 @@ export const EnviosColumns: GridColDef[] = [
     sortable: true,
   },
   {
-    field: "details",
-    headerName: "Detalles",
+    field: "actions",
+    headerName: "Acciones",
+    headerAlign: "center",
+    align: "center",
+    width: 200,
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton
-          component={Link}
-          to={`/Envios/Detalles/${thisRow.row.SE_Id}`}
-        >
-          <VisibilityTwoToneIcon />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "edit",
-    headerName: "Editar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton component={Link} to={`/Envios/Editar/${thisRow.row.SE_Id}`}>
-          <EditTwoToneIcon color="info" />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "delete",
-    headerName: "Eliminar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton
-          component={Link}
-          to={`/Envios/Eliminar/${thisRow.row.SE_Id}`}
-        >
-          <DeleteTwoToneIcon color="error" />
-        </IconButton>
+        <>
+          <IconButton
+            component={Link}
+            to={`/Envios/Detalles/${thisRow.row.SE_Id}`}
+          >
+            <VisibilityTwoToneIcon />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Envios/Editar/${thisRow.row.SE_Id}`}
+          >
+            <EditTwoToneIcon color="info" />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Envios/Eliminar/${thisRow.row.SE_Id}`}
+          >
+            <DeleteTwoToneIcon color="error" />
+          </IconButton>
+        </>
       );
     },
   },
@@ -105,80 +95,88 @@ export const ServiciosColumns: GridColDef[] = [
   {
     headerName: "Id",
     field: "ST_Id",
+    headerAlign: "center",
+    align: "center",
+    width: 90,
     sortable: true,
   },
   {
     headerName: "Medio de Transporte",
     field: "MT_Nombre",
+    headerAlign: "center",
+    align: "center",
+    width: 210,
     sortable: true,
   },
   {
     headerName: "Inicio",
     field: "ST_HorarioIni",
+    headerAlign: "center",
+    align: "center",
+    width: 120,
     sortable: true,
   },
   {
     headerName: "Fin",
     field: "ST_HorarioFin",
+    headerAlign: "center",
+    align: "center",
+    width: 100,
     sortable: true,
   },
   {
     headerName: "Precio",
     field: "ST_Precio",
+    headerAlign: "center",
+    align: "center",
+    width: 120,
     sortable: true,
   },
   {
     headerName: "Estatus",
     field: "ST_Status",
+    headerAlign: "center",
+    align: "center",
+    width: 130,
     sortable: true,
   },
   {
     headerName: "Areas de Operaciones",
     field: "Areas",
+    headerAlign: "center",
+    align: "center",
+    width: 220,
     sortable: true,
   },
   {
-    field: "details",
-    headerName: "Detalles",
+    field: "actions",
+    headerName: "Acciones",
+    headerAlign: "center",
+    align: "center",
+    width: 200,
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton
-          component={Link}
-          to={`/Servicios/Detalles/${thisRow.row.ST_Id}`}
-        >
-          <VisibilityTwoToneIcon />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "edit",
-    headerName: "Editar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton
-          component={Link}
-          to={`/Servicios/Editar/${thisRow.row.ST_Id}`}
-        >
-          <EditTwoToneIcon />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "delete",
-    headerName: "Eliminar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton
-          component={Link}
-          to={`/Servicios/Eliminar/${thisRow.row.ST_Id}`}
-        >
-          <DeleteTwoToneIcon />
-        </IconButton>
+        <>
+          <IconButton
+            component={Link}
+            to={`/Servicios/Detalles/${thisRow.row.ST_Id}`}
+          >
+            <VisibilityTwoToneIcon />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Servicios/Detalles/${thisRow.row.ST_Id}`}
+          >
+            <EditTwoToneIcon color="info" />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Servicios/Eliminar/${thisRow.row.ST_Id}`}
+          >
+            <DeleteTwoToneIcon color="error" />
+          </IconButton>
+        </>
       );
     },
   },
@@ -189,80 +187,88 @@ export const VehiculosColumns: GridColDef[] = [
   {
     headerName: "Id",
     field: "Vehiculo_Id",
+    headerAlign: "center",
+    align: "center",
+    width: 90,
     sortable: true,
   },
   {
     headerName: "Matricula",
     field: "Vehiculo_Matricula",
+    headerAlign: "center",
+    align: "center",
+    width: 140,
     sortable: true,
   },
   {
     headerName: "Marca",
     field: "Vehiculo_Marca",
+    headerAlign: "center",
+    align: "center",
+    width: 120,
     sortable: true,
   },
   {
     headerName: "Modelo",
     field: "Vehiculo_Modelo",
+    headerAlign: "center",
+    align: "center",
+    width: 125,
     sortable: true,
   },
   {
     headerName: "Año",
     field: "Vehiculo_Anio",
+    headerAlign: "center",
+    align: "center",
+    width: 110,
     sortable: true,
   },
   {
     headerName: "Pasajeros",
     field: "Vehiculo_Pasajeros",
+    headerAlign: "center",
+    align: "center",
+    width: 150,
     sortable: true,
   },
   {
     headerName: "Capacidad de Carga",
     field: "Vehiculo_CapacidadCarga",
+    headerAlign: "center",
+    align: "center",
+    width: 215,
     sortable: true,
   },
   {
-    field: "details",
-    headerName: "Detalles",
+    field: "actions",
+    headerName: "Acciones",
+    headerAlign: "center",
+    align: "center",
+    width: 200,
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton
-          component={Link}
-          to={`/Vehiculos/Detalles/${thisRow.row.Vehiculo_Id}`}
-        >
-          <VisibilityTwoToneIcon />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "edit",
-    headerName: "Editar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton
-          component={Link}
-          to={`/Vehiculos/Editar/${thisRow.row.Vehiculo_Id}`}
-        >
-          <EditTwoToneIcon />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "delete",
-    headerName: "Eliminar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton
-          component={Link}
-          to={`/Vehiculos/Eliminar/${thisRow.row.Vehiculo_Id}`}
-        >
-          <DeleteTwoToneIcon />
-        </IconButton>
+        <>
+          <IconButton
+            component={Link}
+            to={`/Vehiculos/Detalles/${thisRow.row.Vehiculo_Id}`}
+          >
+            <VisibilityTwoToneIcon />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Vehiculos/Editar/${thisRow.row.Vehiculo_Id}`}
+          >
+            <EditTwoToneIcon color="info" />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Vehiculos/Eliminar/${thisRow.row.Vehiculo_Id}`}
+          >
+            <DeleteTwoToneIcon color="error" />
+          </IconButton>
+        </>
       );
     },
   },
@@ -273,72 +279,80 @@ export const PagosColumns: GridColDef[] = [
   {
     headerName: "Id",
     field: "PS_Id",
+    headerAlign: "center",
+    align: "center",
+    width: 90,
     sortable: true,
   },
   {
     headerName: "Método de Pago",
     field: "PS_Metodo",
+    headerAlign: "center",
+    align: "center",
+    width: 190,
     sortable: true,
   },
   {
     headerName: "Fecha",
     field: "PS_Fecha",
+    headerAlign: "center",
+    align: "center",
+    width: 200,
     sortable: true,
   },
   {
     headerName: "Monto",
     field: "PS_Monto",
+    headerAlign: "center",
+    align: "center",
+    width: 120,
     sortable: true,
   },
   {
     headerName: "Estatus",
     field: "PS_Status",
+    headerAlign: "center",
+    align: "center",
+    width: 130,
     sortable: true,
   },
   {
     headerName: "Usuario",
     field: "Persona_Nombre",
+    headerAlign: "center",
+    align: "center",
+    width: 138,
     sortable: true,
   },
   {
-    field: "details",
-    headerName: "Detalles",
+    field: "actions",
+    headerName: "Acciones",
+    headerAlign: "center",
+    align: "center",
+    width: 200,
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton
-          component={Link}
-          to={`/Pagos/Detalles/${thisRow.row.PS_Id}`}
-        >
-          <VisibilityTwoToneIcon />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "edit",
-    headerName: "Editar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton component={Link} to={`/Pagos/Editar/${thisRow.row.PS_Id}`}>
-          <EditTwoToneIcon />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "delete",
-    headerName: "Eliminar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton
-          component={Link}
-          to={`/Pagos/Eliminar/${thisRow.row.PS_Id}`}
-        >
-          <DeleteTwoToneIcon />
-        </IconButton>
+        <>
+          <IconButton
+            component={Link}
+            to={`/Pagos/Detalles/${thisRow.row.PS_Id}`}
+          >
+            <VisibilityTwoToneIcon />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Pagos/Editar/${thisRow.row.PS_Id}`}
+          >
+            <EditTwoToneIcon color="info" />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Pagos/Eliminar/${thisRow.row.PS_Id}`}
+          >
+            <DeleteTwoToneIcon color="error" />
+          </IconButton>
+        </>
       );
     },
   },
@@ -351,6 +365,7 @@ export const UsuariosColumns: GridColDef[] = [
     field: "Persona_Id",
     headerAlign: "center",
     align: "center",
+    width: 125,
     sortable: true,
   },
   {
@@ -358,62 +373,62 @@ export const UsuariosColumns: GridColDef[] = [
     field: "Persona_Nombre",
     headerAlign: "center",
     align: "center",
+    width: 130,
     sortable: true,
   },
   {
     headerName: "Apellido",
     field: "Persona_Apellido",
+    headerAlign: "center",
+    align: "center",
+    width: 130,
     sortable: true,
   },
   {
     headerName: "Correo",
     field: "Usuario_Correo",
+    headerAlign: "center",
+    align: "center",
+    width: 200,
     sortable: true,
   },
   {
     headerName: "Estatus",
     field: "Suscripcion_Status",
+    headerAlign: "center",
+    align: "center",
+    width: 130,
     sortable: true,
   },
   {
-    field: "details",
-    headerName: "Detalles",
+    field: "actions",
+    headerName: "Acciones",
+    headerAlign: "center",
+    align: "center",
+    width: 200,
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <IconButton
-          component={Link}
-          to={`/Usuarios/Detalles/${thisRow.row.id}`}
-        >
-          <VisibilityTwoToneIcon />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "edit",
-    headerName: "Editar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton component={Link} to={`/Usuarios/Editar/${thisRow.row.id}`}>
-          <EditTwoToneIcon />
-        </IconButton>
-      );
-    },
-  },
-  {
-    field: "delete",
-    headerName: "Eliminar",
-    sortable: false,
-    renderCell: (thisRow) => {
-      return (
-        <IconButton
-          component={Link}
-          to={`/Usuarios/Eliminar/${thisRow.row.id}`}
-        >
-          <DeleteTwoToneIcon />
-        </IconButton>
+        <>
+          <IconButton
+            component={Link}
+            to={`/Usuarios/Detalles/${thisRow.row.Persona_Id}`}
+          >
+            <VisibilityTwoToneIcon />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Usuarios/Editar/${thisRow.row.Persona_Id}`}
+          >
+            <EditTwoToneIcon color="info" />
+          </IconButton>
+          <IconButton
+            component={Link}
+            to={`/Usuarios/Eliminar/${thisRow.row.Persona_Id}`}
+          >
+            <DeleteTwoToneIcon color="error" />
+          </IconButton>
+        </>
       );
     },
   },
