@@ -43,11 +43,7 @@ function AppTabs() {
           }}
         >
           <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
-            {/* 
-              error: first-child instead of: first-of-type
-              follow this path to change property
-              node_modules\@mui\material\Tab\Tab.js 
-            */}
+            
             <Tabs
               value={currentTab}
               centered

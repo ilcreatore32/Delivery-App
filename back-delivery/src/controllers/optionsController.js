@@ -10,6 +10,8 @@ export const getUbication = async (req, res) => {
     } = req.query;
     let query = "";
 
+    let condition
+
     switch (option) {
         /* Get all federal entities */
         case "federal_entity":
@@ -20,26 +22,20 @@ export const getUbication = async (req, res) => {
             break;
         /* Get all municipalities by federal entity */
         case "municipality":
+            if (!federal_entity) break;
+            condition = federal_entity
             query =
             `
-            SELECT Municipio_Id, Municipio_Nombre FROM municipios 
-            ${
-                federal_entity 
-                ? `WHERE Municipio_EFId = ${federal_entity}` 
-                : ''
-            }
+            SELECT Municipio_Id, Municipio_Nombre FROM municipios WHERE Municipio_EFId = ?
             `;
             break;
         /* Get all parish by municipality */
         case "parish":
+            if (!municipality) break;
+            condition = municipality
             query =
             `
-            SELECT Parroquia_Id, Parroquia_Nombre FROM Parroquias 
-            ${
-                municipality 
-                ? `WHERE Parroquia_MunicipioId = ${municipality}` 
-                : ''
-            }
+            SELECT Parroquia_Id, Parroquia_Nombre FROM Parroquias WHERE Parroquia_MunicipioId = ?
             `;
             break;
         default:
@@ -48,7 +44,7 @@ export const getUbication = async (req, res) => {
 
     try {
       /* Get all data */
-      await pool.query(query, function (error, results) {
+      await pool.query(query, [condition], function (error, results) {
         /* if error in the query */
         if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
         /* if there is no data */
@@ -66,8 +62,8 @@ export const getUbication = async (req, res) => {
 export const getProducts = async (req, res) => {
   /* extract the query params */
   let { 
-    option, // E.g. federal_entity, municipality, etc.
-    type_product, // E.g. 'Harina'.
+    option, // E.g. type_product, product, etc.
+    type_product, // E.g. 'Harinas'.
   } = req.query;
   let query = "";
 

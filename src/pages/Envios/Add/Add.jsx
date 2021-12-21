@@ -20,12 +20,18 @@ import {
   Badge,
   Chip,
   Tooltip,
+  MenuItem,
+  Paper,
 } from "@mui/material";
 
 /* Material UI Icons */
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 import UploadFileTwoToneIcon from "@mui/icons-material/UploadFileTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+
+/* Components */
+import Spinner from "../../../components/Spinner/Spinner";
+import { GetProducts, GetUbication } from "../../../api/Get";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -36,12 +42,77 @@ const options = ["harina", "res", "pan", "agua"];
 function Add() {
   const [open, setOpen] = useState(false);
   const [openFile, setOpenFile] = useState(false);
+
   const [value, setValue] = useState("");
   const [inputValue, setInputValue] = useState("");
+
   const [products, setProducts] = useState([]);
+
+  const [productsTypes, setProductsTypes] = useState([]);
+  const [loadingProductsTypes, setLoadingProductsTypes] = useState(false);
+  const [productType, setProductType] = useState("");
+  const [productTypeInput, setProductTypeInput] = useState("");
+
+  const [productsList, setProductsList] = useState([])
+  const [loadingProductsList, setLoadingProductsList] = useState(false);
+  const [productSelected, setProductSelected] = useState("");
+  const [productSelectedInput, setProductSelectedInput] = useState("");
+
   const [federalEntities, setFederalEntities] = useState([]);
+  const [federalEntity, setFederalEntity] = useState("");
+  const [loadingFederalEntities, setLoadingFederalEntities] = useState(false);
+
   const [municipalities, setMunicipalities] = useState([]);
-  const [parishes, setParishes] = useState([])
+  const [municipality, setMunicipality] = useState("");
+  const [loadingMunicipalities, setLoadingMunicipalities] = useState(false);
+
+  const [parishes, setParishes] = useState([]);
+  const [parish, setParish] = useState("");
+  const [loadingParishes, setLoadingParishes] = useState(false);
+
+  const [shippmentDetails, setShippmentDetails] = useState({});
+
+  const getFederalEntities = () => {
+    setLoadingFederalEntities(true);
+    GetUbication("federal_entity").then((res) => {
+      setFederalEntities(res);
+      setLoadingFederalEntities(false);
+    });
+  };
+
+  const getMunicipities = (federal_entity) => {
+    if (!federal_entity) return;
+    setLoadingMunicipalities(true);
+    GetUbication("municipality", federal_entity).then((res) => {
+      setMunicipalities(res);
+      setLoadingMunicipalities(false);
+    });
+  };
+
+  const getParishes = (municipality) => {
+    if (!municipality) return;
+    setLoadingParishes(true);
+    GetUbication("parish", null, municipality).then((res) => {
+      setParishes(res);
+      setLoadingParishes(false);
+    });
+  };
+
+  const getProductsTypes = async () => {
+    if (productsTypes && productsTypes.length > 0) return;
+    setLoadingProductsTypes(true);
+    let prod = await GetProducts("type_product");
+    setProductsTypes(prod);
+    setLoadingProductsTypes(false);
+  };
+
+  const getProductsList = async (type_product) => {
+    if (productsList && productsList.length > 0) return;
+    setLoadingProductsList(true);
+    let prod = await GetProducts("product", type_product);
+    setProductsList(prod);
+    setLoadingProductsList(false);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -70,6 +141,25 @@ function Add() {
 
   const handleDeleteProduct = () => {
     setProducts([]);
+  };
+
+  const handleFederalEntityChange = (e) => {
+    setFederalEntity(e.target.value);
+    setMunicipalities([]);
+    setParishes([]);
+  };
+
+  const handleMunicipalityChange = (e) => {
+    setMunicipality(e.target.value);
+    setParishes([]);
+  };
+
+  const handleParishChange = (e) => {
+    setParish(e.target.value);
+    setShippmentDetails({
+      ...shippmentDetails,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (
@@ -117,9 +207,104 @@ function Add() {
               spacing={{ xs: 1, sm: 2, md: 2 }}
               sx={{ padding: "1rem 0" }}
             >
-              <TextField label="Ciudad" variant="filled"></TextField>
-              <TextField label="Municipio" variant="filled"></TextField>
-              <TextField label="Parroquia" variant="filled"></TextField>
+              <TextField
+                id="federal_entity"
+                select
+                label="Entidad Federal"
+                value={federalEntity}
+                onChange={handleFederalEntityChange}
+                variant="filled"
+                SelectProps={{
+                  onOpen: getFederalEntities,
+                }}
+                fullWidth
+              >
+                {federalEntities ? (
+                  federalEntities.map((federalEntity) => (
+                    <MenuItem
+                      key={federalEntity.EF_Id}
+                      value={federalEntity.EF_Id}
+                    >
+                      {federalEntity.EF_Nombre}
+                    </MenuItem>
+                  ))
+                ) : loadingFederalEntities ? (
+                  <MenuItem>
+                    <Spinner loading={loadingFederalEntities} />
+                  </MenuItem>
+                ) : (
+                  <MenuItem value={0}>Hubo un error</MenuItem>
+                )}
+              </TextField>
+              <TextField
+                id="municipality"
+                select
+                label="Municipio"
+                value={municipality}
+                onChange={handleMunicipalityChange}
+                variant="filled"
+                SelectProps={{
+                  onOpen: () => getMunicipities(federalEntity),
+                }}
+                fullWidth
+                {...(federalEntity
+                  ? {
+                      disabled: false,
+                    }
+                  : { disabled: true })}
+              >
+                {municipalities ? (
+                  municipalities.map((municipality) => (
+                    <MenuItem
+                      key={municipality.Municipio_Id}
+                      value={municipality.Municipio_Id}
+                    >
+                      {municipality.Municipio_Nombre}
+                    </MenuItem>
+                  ))
+                ) : loadingMunicipalities ? (
+                  <MenuItem>
+                    <Spinner loading={loadingMunicipalities} />
+                  </MenuItem>
+                ) : (
+                  <MenuItem value={0}>Hubo un error</MenuItem>
+                )}
+              </TextField>
+              <TextField
+                id="SE_ParroquiaId"
+                select
+                label="Parroquia"
+                name="SE_ParroquiaId"
+                value={parish}
+                onChange={handleParishChange}
+                variant="filled"
+                SelectProps={{
+                  onOpen: () => getParishes(municipality),
+                }}
+                fullWidth
+                {...(municipality
+                  ? {
+                      disabled: false,
+                    }
+                  : { disabled: true })}
+              >
+                {parishes ? (
+                  parishes.map((parish) => (
+                    <MenuItem
+                      key={parish.Parroquia_Id}
+                      value={parish.Parroquia_Id}
+                    >
+                      {parish.Parroquia_Nombre}
+                    </MenuItem>
+                  ))
+                ) : loadingParishes ? (
+                  <MenuItem>
+                    <Spinner loading={loadingParishes} />
+                  </MenuItem>
+                ) : (
+                  <MenuItem value={0}>Hubo un error</MenuItem>
+                )}
+              </TextField>
             </Stack>
             <Stack
               direction={{ xs: "column", sm: "row" }}
@@ -148,16 +333,81 @@ function Add() {
             sx={{ padding: "1rem 0" }}
           >
             <Autocomplete
-              value={value}
+              value={productType}
+              inputValue={productTypeInput}
+              options={productsTypes && productsTypes}
+              openOnFocus={true}
+              onOpen={() => {
+                getProductsTypes();
+              }}
+              isOptionEqualToValue={(option, value) => option.Producto_Tipo === value.Producto_Tipo}
               onChange={(event, newValue) => {
-                setValue(newValue);
+                setProductSelected("");
+                setProductsList([]);
+                if (newValue === undefined || newValue === null)
+                  return setProductType("");
+                if (Object.keys(newValue).length === 0)
+                  return setProductType("");
+                setProductType(newValue);
               }}
-              inputValue={inputValue}
               onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
+                setProductTypeInput(newInputValue);
               }}
-              options={options}
+              getOptionLabel={(option) => option.Producto_Tipo || ""}
+              loading={loadingProductsTypes}
+              loadingText={
+                <Box sx={{ textAlign: "center" }}>
+                  <Spinner loading={loadingProductsTypes} />
+                </Box>
+              }
               sx={{ width: "100%" }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Producto"
+                  variant="filled"
+                  type="text"
+                  id="product_type"
+                  name="product_type"
+                />
+              )}
+            />
+            <Autocomplete
+              value={productSelected}
+              inputValue={productSelectedInput}
+              options={productsList && productsList}
+              openOnFocus={true}
+              onOpen={() => {
+                getProductsList(productType.Producto_Tipo);
+              }}
+              onChange={(event, newValue) => {
+                if (newValue === undefined || newValue === null)
+                  return setProductSelected("");
+                if (Object.keys(newValue).length === 0)
+                  return setProductSelected("");
+                setProductSelected(newValue);
+              }}
+              onInputChange={(event, newInputValue) => {
+                setProductSelectedInput(newInputValue);
+              }}
+              getOptionLabel={(option) => option.Producto_Nombre || ""} 
+              loading={loadingProductsList}
+              loadingText={
+                <Box sx={{ textAlign: "center" }}>
+                  <Spinner loading={loadingProductsList} />
+                </Box>
+              }
+              {...(productType
+                ? {
+                    disabled: false,
+                  }
+                : { disabled: true })}
+              sx={{ width: "100%" }}
+              renderOption={(props, option) => (
+                <li {...props}>
+                  {option.Producto_Nombre}
+                </li>
+              )}
               renderInput={(params) => (
                 <TextField
                   {...params}

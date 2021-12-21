@@ -138,10 +138,12 @@ export async function GetUsers() {
 }
 
 /* Opciones */
-export async function GetUbication(option) {
-  const ubication = await Api.get(`/ubication`, {
+export async function GetUbication(option, federal_entity, municipality) {
+  const ubication = await Api.get(`/options/ubication`, {
     params: {
       option,
+      federal_entity: federal_entity,
+      municipality: municipality
     },
   })
     .then((result) => {
@@ -151,4 +153,20 @@ export async function GetUbication(option) {
       console.log(`Error al consultar la opción: #${option}`);
     });
   return ubication;
+}
+
+export async function GetProducts(option, type_product) {
+  const products = await Api.get(`/options/products`, {
+    params: {
+      option,
+      type_product: type_product,
+    },
+  })
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al consultar la opción: #${option}`);
+    });
+  return products;
 }
