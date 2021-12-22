@@ -21,7 +21,6 @@ import {
   Chip,
   Tooltip,
   MenuItem,
-  Paper,
 } from "@mui/material";
 
 /* Material UI Icons */
@@ -37,14 +36,24 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
 });
 
+const CustomStack = (props) => {
+  return (
+    <Stack
+      {...props}
+      direction={{ xs: "column", sm: "row" }}
+      spacing={{ xs: 1, sm: 2, md: 2 }}
+      sx={{ padding: "1rem 0" }}
+    >
+      {props.children}
+    </Stack>
+  );
+};
+
 const options = ["harina", "res", "pan", "agua"];
 
 function Add() {
   const [open, setOpen] = useState(false);
   const [openFile, setOpenFile] = useState(false);
-
-  const [value, setValue] = useState("");
-  const [inputValue, setInputValue] = useState("");
 
   const [products, setProducts] = useState([]);
 
@@ -53,9 +62,9 @@ function Add() {
   const [productType, setProductType] = useState("");
   const [productTypeInput, setProductTypeInput] = useState("");
 
-  const [productsList, setProductsList] = useState([])
+  const [productsList, setProductsList] = useState([]);
   const [loadingProductsList, setLoadingProductsList] = useState(false);
-  const [productSelected, setProductSelected] = useState("");
+  const [productSelected, setProductSelected] = useState({});
   const [productSelectedInput, setProductSelectedInput] = useState("");
 
   const [federalEntities, setFederalEntities] = useState([]);
@@ -70,7 +79,23 @@ function Add() {
   const [parish, setParish] = useState("");
   const [loadingParishes, setLoadingParishes] = useState(false);
 
-  const [shippmentDetails, setShippmentDetails] = useState({});
+  const [contact_type, setContact_type] = useState("");
+
+  const [shippmentDetails, setShippmentDetails] = useState({
+    Persona_TipoId: "V",
+  });
+  
+  const [shippmentStatusList, setShippmentStatusList] = useState([
+    { letter: "E", name: "Eliminado" },
+    { letter: "P", name: "Pendiente de servicio transporte" },
+    { letter: "S", name: "Servicio de transporte activo" },
+    { letter: "T", name: "Producto entregado al transportista" },
+    { letter: "C", name: "Producto entregado al cliente" },
+    { letter: "F", name: "Transporte finalizado con exito" },
+    { letter: "X", name: "Problemas con el transporte" },
+  ]);
+
+  const [contactInfo, setContactInfo] = useState("");
 
   const getFederalEntities = () => {
     setLoadingFederalEntities(true);
@@ -133,14 +158,60 @@ function Add() {
   const handleAddProduct = (e) => {
     let value = document.getElementsByName("quantity")[0].value;
     let product = {
-      name: inputValue,
+      ...productSelected,
       quantity: value,
     };
-    setProducts([...products, product]);
+    let productsCheck = [...products];
+    let index = productsCheck.findIndex(
+      (p) => p.Producto_Id === product.Producto_Id
+    );
+    if (index === -1) {
+      productsCheck.push(product);
+    } else {
+      productsCheck[index].quantity = value;
+    }
+    setProducts(productsCheck);
+    setShippmentDetails({
+      ...shippmentDetails,
+      SE_PesoTotal: productsCheck.reduce(
+        (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
+        0
+      ),
+      SE_ValorTotal: productsCheck.reduce(
+        (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
+        0
+      ),
+    });
+    setProductSelected({});
   };
 
-  const handleDeleteProduct = () => {
+  const handleDeleteAllProducts = () => {
     setProducts([]);
+    setShippmentDetails({
+      ...shippmentDetails,
+      SE_PesoTotal: 0,
+      SE_ValorTotal: 0,
+    });
+  };
+
+  const handleDeleteProduct = (product) => {
+    let productsCheck = [...products];
+    let index = productsCheck.findIndex(
+      (p) => p.Producto_Id === product.Producto_Id
+    );
+    productsCheck.splice(index, 1);
+    setProducts(productsCheck);
+    setShippmentDetails({
+      ...shippmentDetails,
+      SE_PesoTotal: productsCheck.reduce(
+        (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
+        0
+      ),
+      SE_ValorTotal: productsCheck.reduce(
+        (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
+        0
+      ),
+    });
   };
 
   const handleFederalEntityChange = (e) => {
@@ -161,6 +232,20 @@ function Add() {
       [e.target.name]: e.target.value,
     });
   };
+
+  const handleShippmentChange = (e) => {
+    setShippmentDetails({
+      ...shippmentDetails,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleContactTypeChange = (e) => {
+    setContact_type(e.target.value);
+  }
+  const handleContactInfoChange = (e) => {
+    setContactInfo(e.target.value);
+  }
 
   return (
     <>
@@ -202,11 +287,106 @@ function Add() {
             </Tooltip>
           </DialogContentText>
           <Grid>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 1, sm: 2, md: 2 }}
-              sx={{ padding: "1rem 0" }}
-            >
+            <CustomStack>
+              <TextField
+                id="Persona_TipoId"
+                name="Persona_TipoId"
+                select
+                label="Tipo"
+                value={
+                  shippmentDetails.Persona_TipoId &&
+                  shippmentDetails.Persona_TipoId
+                }
+                onChange={handleShippmentChange}
+                variant="filled"
+              >
+                {["V", "E", "J"].map((tipo) => (
+                  <MenuItem key={tipo} value={tipo}>
+                    {tipo}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                label="Cédula o RIF de la persona"
+                variant="filled"
+                type="number"
+                id="Persona_Id"
+                name="Persona_Id"
+                onChange={handleShippmentChange}
+                value={
+                  shippmentDetails.Persona_Id && shippmentDetails.Persona_Id
+                }
+              />
+            </CustomStack>
+            <CustomStack>
+              <TextField
+                id="Persona_Nombre"
+                name="Persona_Nombre"
+                label="Nombres"
+                value={
+                  shippmentDetails.Persona_Nombre &&
+                  shippmentDetails.Persona_Nombre
+                }
+                onChange={handleShippmentChange}
+                variant="filled"
+              />
+              <TextField
+                id="Persona_Apellido"
+                name="Persona_Apellido"
+                label="Apellidos"
+                value={
+                  shippmentDetails.Persona_Apellido &&
+                  shippmentDetails.Persona_Apellido
+                }
+                onChange={handleShippmentChange}
+                variant="filled"
+              />
+            </CustomStack>
+            <CustomStack>
+              <TextField
+                label="Id del Envío"
+                variant="filled"
+                type="number"
+                id="SE_Id"
+                name="SE_Id"
+                fullWidth
+                onChange={handleShippmentChange}
+                value={shippmentDetails.SE_Id && shippmentDetails.SE_Id}
+              />
+            </CustomStack>
+            <CustomStack>
+              <TextField
+                id="SE_Fecha"
+                name="SE_Fecha"
+                label="Fecha del Pedido"
+                type="date"
+                variant="filled"
+                color="primary"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={handleShippmentChange}
+                value={shippmentDetails.SE_Fecha && shippmentDetails.SE_Fecha}
+                fullWidth
+              />
+              <TextField
+                id="SE_Status"
+                name="SE_Status"
+                select
+                label="Estado del Envío"
+                value={shippmentDetails.SE_Status || ""}
+                onChange={handleShippmentChange}
+                variant="filled"
+                fullWidth
+              >
+                {shippmentStatusList.map((status) => (
+                  <MenuItem key={status.letter} value={status.letter}>
+                    {status.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </CustomStack>
+            <CustomStack>
               <TextField
                 id="federal_entity"
                 select
@@ -305,27 +485,131 @@ function Add() {
                   <MenuItem value={0}>Hubo un error</MenuItem>
                 )}
               </TextField>
-            </Stack>
+            </CustomStack>
+            <CustomStack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={{ xs: 1, sm: 2, md: 2 }}
+              sx={{ padding: "1rem 0" }}
+            >
+              <TextField
+                label="Peso Total"
+                InputProps={{
+                  readOnly: true,
+                }}
+                variant="filled"
+                value={shippmentDetails.SE_PesoTotal || ""}
+                InputLabelProps={{
+                  shrink: shippmentDetails.SE_PesoTotal ? true : false,
+                }}
+                {...(true && {
+                  disabled: true,
+                })}
+              ></TextField>
+              <TextField
+                label="Valor Total"
+                InputProps={{
+                  readOnly: true,
+                }}
+                variant="filled"
+                value={shippmentDetails.SE_ValorTotal || ""}
+                InputLabelProps={{
+                  shrink: shippmentDetails.SE_ValorTotal ? true : false,
+                }}
+                {...(true && {
+                  disabled: true,
+                })}
+              ></TextField>
+            </CustomStack>
+
+            {/* Contact Information */}
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={{ xs: 1, sm: 2, md: 2 }}
               sx={{ padding: "1rem 0" }}
             >
               <TextField
-                label="Valor"
-                InputProps={{
-                  readOnly: true,
-                }}
+                id="contact_type"
+                name="contact_type"
+                select
+                label="Tipo de contacto"
+                value={
+                 contact_type &&
+                 contact_type
+                }
+                onChange={handleContactTypeChange}
                 variant="filled"
-              ></TextField>
+              >
+                {[
+                  {letter: "C", name: "Correo"},
+                  {letter: "T", name: "Teléfono"},
+                ].map((tipo) => (
+                  <MenuItem key={tipo.letter} value={tipo.letter}>
+                    {tipo.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              {contact_type === "C" && (
               <TextField
-                label="Precio"
-                InputProps={{
-                  readOnly: true,
-                }}
+                label="Correo Electrónico"
                 variant="filled"
-              ></TextField>
+                type="email"
+                id="contactInfo"
+                name="contactInfo"
+                onChange={handleContactInfoChange}
+                {...(contactInfo && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(contactInfo) && {
+                  error: true,
+                  helperText: "Correo electrónico inválido",
+                })}
+              />
+              )}
+              <IconButton>
+                <AddCircleTwoToneIcon
+                  size="large"
+                  onClick={handleAddProduct}
+                  color="primary"
+                />
+              </IconButton>
             </Stack>
+            <Box
+              sx={{
+                gap: "1rem",
+                display: "flex",
+                justifyContent: "space-between",
+                margin: ".7rem",
+                alignItems: "center",
+              }}
+            >
+              <Box
+                sx={{
+                  gap: "1rem",
+                  display: "flex",
+                  margin: ".7rem",
+                }}
+              >
+                <Typography variant="subtitle2" component="h3">
+                  Productos agregados al Envio
+                </Typography>
+                <Badge badgeContent={products.length} color="primary" />
+              </Box>
+              <Chip label="Vaciar Envio" onClick={handleDeleteAllProducts} />
+            </Box>
+            <Grid
+              sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
+              container
+            >
+              {products.map((product, index) => {
+                return (
+                  <Tooltip title={product.quantity} arrow>
+                    <Chip
+                      label={`${product.Producto_Nombre}`}
+                      deleteIcon={<DeleteTwoToneIcon />}
+                      variant="outlined"
+                      onDelete={handleDeleteProduct}
+                    />
+                  </Tooltip>
+                );
+              })}
+            </Grid>
           </Grid>
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -340,7 +624,9 @@ function Add() {
               onOpen={() => {
                 getProductsTypes();
               }}
-              isOptionEqualToValue={(option, value) => option.Producto_Tipo === value.Producto_Tipo}
+              isOptionEqualToValue={(option, value) =>
+                option.Producto_Tipo === value.Producto_Tipo
+              }
               onChange={(event, newValue) => {
                 setProductSelected("");
                 setProductsList([]);
@@ -364,7 +650,7 @@ function Add() {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Producto"
+                  label="Tipo de Producto"
                   variant="filled"
                   type="text"
                   id="product_type"
@@ -390,7 +676,7 @@ function Add() {
               onInputChange={(event, newInputValue) => {
                 setProductSelectedInput(newInputValue);
               }}
-              getOptionLabel={(option) => option.Producto_Nombre || ""} 
+              getOptionLabel={(option) => option.Producto_Nombre || ""}
               loading={loadingProductsList}
               loadingText={
                 <Box sx={{ textAlign: "center" }}>
@@ -404,9 +690,7 @@ function Add() {
                 : { disabled: true })}
               sx={{ width: "100%" }}
               renderOption={(props, option) => (
-                <li {...props}>
-                  {option.Producto_Nombre}
-                </li>
+                <li {...props}>{option.Producto_Nombre}</li>
               )}
               renderInput={(params) => (
                 <TextField
@@ -455,24 +739,20 @@ function Add() {
               </Typography>
               <Badge badgeContent={products.length} color="primary" />
             </Box>
-            <Chip label="Vaciar Envio" onClick={handleDeleteProduct} />
+            <Chip label="Vaciar Envio" onClick={handleDeleteAllProducts} />
           </Box>
           <Grid
             sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
             container
           >
             {products.map((product, index) => {
-              console.log(product);
               return (
                 <Tooltip title={product.quantity} arrow>
                   <Chip
-                    label={`${product.name}`}
+                    label={`${product.Producto_Nombre}`}
                     deleteIcon={<DeleteTwoToneIcon />}
                     variant="outlined"
-                    onDelete={() => {
-                      products.splice(index, 1);
-                      setProducts([...products]);
-                    }}
+                    onDelete={handleDeleteProduct}
                   />
                 </Tooltip>
               );
