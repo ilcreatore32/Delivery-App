@@ -1,7 +1,7 @@
 import multer from "multer";
 import path from "path"
 
-const excelFilter = (req, file, cb) => {
+/* const excelFilter = (req, file, cb) => {
   if (
     file.mimetype.includes("excel") ||
     file.mimetype.includes("spreadsheetml")
@@ -26,4 +26,6 @@ const storageExcel = multer.diskStorage({
 //         cb(null, uuid() + path.extname(file.originalname));
 //     }
 // });
-export const uploadExcel = multer({ storage: storageExcel, fileFilter: excelFilter });
+export const uploadExcel = multer({ storage: storageExcel, fileFilter: excelFilter }); */
+export const paymentImage = multer().single("PS_ArchivoReferencia");
+export const personImage = multer().single("Persona_Archivo")

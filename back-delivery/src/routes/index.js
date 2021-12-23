@@ -10,16 +10,17 @@ import register from "./registerRoute";
 import user from "./usersRouter";
 /* Importing middleware */
 import { authMiddleware } from "../middlewares/auth";
+import { suscriptionMiddleware } from "../middlewares/suscription";
 
 const router = Router();
 
-router.use("/shippment", authMiddleware, shippment);
-router.use("/service", authMiddleware, service);
-router.use("/vehicle", authMiddleware, vehicle);
-router.use("/payment", authMiddleware, payment);
-router.use("/options", authMiddleware, options);
+router.use("/shippment", authMiddleware, suscriptionMiddleware, shippment);
+router.use("/service", authMiddleware, suscriptionMiddleware, service);
+router.use("/vehicle", authMiddleware, suscriptionMiddleware, vehicle);
+router.use("/payment", authMiddleware, suscriptionMiddleware, payment);
+router.use("/options", authMiddleware, suscriptionMiddleware, options);
 router.use("/auth", auth);
 router.use("/register", authMiddleware, register);
-router.use("/user", authMiddleware, user);
+router.use("/user", authMiddleware,suscriptionMiddleware, user);
 
 export default router;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 /* API */
-import { GetOptions } from "../../../api/Get";
+import { GetUbication } from "../../../api/Get";
 
 /* Font-Awesome */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -31,8 +31,8 @@ function Envios({ asumidos, admin }) {
   };
 
   const fetchOptions = async () => {
-    const municipalities = await GetOptions("municipality");
-    const federals = await GetOptions("federal_entity");
+    const municipalities = await GetUbication("municipality");
+    const federals = await GetUbication("federal_entity");
     await setOptions([municipalities]);
     await console.log(municipalities, federals);
   };
@@ -236,7 +236,7 @@ function Envios({ asumidos, admin }) {
                   variant="filled"
                   color="secondary"
                 >
-                  {options.map(({ id, value, label }) => (
+                  {options.id && options.map(({ id, value, label }) => (
                     <MenuItem key={id} value={value}>
                       {label}
                     </MenuItem>
