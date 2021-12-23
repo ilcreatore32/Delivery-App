@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
-/* React-Router */
-import { Link } from "react-router-dom";
+/* Context */
+import { filterMenuContext } from "../../context/filterMenuContext";
 
 /* Material UI */
-import { Typography, Grid, Paper, IconButton } from "@mui/material";
-
-/* Material UI Icons */
-import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
+import { Typography, Grid, Paper } from "@mui/material";
 
 /* Api */
 import { GetServices } from "../../api/Get";
@@ -16,6 +13,7 @@ import { GetServices } from "../../api/Get";
 import { ServiciosColumns } from "../../models/DataTableColums.tsx";
 
 /* Components */
+import Add from "./Add/Add";
 import AppTabs from "../../components/AppTabs/AppTabs";
 import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
@@ -24,6 +22,7 @@ import LeftSideComponent from "../../components/LeftSideComponent/LeftSideCompon
 function Servicios({ admin }) {
   const [services, setServices] = useState(null);
   const [loading, setLoading] = useState(false);
+  const FilterMenuContext = useContext(filterMenuContext);
 
   const fetchService = async () => {
     await setLoading(true);
@@ -44,15 +43,18 @@ function Servicios({ admin }) {
       </Typography>
       <div className="dashboard">
         <Grid container spacing={3}>
-          <Grid item xs={6} md={4}>
+          <Grid
+            item
+            xs={FilterMenuContext.filterMenu ? 6 : 0}
+            md={FilterMenuContext.filterMenu ? 4 : 0}
+          >
             <LeftSideComponent servicios={true} />
           </Grid>
-          <Grid item xs={6} md={8}>
-            <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
-              <IconButton component={Link} to="/Servicios/Añadir">
-                <AddCircleTwoToneIcon size="large" />
-              </IconButton>
-            </Paper>
+          <Grid
+            item
+            xs={FilterMenuContext.filterMenu ? 6 : 12}
+            md={FilterMenuContext.filterMenu ? 8 : 12}
+          >
             {loading ? (
               <Paper
                 variant="outlined"
@@ -69,7 +71,9 @@ function Servicios({ admin }) {
                 rowId="ST_Id"
                 Columns={ServiciosColumns}
                 Data={services}
-              />
+              >
+                <Add />
+              </RightSideComponent>
             )}
           </Grid>
         </Grid>

@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+
+/* Context */
+import { filterMenuContext } from "../../../context/filterMenuContext";
 
 /* API */
 import { GetShippments } from "../../../api/Get";
@@ -19,6 +22,7 @@ import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideCom
 function EnviosTransportista() {
   const [shippments, setShippments] = useState(null);
   const [loading, setLoading] = useState(false);
+  const FilterMenuContext = useContext(filterMenuContext);
 
   const fetchShippments = async () => {
     await setLoading(true);
@@ -37,33 +41,43 @@ function EnviosTransportista() {
       <Typography align="center" variant="h4" component="h2">
         Descubrir Envios
       </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={6} md={4}>
-          <LeftSideComponent envios={true} />
+      <div className="dashboard">
+        <Grid container spacing={3}>
+          <Grid
+            item
+            xs={FilterMenuContext.filterMenu ? 6 : 0}
+            md={FilterMenuContext.filterMenu ? 4 : 0}
+          >
+            <LeftSideComponent envios={true} />
+          </Grid>
+          <Grid
+            item
+            xs={FilterMenuContext.filterMenu ? 6 : 12}
+            md={FilterMenuContext.filterMenu ? 8 : 12}
+          >
+            {loading ? (
+              <Paper
+                variant="outlined"
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  margin: ".3rem auto",
+                }}
+              >
+                <Spinner loading={loading} />
+              </Paper>
+            ) : (
+              <RightSideComponent
+                rowId="SE_Id"
+                Columns={EnviosColumns}
+                Data={shippments}
+              >
+                <Add />
+              </RightSideComponent>
+            )}
+          </Grid>
         </Grid>
-        <Grid item xs={6} md={8}>
-        {loading ? (
-            <Paper
-              variant="outlined"
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                margin: ".3rem auto",
-              }}
-            >
-              <Spinner loading={loading} />
-            </Paper>
-          ) : (
-            <RightSideComponent
-              rowId="SE_Id"
-              Columns={EnviosColumns}
-              Data={shippments}
-            >
-              <Add />
-            </RightSideComponent>
-          )}
-        </Grid>
-      </Grid>
+      </div>
     </>
   );
 }

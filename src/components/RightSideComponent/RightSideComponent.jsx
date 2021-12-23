@@ -35,7 +35,7 @@ function RightSideComponent({ rowId, Columns, Data, children }) {
 
   return (
     <>
-      <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
+      <Paper variant="outlined" sx={{ display: "flex", justifyContent: "space-between",margin: ".3rem auto" }}>
         <IconButton
           onClick={() =>
             FilterMenuContext.setFilterMenu(!FilterMenuContext.filterMenu)

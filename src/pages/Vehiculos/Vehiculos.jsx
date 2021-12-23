@@ -24,12 +24,14 @@ import {
 /* Material UI Icons */
 import ViewListIcon from "@mui/icons-material/ViewList";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
-import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
+import ManageSearch from "@mui/icons-material/ManageSearch";
+import CloseIcon from "@mui/icons-material/Close";
 
 /* DataTable Columns */
 import { VehiculosColumns } from "../../models/DataTableColums.tsx";
 
 /* Components */
+import Add from "./Add/Add";
 import AppTabs from "../../components/AppTabs/AppTabs";
 import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
@@ -41,8 +43,7 @@ function Vehiculos({ admin }) {
   const [vehicles, setVehicles] = useState(null);
   const [loading, setLoading] = useState(false);
   const FilterMenuContext = useContext(filterMenuContext);
-
-  let [view, setView] = useState("true");
+  const [view, setView] = useState("true");
 
   const handleChange = (e) => {
     if (e.currentTarget.value === "true") {
@@ -70,42 +71,18 @@ function Vehiculos({ admin }) {
         Sus Vehiculos
       </Typography>
       <div className="dashboard">
-        <Box className="flex-container" container>
-          {FilterMenuContext.filterMenu ? (
-            <Box className="flex-item">
-              <LeftSideComponent vehiculos={true} />
-            </Box>
-          ) : null}
-          <Box className="flex-item">
-            <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
-              {admin ? (
-                <>
-                  <IconButton>
-                    <AddCircleTwoToneIcon size="large" />
-                  </IconButton>
-                </>
-              ) : null}
-              <ToggleButtonGroup
-                value={view}
-                color="secondary"
-                exclusive
-                onChange={handleChange}
-                sx={{
-                  display: "flex",
-                  gap: 0.5,
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  margin: ".3rem",
-                }}
-              >
-                <ToggleButton value={true} aria-label="Table">
-                  <ViewListIcon />
-                </ToggleButton>
-                <ToggleButton value={false} aria-label="Cards">
-                  <ViewModuleIcon />
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </Paper>
+        <Grid container spacing={3}>
+          <Grid
+            itemxs={FilterMenuContext.filterMenu ? 6 : 0}
+            md={FilterMenuContext.filterMenu ? 4 : 0}
+          >
+            <LeftSideComponent vehiculos={true} />
+          </Grid>
+          <Grid
+            item
+            xs={FilterMenuContext.filterMenu ? 6 : 12}
+            md={FilterMenuContext.filterMenu ? 8 : 12}
+          >
             {loading ? (
               <Paper
                 variant="outlined"
@@ -122,15 +99,90 @@ function Vehiculos({ admin }) {
                 rowId="Vehiculo_Id"
                 Columns={VehiculosColumns}
                 Data={vehicles}
-              />
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                  }}
+                >
+                  <Add />
+                  <ToggleButtonGroup
+                    value={view}
+                    color="secondary"
+                    exclusive
+                    onChange={handleChange}
+                    sx={{
+                      display: "flex",
+                      gap: 0.5,
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      margin: ".3rem",
+                    }}
+                  >
+                    <ToggleButton value={true} aria-label="Table">
+                      <ViewListIcon />
+                    </ToggleButton>
+                    <ToggleButton value={false} aria-label="Cards">
+                      <ViewModuleIcon />
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Box>
+              </RightSideComponent>
             ) : (
               <>
-                <Box
+                <Paper
+                  variant="outlined"
+                  sx={{
+                    display: "flex",
+                    marginBottom: ".3rem",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <IconButton
+                    onClick={() =>
+                      FilterMenuContext.setFilterMenu(
+                        !FilterMenuContext.filterMenu
+                      )
+                    }
+                  >
+                    {FilterMenuContext.filterMenu ? (
+                      <CloseIcon color="primary" />
+                    ) : (
+                      <ManageSearch color="primary" />
+                    )}
+                  </IconButton>
+                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Add />
+                    <ToggleButtonGroup
+                      value={view}
+                      color="secondary"
+                      exclusive
+                      onChange={handleChange}
+                      sx={{
+                        display: "flex",
+                        gap: 0.5,
+                        alignItems: "center",
+                        justifyContent: "flex-end",
+                        margin: ".3rem",
+                      }}
+                    >
+                      <ToggleButton value={true} aria-label="Table">
+                        <ViewListIcon />
+                      </ToggleButton>
+                      <ToggleButton value={false} aria-label="Cards">
+                        <ViewModuleIcon />
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  </Box>
+                </Paper>
+                <Paper
+                  variant="outlined"
                   sx={{
                     display: "grid",
                     gap: 2,
                     gridTemplateColumns: "repeat(4, 1fr)",
                     maxWidth: "fit-contend",
+                    padding: ".5rem",
                   }}
                 >
                   {vehicles.map(
@@ -173,11 +225,11 @@ function Vehiculos({ admin }) {
                       );
                     }
                   )}
-                </Box>
+                </Paper>
               </>
             )}
-          </Box>
-        </Box>
+          </Grid>
+        </Grid>
       </div>
     </>
   );

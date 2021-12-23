@@ -47,7 +47,7 @@ function Add() {
         onClose={handleClose}
         component="form"
       >
-        <DialogTitle>{"Creación de Servicio"}</DialogTitle>
+        <DialogTitle>{"Creación de Vehiculo"}</DialogTitle>
         <DialogContent>
           <DialogContentText
             sx={{
@@ -59,7 +59,7 @@ function Add() {
             }}
           >
             <Typography variant="subtitle1" component="h2" sx={{ flexGrow: 1 }}>
-              Por favor, ingrese los datos del Servicio.
+              Por favor, ingrese los datos del Vehiculo.
             </Typography>
           </DialogContentText>
           <Grid>

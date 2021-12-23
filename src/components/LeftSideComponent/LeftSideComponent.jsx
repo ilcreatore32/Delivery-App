@@ -29,7 +29,7 @@ function LeftSideComponent({
   return (
     <>
       <Collapse in={FilterMenuContext.filterMenu}>
-        <Paper elevation={8}>
+        <Paper variant="outlined">
           {envios ? (
             <Envios asumidos={asumidos} admin={admin} />
           ) : servicios ? (
