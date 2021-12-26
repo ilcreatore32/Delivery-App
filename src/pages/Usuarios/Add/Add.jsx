@@ -14,14 +14,30 @@ import {
   TextField,
   Stack,
   Grid,
+  Input,
+  MenuItem,
 } from "@mui/material";
 
 /* Material UI Icons */
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
+import UploadFileTwoToneIcon from "@mui/icons-material/UploadFileTwoTone";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
 });
+
+const CustomStack = (props) => {
+  return (
+    <Stack
+      {...props}
+      direction={{ xs: "column", sm: "row" }}
+      spacing={{ xs: 1, sm: 2, md: 2 }}
+      sx={{ padding: "1rem 0" }}
+    >
+      {props.children}
+    </Stack>
+  );
+};
 
 function Add() {
   const [open, setOpen] = useState(false);
@@ -43,7 +59,8 @@ function Add() {
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        maxWidth="sm"
+        maxWidth="md"
+        fullWidth
         onClose={handleClose}
         component="form"
       >
@@ -63,19 +80,72 @@ function Add() {
             </Typography>
           </DialogContentText>
           <Grid>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 1, sm: 2, md: 2 }}
-              sx={{ padding: "1rem 0" }}
-            >
+            <CustomStack>
+              <TextField label="Cédula" variant="filled" fullWidth />
+              <TextField label="Nombre" variant="filled" fullWidth />
+              <TextField label="Apellido" variant="filled" fullWidth />
+            </CustomStack>
+            <CustomStack>
               <TextField
-                label="Monto"
-                type="number"
+                label="Correo Electronico"
                 variant="filled"
-              ></TextField>
-              <TextField label="Fecha" type="date" variant="filled"></TextField>
-              <TextField label="Metodo de Pago" variant="filled"></TextField>
-            </Stack>
+                type="email"
+                fullWidth
+                placeholder="something@example.com"
+              />
+              <TextField
+                label="Contraseña"
+                variant="filled"
+                type="password"
+                fullWidth
+              />
+              <TextField
+                label="Confirmar Contraseña"
+                variant="filled"
+                type="password"
+                fullWidth
+              />
+            </CustomStack>
+            <CustomStack>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
+              >
+                <Typography variant="subtitle2" component="span">
+                  Comprobante Documento de Identidad
+                </Typography>
+                <label htmlFor="file">
+                  <Input
+                    accept="image/*"
+                    id="file"
+                    type="file"
+                    sx={{ display: "none" }}
+                  />
+                  <IconButton aria-label="Subir Archivo" component="span">
+                    <UploadFileTwoToneIcon size="large" />
+                  </IconButton>
+                </label>
+              </Box>
+              <TextField
+                id=""
+                name=""
+                select
+                label="Tipo de Usuario"
+                variant="filled"
+                fullWidth
+              >
+                {["Cliente", "Transportista", "Administrador"].map((tipo) => (
+                  <MenuItem key={tipo} value={tipo}>
+                    {tipo}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </CustomStack>
           </Grid>
         </DialogContent>
         <Box

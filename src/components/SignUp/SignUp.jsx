@@ -183,7 +183,7 @@ function SignUp() {
                         <TextField
                           label="Confirmar Contraseña"
                           variant="filled"
-                          type="email"
+                          type="password"
                           fullWidth
                         />
                       </TableCell>

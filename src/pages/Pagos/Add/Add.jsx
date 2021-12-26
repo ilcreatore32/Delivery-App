@@ -14,6 +14,7 @@ import {
   TextField,
   Stack,
   Grid,
+  MenuItem,
 } from "@mui/material";
 
 /* Material UI Icons */
@@ -22,6 +23,19 @@ import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
 });
+
+const CustomStack = (props) => {
+  return (
+    <Stack
+      {...props}
+      direction={{ xs: "column", sm: "row" }}
+      spacing={{ xs: 1, sm: 2, md: 2 }}
+      sx={{ padding: "1rem 0" }}
+    >
+      {props.children}
+    </Stack>
+  );
+};
 
 function Add() {
   const [open, setOpen] = useState(false);
@@ -43,7 +57,8 @@ function Add() {
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        maxWidth="sm"
+        maxWidth="md"
+        fullWidth
         onClose={handleClose}
         component="form"
       >
@@ -63,19 +78,45 @@ function Add() {
             </Typography>
           </DialogContentText>
           <Grid>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 1, sm: 2, md: 2 }}
-              sx={{ padding: "1rem 0" }}
-            >
+            <CustomStack>
               <TextField
-                label="Monto"
-                type="number"
+                id=""
+                name=""
+                select
+                label="Metodo de Pago"
                 variant="filled"
-              ></TextField>
-              <TextField label="Fecha" type="date" variant="filled"></TextField>
-              <TextField label="Metodo de Pago" variant="filled"></TextField>
-            </Stack>
+                fullWidth
+              >
+                {["Transferencia", "Efectivo", "Pago Movil"].map((tipo) => (
+                  <MenuItem key={tipo} value={tipo}>
+                    {tipo}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                id=""
+                name=""
+                type="date"
+                label="Fecha del Pago"
+                variant="filled"
+                fullWidth
+              />
+              <TextField
+                id=""
+                name=""
+                type="number"
+                label="Monto"
+                variant="filled"
+                fullWidth
+              />
+              <TextField
+                id=""
+                name=""
+                label="Referencia"
+                variant="filled"
+                fullWidth
+              />
+            </CustomStack>
           </Grid>
         </DialogContent>
         <Box

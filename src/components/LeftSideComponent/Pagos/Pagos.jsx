@@ -120,7 +120,7 @@ function Pagos() {
           <Divider variant="middle" />
           <Paper variant="outlined" sx={{ padding: "1rem" }}>
             <Typography variant="h6" component="span">
-              Refrencia
+              Referencia
             </Typography>
             <Box
               sx={{

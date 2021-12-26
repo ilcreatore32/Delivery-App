@@ -14,6 +14,7 @@ import {
   TextField,
   Stack,
   Grid,
+  MenuItem,
 } from "@mui/material";
 
 /* Material UI Icons */
@@ -22,6 +23,19 @@ import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
 });
+
+const CustomStack = (props) => {
+  return (
+    <Stack
+      {...props}
+      direction={{ xs: "column", sm: "row" }}
+      spacing={{ xs: 1, sm: 2, md: 2 }}
+      sx={{ padding: "1rem 0" }}
+    >
+      {props.children}
+    </Stack>
+  );
+};
 
 function Add() {
   const [open, setOpen] = useState(false);
@@ -43,7 +57,8 @@ function Add() {
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        maxWidth="sm"
+        maxWidth="md"
+        fullWidth
         onClose={handleClose}
         component="form"
       >
@@ -63,19 +78,103 @@ function Add() {
             </Typography>
           </DialogContentText>
           <Grid>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 1, sm: 2, md: 2 }}
-              sx={{ padding: "1rem 0" }}
-            >
+            <CustomStack>
               <TextField
-                label="Monto"
-                type="number"
+                id=""
+                name=""
+                select
+                label="Tipo de Vehiculo"
                 variant="filled"
-              ></TextField>
-              <TextField label="Fecha" type="date" variant="filled"></TextField>
-              <TextField label="Metodo de Pago" variant="filled"></TextField>
-            </Stack>
+                fullWidth
+              >
+                {["Carro", "Camion", "Moto"].map((tipo) => (
+                  <MenuItem key={tipo} value={tipo}>
+                    {tipo}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                id=""
+                name=""
+                select
+                label="Marca"
+                variant="filled"
+                fullWidth
+              >
+                {["Ford", "Audi", "Toyota"].map((tipo) => (
+                  <MenuItem key={tipo} value={tipo}>
+                    {tipo}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                id=""
+                name=""
+                select
+                label="Modelo"
+                variant="filled"
+                fullWidth
+              >
+                {["Fiesta", "Fost", "Highlander"].map((tipo) => (
+                  <MenuItem key={tipo} value={tipo}>
+                    {tipo}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </CustomStack>
+            <CustomStack>
+              <TextField
+                id=""
+                name=""
+                select
+                label="Año del Vehiculo"
+                variant="filled"
+                fullWidth
+              >
+                {["1899", "2000", "2021"].map((tipo) => (
+                  <MenuItem key={tipo} value={tipo}>
+                    {tipo}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField id="" label="Matricula" variant="filled" />
+            </CustomStack>
+            <CustomStack>
+              <TextField
+                id=""
+                name=""
+                type="number"
+                label="Minimo de Pasajeros"
+                variant="filled"
+                fullWidth
+              />
+              <TextField
+                id=""
+                name=""
+                type="number"
+                label="Maximo de Pasajeros"
+                variant="filled"
+                fullWidth
+              />
+            </CustomStack>
+            <CustomStack>
+              <TextField
+                id=""
+                name=""
+                type="number"
+                label="Minimo de Carga"
+                variant="filled"
+                fullWidth
+              />
+              <TextField
+                id=""
+                name=""
+                type="number"
+                label="Maximo de Carga"
+                variant="filled"
+                fullWidth
+              />
+            </CustomStack>
           </Grid>
         </DialogContent>
         <Box
