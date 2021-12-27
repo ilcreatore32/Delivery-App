@@ -99,7 +99,7 @@ function Vehiculos({ admin }) {
               <TextField
                 id=""
                 select
-                label="Estado del Envio"
+                label="Estado del Envío"
                 value={MinYear}
                 onChange={handleMinYearChange}
                 variant="filled"
@@ -114,7 +114,7 @@ function Vehiculos({ admin }) {
               <TextField
                 id=""
                 select
-                label="Estado del Envio"
+                label="Estado del Envío"
                 value={MaxYear}
                 onChange={handleMaxYearChange}
                 variant="filled"

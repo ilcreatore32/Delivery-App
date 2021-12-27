@@ -39,7 +39,7 @@ function EnviosTransportista() {
     <>
       <AppTabs />
       <Typography align="center" variant="h4" component="h2">
-        Descubrir Envios
+        Descubrir Envíos
       </Typography>
       <div className="dashboard">
         <Grid container spacing={3}>

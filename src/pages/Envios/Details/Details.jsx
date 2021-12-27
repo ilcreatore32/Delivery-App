@@ -129,7 +129,7 @@ function Details() {
           >
             <Item xs={6} sm={8} md={8}>
               <Typography align="center" variant="h4" component="h1">
-                Detalles del Envio
+                Detalles del Envío
               </Typography>
               <TableContainer sx={{ margin: "2rem 0" }}>
                 <Table>
@@ -426,7 +426,7 @@ export default Details;
                     }}
                   >
                     <Typography variant="subtitle1" component="h4">
-                      Estado del Envio:
+                      Estado del Envío:
                     </Typography>
                     <Typography variant="body2" component="p">
                       Esperando a que el transportista reciba los productos

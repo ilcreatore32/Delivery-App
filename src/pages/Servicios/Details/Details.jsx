@@ -140,7 +140,7 @@ function Details() {
           }}
         >
           <Typography align="center" variant="h6" component="h3">
-            Areas de Operaciones
+            Áreas de Operaciones
           </Typography>
           <TableContainer component={Paper} variant="outlined">
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -189,7 +189,7 @@ export default Details;
                 }}
               >
                 <Typography align="center" variant="h6" component="h3">
-                  Envios Asumidos
+                  Envíos Asumidos
                 </Typography>
                 <TableContainer component={Paper} variant="outlined">
                   <Table sx={{ minWidth: 650 }} aria-label="simple table">

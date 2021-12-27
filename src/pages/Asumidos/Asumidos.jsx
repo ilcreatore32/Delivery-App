@@ -38,7 +38,7 @@ function Asumidos() {
     <>
       <AppTabs />
       <Typography align="center" variant="h4" component="h2">
-        Envios Asumidos
+        Envíos Asumidos
       </Typography>
       <div className="dashboard">
         <Grid container spacing={3}>

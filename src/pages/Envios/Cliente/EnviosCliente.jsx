@@ -35,7 +35,7 @@ function EnviosCliente(Shippments) {
     <>
       <AppTabs />
       <Typography align="center" variant="h4" component="h2">
-        Envios
+        Envíos
       </Typography>
       <div className="dashboard">
         <Grid container spacing={3}>

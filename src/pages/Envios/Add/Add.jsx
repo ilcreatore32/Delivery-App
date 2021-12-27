@@ -22,6 +22,7 @@ import {
   Tooltip,
   MenuItem,
 } from "@mui/material";
+import InputMask from "react-input-mask";
 
 /* Material UI Icons */
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
@@ -31,6 +32,7 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 /* Components */
 import Spinner from "../../../components/Spinner/Spinner";
 import { GetProducts, GetUbication } from "../../../api/Get";
+import { areaCodes } from "../../../areaCodes";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -48,8 +50,37 @@ const CustomStack = (props) => {
     </Stack>
   );
 };
-
-const options = ["harina", "res", "pan", "agua"];
+const TextMaskCustom = (props) => {
+  const { inputRef, ...other } = props;
+  const firstLetter = /^(424|212)$/;
+  const letter = /(?!.*[DFIOQU])[A-Z]/i;
+  const digit = /[0-9]/;
+  const mask = ["(", , digit, letter, " ", digit, letter, digit];
+  return (
+    <InputMask
+      {...other}
+      ref={inputRef}
+      mask={[
+        "(",
+        /\d/,
+        /\d/,
+        /\d/,
+        ")",
+        " ",
+        /\d/,
+        /\d/,
+        /\d/,
+        "-",
+        /\d/,
+        /\d/,
+        /\d/,
+        /\d/,
+      ]}
+      maskChar={null}
+      placeholderChar={"\u2000"}
+    />
+  );
+};
 
 function Add() {
   const [open, setOpen] = useState(false);
@@ -80,11 +111,13 @@ function Add() {
   const [loadingParishes, setLoadingParishes] = useState(false);
 
   const [contact_type, setContact_type] = useState("");
+  const [contactInfo, setContactInfo] = useState("");
+  const [contactList, setContactList] = useState([]);
 
   const [shippmentDetails, setShippmentDetails] = useState({
     Persona_TipoId: "V",
   });
-  
+
   const [shippmentStatusList, setShippmentStatusList] = useState([
     { letter: "E", name: "Eliminado" },
     { letter: "P", name: "Pendiente de servicio transporte" },
@@ -94,8 +127,6 @@ function Add() {
     { letter: "F", name: "Transporte finalizado con exito" },
     { letter: "X", name: "Problemas con el transporte" },
   ]);
-
-  const [contactInfo, setContactInfo] = useState("");
 
   const getFederalEntities = () => {
     setLoadingFederalEntities(true);
@@ -155,76 +186,18 @@ function Add() {
     setOpenFile(false);
   };
 
-  const handleAddProduct = (e) => {
-    let value = document.getElementsByName("quantity")[0].value;
-    let product = {
-      ...productSelected,
-      quantity: value,
-    };
-    let productsCheck = [...products];
-    let index = productsCheck.findIndex(
-      (p) => p.Producto_Id === product.Producto_Id
-    );
-    if (index === -1) {
-      productsCheck.push(product);
-    } else {
-      productsCheck[index].quantity = value;
-    }
-    setProducts(productsCheck);
-    setShippmentDetails({
-      ...shippmentDetails,
-      SE_PesoTotal: productsCheck.reduce(
-        (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
-        0
-      ),
-      SE_ValorTotal: productsCheck.reduce(
-        (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
-        0
-      ),
-    });
-    setProductSelected({});
-  };
-
-  const handleDeleteAllProducts = () => {
-    setProducts([]);
-    setShippmentDetails({
-      ...shippmentDetails,
-      SE_PesoTotal: 0,
-      SE_ValorTotal: 0,
-    });
-  };
-
-  const handleDeleteProduct = (product) => {
-    let productsCheck = [...products];
-    let index = productsCheck.findIndex(
-      (p) => p.Producto_Id === product.Producto_Id
-    );
-    productsCheck.splice(index, 1);
-    setProducts(productsCheck);
-    setShippmentDetails({
-      ...shippmentDetails,
-      SE_PesoTotal: productsCheck.reduce(
-        (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
-        0
-      ),
-      SE_ValorTotal: productsCheck.reduce(
-        (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
-        0
-      ),
-    });
-  };
-
+  
   const handleFederalEntityChange = (e) => {
     setFederalEntity(e.target.value);
     setMunicipalities([]);
     setParishes([]);
   };
-
+  
   const handleMunicipalityChange = (e) => {
     setMunicipality(e.target.value);
     setParishes([]);
   };
-
+  
   const handleParishChange = (e) => {
     setParish(e.target.value);
     setShippmentDetails({
@@ -239,16 +212,112 @@ function Add() {
       [e.target.name]: e.target.value,
     });
   };
-
+  
   const handleContactTypeChange = (e) => {
     setContact_type(e.target.value);
-  }
+  };
+  
   const handleContactInfoChange = (e) => {
     setContactInfo(e.target.value);
-  }
+  };
+  const handleAddContact = (e) => {
+    if (!contact_type || !contactInfo) return;
+    if (
+      contact_type === "C" &&
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(contactInfo)
+      )
+      return;
+      if (
+        contact_type === "T" &&
+        (!areaCodes.includes(parseInt(contactInfo.split(/[()]/)[1], 10)) ||
+        contactInfo.includes("_"))
+        )
+        return;
+        let contactListCheck = [...contactList];
+        if (contactListCheck.findIndex((c) => c.contactInfo === contactInfo) > -1) {
+          setContact_type("");
+          setContactInfo("");
+          return;
+        }
+        contactListCheck.push({
+          contact_type,
+          contactInfo,
+        });
+        setContactList(contactListCheck);
+        setContact_type("");
+        setContactInfo("");
+      };
+      
+      const handleDeleteContact = (i) => {
+        let contactListCheck = [...contactList];
+        contactListCheck.splice(i, 1);
+        setContactList(contactListCheck);
+      };
 
-  return (
-    <>
+      const handleDeleteAllContacts = () => {
+        setContactList([]);
+      };
+      
+      const handleAddProduct = (e) => {
+        let value = document.getElementsByName("quantity")[0].value;
+        if (value < 1) return;
+        if (!productSelected.Producto_Nombre) return
+        let product = {
+          ...productSelected,
+          quantity: value,
+        };
+        let productsCheck = [...products];
+        let index = productsCheck.findIndex(
+          (p) => p.Producto_Id === product.Producto_Id
+        );
+        if (index === -1) {
+          productsCheck.push(product);
+        } else {
+          productsCheck[index].quantity = value;
+        }
+        setProducts(productsCheck);
+        setShippmentDetails({
+          ...shippmentDetails,
+          SE_PesoTotal: productsCheck.reduce(
+            (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
+            0
+          ),
+          SE_ValorTotal: productsCheck.reduce(
+            (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
+            0
+          ),
+        });
+        setProductSelected({});
+        document.getElementsByName("quantity")[0].value = "";
+      };
+    
+      const handleDeleteAllProducts = () => {
+        setProducts([]);
+        setShippmentDetails({
+          ...shippmentDetails,
+          SE_PesoTotal: 0,
+          SE_ValorTotal: 0,
+        });
+      };
+    
+      const handleDeleteProduct = (index) => {
+        let productsCheck = [...products];
+        productsCheck.splice(index, 1);
+        setProducts(productsCheck);
+        setShippmentDetails({
+          ...shippmentDetails,
+          SE_PesoTotal: productsCheck.reduce(
+            (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
+            0
+          ),
+          SE_ValorTotal: productsCheck.reduce(
+            (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
+            0
+          ),
+        });
+      };
+      return (
+        <>
       <IconButton onClick={handleClickOpen}>
         <AddCircleTwoToneIcon color="primary" />
       </IconButton>
@@ -260,7 +329,7 @@ function Add() {
         onClose={handleClose}
         component="form"
       >
-        <DialogTitle>{"Creación de Envio"}</DialogTitle>
+        <DialogTitle>{"Creación de Envío"}</DialogTitle>
         <DialogContent>
           <DialogContentText
             sx={{
@@ -342,6 +411,121 @@ function Add() {
                 variant="filled"
               />
             </CustomStack>
+            {/* Contact Information */}
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={{ xs: 1, sm: 2, md: 2 }}
+              sx={{ padding: "1rem 0" }}
+            >
+              <TextField
+                id="contact_type"
+                name="contact_type"
+                select
+                label="Tipo de contacto"
+                value={contact_type && contact_type}
+                onChange={handleContactTypeChange}
+                variant="filled"
+                sx={{ minWidth: 170 }}
+              >
+                {[
+                  { letter: "C", name: "Correo" },
+                  { letter: "T", name: "Teléfono" },
+                ].map((tipo) => (
+                  <MenuItem key={tipo.letter} value={tipo.letter}>
+                    {tipo.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              {contact_type === "C" && (
+                <TextField
+                  label="Correo Electrónico"
+                  variant="filled"
+                  type="email"
+                  id="contactInfo"
+                  name="contactInfo"
+                  onChange={handleContactInfoChange}
+                  {...(contactInfo &&
+                    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                      contactInfo
+                    ) && {
+                      error: true,
+                      helperText: "Correo electrónico inválido",
+                    })}
+                  fullWidth
+                />
+              )}
+              {contact_type === "T" && (
+                <TextField
+                  id="contactInfo"
+                  name="contactInfo"
+                  label="Número de teléfono"
+                  margin="normal"
+                  variant="filled"
+                  InputProps={{
+                    inputComponent: TextMaskCustom,
+                    onChange: handleContactInfoChange,
+                  }}
+                  {...((contactInfo &&
+                    !areaCodes.includes(
+                      parseInt(contactInfo.split(/[()]/)[1], 10)
+                    ) && {
+                      error: true,
+                      helperText: "Código de área inválido",
+                    }) ||
+                    (contactInfo &&
+                      contactInfo.includes("_") && {
+                        error: true,
+                        helperText: "Número de teléfono inválido",
+                      }))}
+                />
+              )}
+              <IconButton>
+                <AddCircleTwoToneIcon
+                  size="large"
+                  onClick={handleAddContact}
+                  color="primary"
+                />
+              </IconButton>
+            </Stack>
+            <Box
+              sx={{
+                gap: "1rem",
+                display: "flex",
+                justifyContent: "space-between",
+                margin: ".7rem",
+                alignItems: "center",
+              }}
+            >
+              <Box
+                sx={{
+                  gap: "1rem",
+                  display: "flex",
+                  margin: ".7rem",
+                }}
+              >
+                <Typography variant="subtitle2" component="h3">
+                  Información de contacto agregada al envío
+                </Typography>
+                <Badge badgeContent={contactList.length} color="primary" />
+              </Box>
+              <Chip label="Vaciar contactos" onClick={handleDeleteAllContacts} />
+            </Box>
+            <Grid
+              sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
+              container
+            >
+              {contactList.map((contact, index) => {
+                return (
+                  <Chip
+                    label={`${contact.contactInfo}`}
+                    deleteIcon={<DeleteTwoToneIcon />}
+                    variant="outlined"
+                    onDelete={() => handleDeleteContact(index)}
+                  />
+                );
+              })}
+            </Grid>
+            {/* Shippment Information */}
             <CustomStack>
               <TextField
                 label="Id del Envío"
@@ -351,7 +535,7 @@ function Add() {
                 name="SE_Id"
                 fullWidth
                 onChange={handleShippmentChange}
-                value={shippmentDetails.SE_Id && shippmentDetails.SE_Id}
+                value={shippmentDetails.SE_Id || null}
               />
             </CustomStack>
             <CustomStack>
@@ -521,95 +705,7 @@ function Add() {
               ></TextField>
             </CustomStack>
 
-            {/* Contact Information */}
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 1, sm: 2, md: 2 }}
-              sx={{ padding: "1rem 0" }}
-            >
-              <TextField
-                id="contact_type"
-                name="contact_type"
-                select
-                label="Tipo de contacto"
-                value={
-                 contact_type &&
-                 contact_type
-                }
-                onChange={handleContactTypeChange}
-                variant="filled"
-              >
-                {[
-                  {letter: "C", name: "Correo"},
-                  {letter: "T", name: "Teléfono"},
-                ].map((tipo) => (
-                  <MenuItem key={tipo.letter} value={tipo.letter}>
-                    {tipo.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              {contact_type === "C" && (
-              <TextField
-                label="Correo Electrónico"
-                variant="filled"
-                type="email"
-                id="contactInfo"
-                name="contactInfo"
-                onChange={handleContactInfoChange}
-                {...(contactInfo && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(contactInfo) && {
-                  error: true,
-                  helperText: "Correo electrónico inválido",
-                })}
-              />
-              )}
-              <IconButton>
-                <AddCircleTwoToneIcon
-                  size="large"
-                  onClick={handleAddProduct}
-                  color="primary"
-                />
-              </IconButton>
-            </Stack>
-            <Box
-              sx={{
-                gap: "1rem",
-                display: "flex",
-                justifyContent: "space-between",
-                margin: ".7rem",
-                alignItems: "center",
-              }}
-            >
-              <Box
-                sx={{
-                  gap: "1rem",
-                  display: "flex",
-                  margin: ".7rem",
-                }}
-              >
-                <Typography variant="subtitle2" component="h3">
-                  Productos agregados al Envio
-                </Typography>
-                <Badge badgeContent={products.length} color="primary" />
-              </Box>
-              <Chip label="Vaciar Envio" onClick={handleDeleteAllProducts} />
-            </Box>
-            <Grid
-              sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
-              container
-            >
-              {products.map((product, index) => {
-                return (
-                  <Tooltip title={product.quantity} arrow>
-                    <Chip
-                      label={`${product.Producto_Nombre}`}
-                      deleteIcon={<DeleteTwoToneIcon />}
-                      variant="outlined"
-                      onDelete={handleDeleteProduct}
-                    />
-                  </Tooltip>
-                );
-              })}
-            </Grid>
+            
           </Grid>
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -735,11 +831,11 @@ function Add() {
               }}
             >
               <Typography variant="subtitle2" component="h3">
-                Productos agregados al Envio
+                Productos agregados al Envío
               </Typography>
               <Badge badgeContent={products.length} color="primary" />
             </Box>
-            <Chip label="Vaciar Envio" onClick={handleDeleteAllProducts} />
+            <Chip label="Vaciar Envío" onClick={handleDeleteAllProducts} />
           </Box>
           <Grid
             sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
@@ -752,7 +848,7 @@ function Add() {
                     label={`${product.Producto_Nombre}`}
                     deleteIcon={<DeleteTwoToneIcon />}
                     variant="outlined"
-                    onDelete={handleDeleteProduct}
+                    onDelete={() => handleDeleteProduct(index)}
                   />
                 </Tooltip>
               );
@@ -784,7 +880,7 @@ function Add() {
         maxWidth="xs"
         onClose={handleCloseFile}
       >
-        <DialogTitle>{"¿ Desea Agregar un Envio ?"}</DialogTitle>
+        <DialogTitle>{"¿ Desea Agregar un Envío ?"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Por favor, seleccione un Archivo con los datos de los envios que

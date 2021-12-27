@@ -224,12 +224,12 @@ function Envios({ asumidos, admin }) {
                 sx={{ display: "grid", rowGap: 1, padding: "1rem" }}
               >
                 <Typography variant="h6" component="span">
-                  Estado del Envio
+                  Estado del Envío
                 </Typography>
                 <TextField
                   id=""
                   select
-                  label="Estado del Envio"
+                  label="Estado del Envío"
                   value={Status}
                   onChange={handleChange}
                   helperText="Selecciona el Estado"

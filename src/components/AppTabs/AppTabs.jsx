@@ -51,7 +51,7 @@ function AppTabs() {
               indicatorColor="secondary"
             >
               <Tab
-                label="Envios"
+                label="Envíos"
                 value={`/Envios`}
                 to={`/Envios`}
                 icon={<ExploreTwoToneIcon />}

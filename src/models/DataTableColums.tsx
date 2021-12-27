@@ -141,8 +141,8 @@ export const ServiciosColumns: GridColDef[] = [
     sortable: true,
   },
   {
-    headerName: "Areas de Operaciones",
-    field: "Areas",
+    headerName: "Áreas de Operaciones",
+    field: "Áreas",
     headerAlign: "center",
     align: "center",
     width: 220,
