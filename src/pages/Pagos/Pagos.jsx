@@ -10,7 +10,7 @@ import { GetPayments } from "../../api/Get";
 import { Typography, Grid, Paper } from "@mui/material";
 
 /* DataTable Columns */
-import { PagosColumns } from "../../models/DataTableColums.tsx";
+import { PagosColumns } from "../../models/DataTableColums.jsx";
 
 /* Components */
 import Add from "./Add/Add";

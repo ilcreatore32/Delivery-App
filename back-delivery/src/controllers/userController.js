@@ -71,13 +71,13 @@ export const getUsers = async (req, res) => {
 
 /* Get one user details */
 export const getOneUser = async function (req, res) {
-  /* Extract payment's id */
+  /* Extract user's id */
   const { id } = req.params;
 
   /* extract the query params */
   let queryUserDetails = `
     SELECT Persona_Id, Persona_Nombre, Persona_Apellido, 
-    Usuario_Correo, TS_Nombre , Suscripcion_Id, Suscripcion_Monto, Suscripcion_Status,
+    Usuario_Correo, Usuario_Status, TS_Nombre , Suscripcion_Id, Suscripcion_Monto, Suscripcion_Status,
     Suscripcion_FechaI,Suscripcion_FechaV
     FROM personas
     JOIN usuarios ON Persona_Id = Usuario_Id
@@ -299,12 +299,12 @@ export const updateUser = async function (req, res) {
   }
 };
 
-/* Delete payment */
-export const deletePayment = async function (req, res) {
-  /* Get the id of the payment */
+/* /* Delete user 
+export const deleteUser = async function (req, res) {
+  /* Get the id of the user 
   const { id } = req.params;
 
-  /* Query to delete the payment */
+  /* Query to delete the user 
   let queryDelete = `
     DELETE FROM pago_suscripcion WHERE PS_Id = ${id}
   `;
@@ -312,14 +312,14 @@ export const deletePayment = async function (req, res) {
   try {
     //query to delete
     await pool.query(queryDelete, function (error, result) {
-      /* if error in the query */
+      /* if error in the query 
       if (error) return res.status(400).json(error);
-      /* Send the response */
+      /* Send the response 
       res.status(200).json({ message: "Operación Exitosa" });
     });
   } catch (err) {
-    /* error in the server */
+    /* error in the server 
     console.log(err);
     res.status(500).send("Error en el servidor");
   }
-};
+}; */

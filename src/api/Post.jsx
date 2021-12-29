@@ -11,6 +11,18 @@ export function PostOneEnvio(id) {
     });
 }
 
+export async function PostEnvio(shippmentDetails) {
+  const shippmentsResult = await Api.post(`/shippment/`, shippmentDetails)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      return error
+    });
+  console.log(shippmentsResult);
+  return shippmentsResult;
+}
+
 /* Servicios */
 export function PostOneServicio(id) {
   Api.post(`/Servicios/${id}`)

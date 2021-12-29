@@ -10,7 +10,7 @@ import { GetUsers } from "../../api/Get";
 import { Typography, Grid, Paper } from "@mui/material";
 
 /* DataTable Columns */
-import { UsuariosColumns } from "../../models/DataTableColums.tsx";
+import { UsuariosColumns } from "../../models/DataTableColums.jsx";
 
 /* Components */
 import Add from "./Add/Add";

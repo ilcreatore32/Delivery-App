@@ -31,6 +31,21 @@ export async function GetOneShippment(id) {
   return shippment;
 }
 
+export async function GetOneShippmentToEdit(id) {
+  const shippment = await Api.get(`/shippment/edit/${id}`, {
+    params: {
+      view_option: "admin",
+    },
+  })
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al consultar el Envio: #${id}`);
+    });
+  return shippment;
+}
+
 /* Servicios */
 export async function GetServices() {
   const service = await Api.get("/service", {

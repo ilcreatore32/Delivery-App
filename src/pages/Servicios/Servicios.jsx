@@ -10,7 +10,7 @@ import { Typography, Grid, Paper } from "@mui/material";
 import { GetServices } from "../../api/Get";
 
 /* DataTable Columns */
-import { ServiciosColumns } from "../../models/DataTableColums.tsx";
+import { ServiciosColumns } from "../../models/DataTableColums.jsx";
 
 /* Components */
 import Add from "./Add/Add";

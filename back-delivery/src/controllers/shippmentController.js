@@ -1,7 +1,7 @@
 import moment from "moment";
 import XLSX from "xlsx";
 import pool from "../database";
-import promisedPool from "../promisedPool"
+import promisedPool from "../promisedPool";
 import path from "path";
 import fs from "fs";
 import { withTransaction } from "../helpers/transaction";
@@ -322,7 +322,7 @@ export const getShippments = async (req, res) => {
       queryShippment = "";
   }
 
-  try { 
+  try {
     /* Get all data */
     await pool.query(queryShippment, function (error, results) {
       /* if error in the query */
@@ -466,26 +466,20 @@ export const getOneShippment = async function (req, res) {
                 function (errServiceD, serviceD) {
                   /* if error in the query */
                   if (errServiceD)
-                    return res
-                      .status(400)
-                      .json({
-                        error: "Error al consultar en la base de datos",
-                      });
+                    return res.status(400).json({
+                      error: "Error al consultar en la base de datos",
+                    });
                   /* if there is no data */
                   if (serviceD.length === 0 || serviceD[0].ST_Id === null)
-                    return res
-                      .status(404)
-                      .json({
-                        error: "No posee solicitud de envío de productos",
-                      });
-                  /* send results */
-                  res
-                    .status(200)
-                    .json({
-                      shippmentDetails: shippmentDetails[0],
-                      productsList: products,
-                      serviceDetails: serviceD[0],
+                    return res.status(404).json({
+                      error: "No posee solicitud de envío de productos",
                     });
+                  /* send results */
+                  res.status(200).json({
+                    shippmentDetails: shippmentDetails[0],
+                    productsList: products,
+                    serviceDetails: serviceD[0],
+                  });
                 }
               );
             } else {
@@ -496,30 +490,24 @@ export const getOneShippment = async function (req, res) {
                 function (errServices, servicesAvailable) {
                   /* if error in the query */
                   if (errServices)
-                    return res
-                      .status(400)
-                      .json({
-                        error: "Error al consultar en la base de datos",
-                      });
+                    return res.status(400).json({
+                      error: "Error al consultar en la base de datos",
+                    });
                   /* if there is no available services send results */
                   if (
                     servicesAvailable.length === 0 ||
                     servicesAvailable[0].ST_Id === null
                   )
-                  return res
-                  .status(200)
-                  .json({
-                    shippmentDetails: shippmentDetails[0],
-                    productsList: products
-                  });
-                  /* if there is available services send them with the results */
-                  res
-                    .status(200)
-                    .json({
+                    return res.status(200).json({
                       shippmentDetails: shippmentDetails[0],
                       productsList: products,
-                      servicesAvailable: servicesAvailable,
                     });
+                  /* if there is available services send them with the results */
+                  res.status(200).json({
+                    shippmentDetails: shippmentDetails[0],
+                    productsList: products,
+                    servicesAvailable: servicesAvailable,
+                  });
                 }
               );
             }
@@ -538,12 +526,12 @@ export const getOneShippment = async function (req, res) {
 export const editShippment = async function (req, res) {
   /* Extract shippment's id */
   const { id } = req.params;
+  console.log(id)
   /* Query to get shippment's details */
   let query_shippment = `
   SELECT SE_Id, SE_Fecha, SE_Status, SE_ValorTotal, SE_PesoTotal, EF_Id, 
   EF_Nombre, Municipio_Id, Municipio_Nombre, Parroquia_Id, Parroquia_Nombre, SEST_Status,
-  SEST_STId
-
+  SEST_STId, Persona_Id, Persona_TipoId, Persona_Nombre, Persona_Apellido
   
   FROM solicitudesenvio
   
@@ -553,10 +541,12 @@ export const editShippment = async function (req, res) {
      ON Parroquia_MunicipioId = Municipio_Id	
   JOIN entidadesfederales
      ON Municipio_EFId = EF_Id
+  JOIN personas
+     ON Persona_Id = SE_PersonaId 
   LEFT JOIN (SELECT SEST_SEId, SEST_Status, SEST_STId FROM se_has_st WHERE SEST_Status = 1) SEST
      ON SEST_SEId = SE_Id 
   
-  WHERE SE_Id = ${id}
+  WHERE SE_Id = ?
   `;
   /* Query to get all shippment's products */
   let query_products = `
@@ -570,12 +560,17 @@ export const editShippment = async function (req, res) {
 
   WHERE ProductoSE_SEId = ?
   `;
+  /* Query to get person's contact information */
+  let query_contact = `
+  SELECT Contacto_Tipo, Contacto_Info from contacto WHERE Contacto_PersonaId = ?
+  `;
 
   try {
     /* Get all shippment's details */
     await pool.query(
-      query_shippment,
+      query_shippment, [id],
       async function (errShippment, shippmentDetails) {
+        console.log(shippmentDetails)
         /* if error in the query */
         if (errShippment)
           return res
@@ -601,14 +596,31 @@ export const editShippment = async function (req, res) {
             if (products.length === 0 || products[0].SE_Id === null)
               return res
                 .status(404)
-                .json({ error: "No posee solicitud de envío de productos" });
-            /* send results */
-            res
-              .status(200)
-              .json({
-                shippmentDetails: shippmentDetails[0],
-                productsList: products,
-              });
+                .json({ error: "Este envío no posee productos" });
+            await pool.query(
+              query_contact,
+              shippmentDetails[0].Persona_Id,
+              async function (errContact, contact) {
+                /* if error in the query */
+                if (errContact)
+                  return res
+                    .status(400)
+                    .json({ error: "Error al consultar en la base de datos" });
+                /* if there is no data */
+                if (contact.length === 0 || contact[0].Contacto_Info === null)
+                  return res
+                    .status(404)
+                    .json({
+                      error: "Esta persona no posee información de contacto",
+                    });
+                /* send results */
+                res.status(200).json({
+                  ...shippmentDetails[0],
+                  productsList: products,
+                  contactInfo: contact,
+                });
+              }
+            );
           }
         );
       }
@@ -641,10 +653,7 @@ export const saveShippment = async function (req, res) {
     ContactInformation, // [ [4242843235, 'T', 20000000], ['email@email.com', 'C', 20000000] ] Info, Type, PersonaId
   } = req.body;
 
-  /* Extract request options */
-  const { 
-    personAction // 'add', 'update', 'nothing'
-  } = req.query;
+  console.log(req.body);
 
   /* Create an object with the properties */
   const shippmentDetails = {
@@ -667,44 +676,59 @@ export const saveShippment = async function (req, res) {
   /* Get the keys of the object */
   const keysShippment = Object.keys(shippmentDetails);
 
+  /* Query to check if the person exists*/
+  let queryCheckPerson = `SELECT Persona_Id, Usuario_Id, Usuario_Status 
+  FROM personas LEFT JOIN usuarios ON Persona_Id = Usuario_Id
+  WHERE Persona_Id = ?
+  `;
   /* Query to add or update person */
-  let queryPerson = ``
+  let queryPerson = ``;
   /* Query to delete the contact information */
   let queryDeleteContactInfo = ``;
   /* Query insert the contact information */
   let queryContactInfo = ``;
 
-  /* insert or update person information */
-  if (personAction === 'add') {
-    queryPerson = `
-      INSERT INTO personas set ?
-    `;
-    queryContactInfo = `
-      INSERT INTO contacto (Contacto_Info, Contacto_Tipo , Contacto_PersonaId) VALUES ?
-    `;
-  } else if (personAction === 'update') {
-    queryPerson = `
-      UPDATE personas set ?
-      WHERE Persona_Id = ?
-    `;
-    queryDeleteContactInfo = `
+  /* Check it person is already in the system and decide whether to update or insert*/
+  try {
+    let personCheck = await pool.query(queryCheckPerson, [Persona_Id]);
+    if (personCheck.length === 0) {
+      queryPerson = `
+        INSERT INTO personas set ?
+      `;
+      queryContactInfo = `
+        INSERT INTO contacto (Contacto_Info, Contacto_Tipo , Contacto_PersonaId) VALUES ?
+      `;
+    } else if (
+      personCheck[0].Usuario_Status === null ||
+      personCheck[0].Usuario_Status === "P"
+    ) {
+      queryPerson = `
+        UPDATE personas set ? WHERE Persona_Id = ?
+      `;
+
+      queryDeleteContactInfo = `
       DELETE FROM contacto WHERE Contacto_PersonaId = ?; 
     `;
-    queryContactInfo = `
+      queryContactInfo = `
       INSERT INTO contacto (Contacto_Info, Contacto_Tipo , Contacto_PersonaId) VALUES ?
     `;
+    }
+  } catch (error) {
+    /* error in the server */
+    console.log(error);
+    res.status(500).send("Error en el servidor");
   }
 
   /* Query to add or update shippment */
-  let queryShippment = ``
-  if (req.method === 'POST') {
+  let queryShippment = ``;
+  if (req.method === "POST") {
     queryShippment = `
       INSERT INTO solicitudesenvio set ?
-    `
-  } else if (req.method === 'PUT') {
+    `;
+  } else if (req.method === "PUT") {
     queryShippment = `
       UPDATE solicitudesenvio set ? where SE_Id = ?
-    `
+    `;
   }
 
   /* Query to delete the products */
@@ -715,47 +739,52 @@ export const saveShippment = async function (req, res) {
   let queryProducts = `
     INSERT INTO producto_has_se (ProductoSE_ProductoId, ProductoSE_SEId, ProductoSE_Cantidad) VALUES ?
   `;
-  
+
   try {
-    let transactionResult
-    if (req.method === 'POST') {
-
-      /* Get connection */
-      const connection = await promisedPool.getConnection();
-
-      /* Start transaction */
-      transactionResult = await withTransaction(connection, res ,async () => {
-        if (queryPerson) await connection.query(queryPerson, person);
-
-        if (queryDeleteContactInfo) await connection.query(queryDeleteContactInfo, [Persona_Id]);
-        if (queryContactInfo) await connection.query(queryContactInfo, [ContactInformation]);
-        if (queryShippment) await connection.query(queryShippment, shippmentDetails);
-        if (queryProducts) await connection.query(queryProducts, [productsList]);
-      })
-
-    } else if (req.method === 'PUT') {
-
+    let transactionResult;
+    if (req.method === "POST") {
       /* Get connection */
       const connection = await promisedPool.getConnection();
 
       /* Start transaction */
       transactionResult = await withTransaction(connection, res, async () => {
-        if (queryPerson) await connection.query(queryPerson, person);
-        if (queryDeleteContactInfo) await connection.query(queryDeleteContactInfo, [Persona_Id]);
-        if (queryContactInfo) await connection.query(queryContactInfo, [ContactInformation]);
-        if (queryShippment) await connection.query(queryShippment, [shippmentDetails, id]);
-        if (queryDeleteProducts) await connection.query(queryDeleteProducts, [SE_Id]);
-        if (queryProducts) await connection.query(queryProducts, [productsList]);
-      })
+        if (queryPerson)
+          await connection.query(queryPerson, [person, Persona_Id]);
+
+        if (queryDeleteContactInfo)
+          await connection.query(queryDeleteContactInfo, [Persona_Id]);
+        if (queryContactInfo)
+          await connection.query(queryContactInfo, [ContactInformation]);
+        if (queryShippment)
+          await connection.query(queryShippment, shippmentDetails);
+        if (queryProducts)
+          await connection.query(queryProducts, [productsList]);
+      });
+    } else if (req.method === "PUT") {
+      /* Get connection */
+      const connection = await promisedPool.getConnection();
+
+      /* Start transaction */
+      transactionResult = await withTransaction(connection, res, async () => {
+        if (queryPerson)
+          await connection.query(queryPerson, [person, Persona_Id]);
+        if (queryDeleteContactInfo)
+          await connection.query(queryDeleteContactInfo, [Persona_Id]);
+        if (queryContactInfo)
+          await connection.query(queryContactInfo, [ContactInformation]);
+        if (queryShippment)
+          await connection.query(queryShippment, [shippmentDetails, id]);
+        if (queryDeleteProducts)
+          await connection.query(queryDeleteProducts, [SE_Id]);
+        if (queryProducts)
+          await connection.query(queryProducts, [productsList]);
+      });
     }
     if (transactionResult) {
-      res
-        .status(200)
-        .json({
-          message: "Solicitud de envío actualizada",
-        });
+      res.status(200).json({
+        message: "Solicitud de envío actualizada",
+      });
     }
-
   } catch (error) {
     /* error in the server */
     console.log(error);
@@ -827,16 +856,13 @@ export const updateStatusShippment = async function (req, res) {
     console.log(err);
     res.status(500).send("Error en el servidor");
   }
-}
+};
 
 export const updateServicesAsociatedStatus = async function (req, res) {
   /* Get the id of the shippment */
   const { id } = req.params;
   /* Get the status of the shippment */
-  const { 
-    status,
-    serviceId
-  } = req.body;
+  const { status, serviceId } = req.body;
   /* Query to update the status of the shippment */
   let queryUpdateStatus = `
     UPDATE se_has_st
@@ -856,7 +882,9 @@ export const updateServicesAsociatedStatus = async function (req, res) {
             .status(400)
             .json({ error: "Error al consultar en la base de datos" });
         /* Send the response */
-        res.status(200).json({ message: "Estatus de la oferta de servicio actualizada" });
+        res
+          .status(200)
+          .json({ message: "Estatus de la oferta de servicio actualizada" });
       }
     );
   } catch (err) {
@@ -864,4 +892,4 @@ export const updateServicesAsociatedStatus = async function (req, res) {
     console.log(err);
     res.status(500).send("Error en el servidor");
   }
-}
+};

@@ -28,7 +28,7 @@ import ManageSearch from "@mui/icons-material/ManageSearch";
 import CloseIcon from "@mui/icons-material/Close";
 
 /* DataTable Columns */
-import { VehiculosColumns } from "../../models/DataTableColums.tsx";
+import { VehiculosColumns } from "../../models/DataTableColums.jsx";
 
 /* Components */
 import Add from "./Add/Add";

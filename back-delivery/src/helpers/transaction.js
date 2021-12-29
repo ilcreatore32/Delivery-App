@@ -6,7 +6,8 @@ export async function withTransaction( connection, res, callback ) {
       await connection.commit();
     } catch ( err ) {
       await connection.rollback();
-      res.status(500).json({
+      console.error( err );
+      res.status(500).send({
         error: "Hubo un error al consultar en la base de datos"
       });
       throw err;

@@ -7,7 +7,7 @@ import { GetShippments } from "../../../api/Get";
 import { Typography, Grid, Paper } from "@mui/material";
 
 /* DataTable Columns */
-import { EnviosColumns } from "../../../models/DataTableColums.tsx";
+import { EnviosColumns } from "../../../models/DataTableColums.jsx";
 
 /* Components */
 import Add from "../Add/Add";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 /* Material UI */
 import {
@@ -21,7 +21,11 @@ import {
   Chip,
   Tooltip,
   MenuItem,
+  Alert,
+  DialogActions,
+  Collapse,
 } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import InputMask from "react-input-mask";
 
 /* Material UI Icons */
@@ -31,8 +35,10 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 
 /* Components */
 import Spinner from "../../../components/Spinner/Spinner";
-import { GetProducts, GetUbication } from "../../../api/Get";
+import { GetOneShippmentToEdit, GetProducts, GetUbication } from "../../../api/Get";
 import { areaCodes } from "../../../areaCodes";
+import { PostEnvio } from "../../../api/Post";
+import { OpenEditContext } from "../../../context/openEditContext";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -83,8 +89,15 @@ const TextMaskCustom = (props) => {
 };
 
 function Add() {
+  const { openEditShippment, setOpenEditShippment, shippmentToEdit} = useContext(OpenEditContext);
+
   const [open, setOpen] = useState(false);
   const [openFile, setOpenFile] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const [sending, setSending] = useState(false);
 
   const [products, setProducts] = useState([]);
 
@@ -176,6 +189,7 @@ function Add() {
 
   const handleClose = () => {
     setOpen(false);
+    setOpenEditShippment(false);
   };
 
   const handleClickOpenFile = () => {
@@ -186,18 +200,28 @@ function Add() {
     setOpenFile(false);
   };
 
-  
   const handleFederalEntityChange = (e) => {
     setFederalEntity(e.target.value);
     setMunicipalities([]);
+    setMunicipality("");
     setParishes([]);
+    setParish("");
+    setShippmentDetails({
+      ...shippmentDetails,
+      SE_ParroquiaId: undefined,
+    });
   };
-  
+
   const handleMunicipalityChange = (e) => {
     setMunicipality(e.target.value);
     setParishes([]);
+    setParish("");
+    setShippmentDetails({
+      ...shippmentDetails,
+      SE_ParroquiaId: undefined,
+    });
   };
-  
+
   const handleParishChange = (e) => {
     setParish(e.target.value);
     setShippmentDetails({
@@ -212,11 +236,11 @@ function Add() {
       [e.target.name]: e.target.value,
     });
   };
-  
+
   const handleContactTypeChange = (e) => {
     setContact_type(e.target.value);
   };
-  
+
   const handleContactInfoChange = (e) => {
     setContactInfo(e.target.value);
   };
@@ -225,110 +249,293 @@ function Add() {
     if (
       contact_type === "C" &&
       !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(contactInfo)
-      )
+    )
       return;
-      if (
-        contact_type === "T" &&
-        (!areaCodes.includes(parseInt(contactInfo.split(/[()]/)[1], 10)) ||
+    if (
+      contact_type === "T" &&
+      (!areaCodes.includes(parseInt(contactInfo.split(/[()]/)[1], 10)) ||
         contactInfo.includes("_"))
-        )
-        return;
-        let contactListCheck = [...contactList];
-        if (contactListCheck.findIndex((c) => c.contactInfo === contactInfo) > -1) {
-          setContact_type("");
-          setContactInfo("");
-          return;
-        }
-        contactListCheck.push({
-          contact_type,
-          contactInfo,
-        });
-        setContactList(contactListCheck);
-        setContact_type("");
-        setContactInfo("");
-      };
-      
-      const handleDeleteContact = (i) => {
-        let contactListCheck = [...contactList];
-        contactListCheck.splice(i, 1);
-        setContactList(contactListCheck);
-      };
+    )
+      return;
+    let contactListCheck = [...contactList];
+    if (contactListCheck.findIndex((c) => c.contactInfo === contactInfo) > -1) {
+      setContact_type("");
+      setContactInfo("");
+      return;
+    }
+    contactListCheck.push({
+      contact_type,
+      contactInfo,
+    });
+    setContactList(contactListCheck);
+    setContact_type("");
+    setContactInfo("");
+  };
 
-      const handleDeleteAllContacts = () => {
-        setContactList([]);
-      };
-      
-      const handleAddProduct = (e) => {
-        let value = document.getElementsByName("quantity")[0].value;
-        if (value < 1) return;
-        if (!productSelected.Producto_Nombre) return
-        let product = {
-          ...productSelected,
-          quantity: value,
-        };
-        let productsCheck = [...products];
-        let index = productsCheck.findIndex(
-          (p) => p.Producto_Id === product.Producto_Id
-        );
-        if (index === -1) {
-          productsCheck.push(product);
-        } else {
-          productsCheck[index].quantity = value;
+  const handleDeleteContact = (i) => {
+    let contactListCheck = [...contactList];
+    contactListCheck.splice(i, 1);
+    setContactList(contactListCheck);
+  };
+
+  const handleDeleteAllContacts = () => {
+    setContactList([]);
+  };
+
+  const handleAddProduct = (e) => {
+    let value = document.getElementsByName("quantity")[0].value;
+    if (value < 1) return;
+    if (!productSelected.Producto_Nombre) return;
+    let product = {
+      ...productSelected,
+      quantity: value,
+    };
+    let productsCheck = [...products];
+    let index = productsCheck.findIndex(
+      (p) => p.Producto_Id === product.Producto_Id
+    );
+    if (index === -1) {
+      productsCheck.push(product);
+    } else {
+      productsCheck[index].quantity = value;
+    }
+    setProducts(productsCheck);
+    setShippmentDetails({
+      ...shippmentDetails,
+      SE_PesoTotal: productsCheck.reduce(
+        (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
+        0
+      ),
+      SE_ValorTotal: productsCheck.reduce(
+        (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
+        0
+      ),
+    });
+    setProductSelected({});
+    document.getElementsByName("quantity")[0].value = "";
+  };
+
+  const handleDeleteAllProducts = () => {
+    setProducts([]);
+    setShippmentDetails({
+      ...shippmentDetails,
+      SE_PesoTotal: 0,
+      SE_ValorTotal: 0,
+    });
+  };
+
+  const handleDeleteProduct = (index) => {
+    let productsCheck = [...products];
+    productsCheck.splice(index, 1);
+    setProducts(productsCheck);
+    setShippmentDetails({
+      ...shippmentDetails,
+      SE_PesoTotal: productsCheck.reduce(
+        (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
+        0
+      ),
+      SE_ValorTotal: productsCheck.reduce(
+        (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
+        0
+      ),
+    });
+  };
+
+  const handleSubmitShippment = (e) => {
+    e.preventDefault();
+    setSending(true);
+    if (products.length === 0) {
+      setErrorMessage("Debe seleccionar al menos un producto");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+    if (contactList.length === 0) {
+      setErrorMessage("Debe ingresar al menos un contacto");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+    if (!shippmentDetails["Persona_TipoId"]) {
+      setErrorMessage("Debe ingresar el tipo de cédula");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+    if (!shippmentDetails["Persona_Id"]) {
+      setErrorMessage("Debe ingresar la cédula");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+    if (!shippmentDetails["Persona_Nombre"]) {
+      setErrorMessage("Debe ingresar el nombre");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+    if (!shippmentDetails["Persona_Apellido"]) {
+      setErrorMessage("Debe ingresar el apellido");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+    if (!shippmentDetails["SE_Id"]) {
+      setErrorMessage("Debe ingresar el número del envío");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+    if (!shippmentDetails["SE_Fecha"]) {
+      setErrorMessage("Debe ingresar la fecha del envío");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+    if (!shippmentDetails["SE_Status"]) {
+      setErrorMessage("Debe ingresar el estado del envío");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+    if (!shippmentDetails["SE_ParroquiaId"]) {
+      setErrorMessage("Debe ingresar la parroquia del envío");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
+
+    let productsList = [];
+
+    products.forEach((product) => {
+      productsList.push([
+        product.Producto_Id,
+        shippmentDetails["SE_Id"],
+        product.quantity,
+      ]);
+    });
+
+    let ContactInformation = [];
+
+    contactList.forEach((contact) => {
+      ContactInformation.push([
+        contact.contactInfo,
+        contact.contact_type,
+        shippmentDetails["Persona_Id"],
+      ]);
+    });
+
+    setShippmentDetails({
+      ...shippmentDetails,
+      productsList,
+      ContactInformation,
+    });
+  };
+  
+  useEffect(() => {
+    if (!sending) return
+    let { productsList, ContactInformation } = shippmentDetails;
+    if (
+      !productsList ||
+      !ContactInformation ||
+      productsList.length === 0 ||
+      ContactInformation.length === 0
+    ) {
+      setSending(false);
+      return;
+    }
+    (async function () {
+      try {
+        const response = await PostEnvio(shippmentDetails);
+        if (response.status === 200) {
+          setSuccessMessage("Envío creado correctamente");
+          setTimeout(() => {
+            setSuccessMessage("");
+          }, 2000);
+          setSending(false);
         }
-        setProducts(productsCheck);
-        setShippmentDetails({
-          ...shippmentDetails,
-          SE_PesoTotal: productsCheck.reduce(
-            (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
-            0
-          ),
-          SE_ValorTotal: productsCheck.reduce(
-            (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
-            0
-          ),
-        });
-        setProductSelected({});
-        document.getElementsByName("quantity")[0].value = "";
-      };
-    
-      const handleDeleteAllProducts = () => {
-        setProducts([]);
-        setShippmentDetails({
-          ...shippmentDetails,
-          SE_PesoTotal: 0,
-          SE_ValorTotal: 0,
-        });
-      };
-    
-      const handleDeleteProduct = (index) => {
-        let productsCheck = [...products];
-        productsCheck.splice(index, 1);
-        setProducts(productsCheck);
-        setShippmentDetails({
-          ...shippmentDetails,
-          SE_PesoTotal: productsCheck.reduce(
-            (acc, cur) => acc + cur.Producto_Peso * cur.quantity,
-            0
-          ),
-          SE_ValorTotal: productsCheck.reduce(
-            (acc, cur) => acc + cur.Producto_Precio * cur.quantity,
-            0
-          ),
-        });
-      };
-      return (
-        <>
+        else {
+          setErrorMessage("Error al crear el envío, puede que el ID ya exista");
+          setTimeout(() => {
+            setErrorMessage("");
+          }, 2000);
+          setSending(false);
+        }
+      } catch (e) {
+        if (e) {
+          setErrorMessage("Error al crear el envío, puede que el ID ya exista");
+          setTimeout(() => {
+            setErrorMessage("");
+          }, 2000);
+          setSending(false);
+        }
+      }
+    })();
+  }, [shippmentDetails]);
+
+  useEffect(async () => {
+    if (!shippmentToEdit || !openEditShippment) return
+    let shippmentDetails = await GetOneShippmentToEdit(shippmentToEdit);
+    console.log(shippmentDetails)
+    await setShippmentDetails(shippmentDetails);
+    getFederalEntities(shippmentDetails.EF_Id)
+    setFederalEntity(() => {
+      return shippmentDetails.EF_Id
+    })
+    getMunicipities(shippmentDetails.EF_Id)
+    setMunicipality(() => {
+      return shippmentDetails.Municipio_Id
+    })
+    getParishes(shippmentDetails.Municipio_Id)
+    setParish(() => {
+      return shippmentDetails.Parroquia_Id
+    })
+
+  }, [shippmentToEdit, openEditShippment])
+
+  return (
+    <>
       <IconButton onClick={handleClickOpen}>
         <AddCircleTwoToneIcon color="primary" />
       </IconButton>
       <Dialog
-        open={open}
+        open={open || openEditShippment }
         TransitionComponent={Transition}
         keepMounted
         maxWidth="sm"
         onClose={handleClose}
         component="form"
       >
+        <Collapse in={errorMessage}>
+          <Alert severity="error" onClose={() => setErrorMessage("")}>
+            {errorMessage}
+          </Alert>
+        </Collapse>
+        <Collapse in={successMessage}>
+          <Alert severity="success" onClose={() => setSuccessMessage("")}>
+            {successMessage}
+          </Alert>
+        </Collapse>
         <DialogTitle>{"Creación de Envío"}</DialogTitle>
         <DialogContent>
           <DialogContentText
@@ -355,358 +562,365 @@ function Add() {
               </span>
             </Tooltip>
           </DialogContentText>
-          <Grid>
-            <CustomStack>
-              <TextField
-                id="Persona_TipoId"
-                name="Persona_TipoId"
-                select
-                label="Tipo"
-                value={
-                  shippmentDetails.Persona_TipoId &&
-                  shippmentDetails.Persona_TipoId
-                }
-                onChange={handleShippmentChange}
-                variant="filled"
-              >
-                {["V", "E", "J"].map((tipo) => (
-                  <MenuItem key={tipo} value={tipo}>
-                    {tipo}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                label="Cédula o RIF de la persona"
-                variant="filled"
-                type="number"
-                id="Persona_Id"
-                name="Persona_Id"
-                onChange={handleShippmentChange}
-                value={
-                  shippmentDetails.Persona_Id && shippmentDetails.Persona_Id
-                }
-              />
-            </CustomStack>
-            <CustomStack>
-              <TextField
-                id="Persona_Nombre"
-                name="Persona_Nombre"
-                label="Nombres"
-                value={
-                  shippmentDetails.Persona_Nombre &&
-                  shippmentDetails.Persona_Nombre
-                }
-                onChange={handleShippmentChange}
-                variant="filled"
-              />
-              <TextField
-                id="Persona_Apellido"
-                name="Persona_Apellido"
-                label="Apellidos"
-                value={
-                  shippmentDetails.Persona_Apellido &&
-                  shippmentDetails.Persona_Apellido
-                }
-                onChange={handleShippmentChange}
-                variant="filled"
-              />
-            </CustomStack>
-            {/* Contact Information */}
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 1, sm: 2, md: 2 }}
-              sx={{ padding: "1rem 0" }}
+
+          <CustomStack>
+            <TextField
+              id="Persona_TipoId"
+              name="Persona_TipoId"
+              select
+              label="Tipo"
+              value={
+                shippmentDetails &&
+                shippmentDetails.Persona_TipoId
+              }
+              onChange={handleShippmentChange}
+              variant="filled"
             >
+              {["V", "E", "J"].map((tipo) => (
+                <MenuItem key={tipo} value={tipo}>
+                  {tipo}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Cédula o RIF de la persona"
+              variant="filled"
+              type="number"
+              id="Persona_Id"
+              name="Persona_Id"
+              onChange={handleShippmentChange}
+              value={shippmentDetails && shippmentDetails.Persona_Id}
+              {...(shippmentDetails.Persona_Id && {InputLabelProps:{
+                shrink: true,
+              }} )}
+            />
+          </CustomStack>
+          <CustomStack>
+            <TextField
+              id="Persona_Nombre"
+              name="Persona_Nombre"
+              label="Nombres"
+              value={
+                shippmentDetails.Persona_Nombre &&
+                shippmentDetails.Persona_Nombre
+              }
+              onChange={handleShippmentChange}
+              variant="filled"
+              {...(shippmentDetails.Persona_Nombre && {InputLabelProps:{
+                shrink: true,
+              }} )}
+            />
+            <TextField
+              id="Persona_Apellido"
+              name="Persona_Apellido"
+              label="Apellidos"
+              value={
+                shippmentDetails.Persona_Apellido &&
+                shippmentDetails.Persona_Apellido
+              }
+              onChange={handleShippmentChange}
+              variant="filled"
+              {...(shippmentDetails.Persona_Apellido && {InputLabelProps:{
+                shrink: true,
+              }} )}
+            />
+          </CustomStack>
+          {/* Contact Information */}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={{ xs: 1, sm: 2, md: 2 }}
+            sx={{ padding: "1rem 0" }}
+          >
+            <TextField
+              id="contact_type"
+              name="contact_type"
+              select
+              label="Tipo de contacto"
+              value={contact_type && contact_type}
+              onChange={handleContactTypeChange}
+              variant="filled"
+              sx={{ minWidth: 170 }}
+            >
+              {[
+                { letter: "C", name: "Correo" },
+                { letter: "T", name: "Teléfono" },
+              ].map((tipo) => (
+                <MenuItem key={tipo.letter} value={tipo.letter}>
+                  {tipo.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            {contact_type === "C" && (
               <TextField
-                id="contact_type"
-                name="contact_type"
-                select
-                label="Tipo de contacto"
-                value={contact_type && contact_type}
-                onChange={handleContactTypeChange}
+                label="Correo Electrónico"
                 variant="filled"
-                sx={{ minWidth: 170 }}
-              >
-                {[
-                  { letter: "C", name: "Correo" },
-                  { letter: "T", name: "Teléfono" },
-                ].map((tipo) => (
-                  <MenuItem key={tipo.letter} value={tipo.letter}>
-                    {tipo.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              {contact_type === "C" && (
-                <TextField
-                  label="Correo Electrónico"
-                  variant="filled"
-                  type="email"
-                  id="contactInfo"
-                  name="contactInfo"
-                  onChange={handleContactInfoChange}
-                  {...(contactInfo &&
-                    !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-                      contactInfo
-                    ) && {
+                type="email"
+                id="contactInfo"
+                name="contactInfo"
+                onChange={handleContactInfoChange}
+                {...(contactInfo &&
+                  !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                    contactInfo
+                  ) && {
+                    error: true,
+                    helperText: "Correo electrónico inválido",
+                  })}
+                fullWidth
+              />
+            )}
+            {contact_type === "T" && (
+              <TextField
+                id="contactInfo"
+                name="contactInfo"
+                label="Número de teléfono"
+                margin="normal"
+                variant="filled"
+                InputProps={{
+                  inputComponent: TextMaskCustom,
+                  onChange: handleContactInfoChange,
+                }}
+                {...((contactInfo &&
+                  !areaCodes.includes(
+                    parseInt(contactInfo.split(/[()]/)[1], 10)
+                  ) && {
+                    error: true,
+                    helperText: "Código de área inválido",
+                  }) ||
+                  (contactInfo &&
+                    contactInfo.includes("_") && {
                       error: true,
-                      helperText: "Correo electrónico inválido",
-                    })}
-                  fullWidth
-                />
-              )}
-              {contact_type === "T" && (
-                <TextField
-                  id="contactInfo"
-                  name="contactInfo"
-                  label="Número de teléfono"
-                  margin="normal"
-                  variant="filled"
-                  InputProps={{
-                    inputComponent: TextMaskCustom,
-                    onChange: handleContactInfoChange,
-                  }}
-                  {...((contactInfo &&
-                    !areaCodes.includes(
-                      parseInt(contactInfo.split(/[()]/)[1], 10)
-                    ) && {
-                      error: true,
-                      helperText: "Código de área inválido",
-                    }) ||
-                    (contactInfo &&
-                      contactInfo.includes("_") && {
-                        error: true,
-                        helperText: "Número de teléfono inválido",
-                      }))}
-                />
-              )}
-              <IconButton>
-                <AddCircleTwoToneIcon
-                  size="large"
-                  onClick={handleAddContact}
-                  color="primary"
-                />
-              </IconButton>
-            </Stack>
+                      helperText: "Número de teléfono inválido",
+                    }))}
+              />
+            )}
+            <IconButton>
+              <AddCircleTwoToneIcon
+                size="large"
+                onClick={handleAddContact}
+                color="primary"
+              />
+            </IconButton>
+          </Stack>
+          <Box
+            sx={{
+              gap: "1rem",
+              display: "flex",
+              justifyContent: "space-between",
+              margin: ".7rem",
+              alignItems: "center",
+            }}
+          >
             <Box
               sx={{
                 gap: "1rem",
                 display: "flex",
-                justifyContent: "space-between",
                 margin: ".7rem",
-                alignItems: "center",
               }}
             >
-              <Box
-                sx={{
-                  gap: "1rem",
-                  display: "flex",
-                  margin: ".7rem",
-                }}
-              >
-                <Typography variant="subtitle2" component="h3">
-                  Información de contacto agregada al envío
-                </Typography>
-                <Badge badgeContent={contactList.length} color="primary" />
-              </Box>
-              <Chip label="Vaciar contactos" onClick={handleDeleteAllContacts} />
+              <Typography variant="subtitle2" component="h3">
+                Información de contacto agregada al envío
+              </Typography>
+              <Badge badgeContent={contactList.length} color="primary" />
             </Box>
-            <Grid
-              sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
-              container
-            >
-              {contactList.map((contact, index) => {
-                return (
-                  <Chip
-                    label={`${contact.contactInfo}`}
-                    deleteIcon={<DeleteTwoToneIcon />}
-                    variant="outlined"
-                    onDelete={() => handleDeleteContact(index)}
-                  />
-                );
-              })}
-            </Grid>
-            {/* Shippment Information */}
-            <CustomStack>
-              <TextField
-                label="Id del Envío"
-                variant="filled"
-                type="number"
-                id="SE_Id"
-                name="SE_Id"
-                fullWidth
-                onChange={handleShippmentChange}
-                value={shippmentDetails.SE_Id || null}
-              />
-            </CustomStack>
-            <CustomStack>
-              <TextField
-                id="SE_Fecha"
-                name="SE_Fecha"
-                label="Fecha del Pedido"
-                type="date"
-                variant="filled"
-                color="primary"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={handleShippmentChange}
-                value={shippmentDetails.SE_Fecha && shippmentDetails.SE_Fecha}
-                fullWidth
-              />
-              <TextField
-                id="SE_Status"
-                name="SE_Status"
-                select
-                label="Estado del Envío"
-                value={shippmentDetails.SE_Status || ""}
-                onChange={handleShippmentChange}
-                variant="filled"
-                fullWidth
-              >
-                {shippmentStatusList.map((status) => (
-                  <MenuItem key={status.letter} value={status.letter}>
-                    {status.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </CustomStack>
-            <CustomStack>
-              <TextField
-                id="federal_entity"
-                select
-                label="Entidad Federal"
-                value={federalEntity}
-                onChange={handleFederalEntityChange}
-                variant="filled"
-                SelectProps={{
-                  onOpen: getFederalEntities,
-                }}
-                fullWidth
-              >
-                {federalEntities ? (
-                  federalEntities.map((federalEntity) => (
-                    <MenuItem
-                      key={federalEntity.EF_Id}
-                      value={federalEntity.EF_Id}
-                    >
-                      {federalEntity.EF_Nombre}
-                    </MenuItem>
-                  ))
-                ) : loadingFederalEntities ? (
-                  <MenuItem>
-                    <Spinner loading={loadingFederalEntities} />
-                  </MenuItem>
-                ) : (
-                  <MenuItem value={0}>Hubo un error</MenuItem>
-                )}
-              </TextField>
-              <TextField
-                id="municipality"
-                select
-                label="Municipio"
-                value={municipality}
-                onChange={handleMunicipalityChange}
-                variant="filled"
-                SelectProps={{
-                  onOpen: () => getMunicipities(federalEntity),
-                }}
-                fullWidth
-                {...(federalEntity
-                  ? {
-                      disabled: false,
-                    }
-                  : { disabled: true })}
-              >
-                {municipalities ? (
-                  municipalities.map((municipality) => (
-                    <MenuItem
-                      key={municipality.Municipio_Id}
-                      value={municipality.Municipio_Id}
-                    >
-                      {municipality.Municipio_Nombre}
-                    </MenuItem>
-                  ))
-                ) : loadingMunicipalities ? (
-                  <MenuItem>
-                    <Spinner loading={loadingMunicipalities} />
-                  </MenuItem>
-                ) : (
-                  <MenuItem value={0}>Hubo un error</MenuItem>
-                )}
-              </TextField>
-              <TextField
-                id="SE_ParroquiaId"
-                select
-                label="Parroquia"
-                name="SE_ParroquiaId"
-                value={parish}
-                onChange={handleParishChange}
-                variant="filled"
-                SelectProps={{
-                  onOpen: () => getParishes(municipality),
-                }}
-                fullWidth
-                {...(municipality
-                  ? {
-                      disabled: false,
-                    }
-                  : { disabled: true })}
-              >
-                {parishes ? (
-                  parishes.map((parish) => (
-                    <MenuItem
-                      key={parish.Parroquia_Id}
-                      value={parish.Parroquia_Id}
-                    >
-                      {parish.Parroquia_Nombre}
-                    </MenuItem>
-                  ))
-                ) : loadingParishes ? (
-                  <MenuItem>
-                    <Spinner loading={loadingParishes} />
-                  </MenuItem>
-                ) : (
-                  <MenuItem value={0}>Hubo un error</MenuItem>
-                )}
-              </TextField>
-            </CustomStack>
-            <CustomStack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={{ xs: 1, sm: 2, md: 2 }}
-              sx={{ padding: "1rem 0" }}
-            >
-              <TextField
-                label="Peso Total"
-                InputProps={{
-                  readOnly: true,
-                }}
-                variant="filled"
-                value={shippmentDetails.SE_PesoTotal || ""}
-                InputLabelProps={{
-                  shrink: shippmentDetails.SE_PesoTotal ? true : false,
-                }}
-                {...(true && {
-                  disabled: true,
-                })}
-              ></TextField>
-              <TextField
-                label="Valor Total"
-                InputProps={{
-                  readOnly: true,
-                }}
-                variant="filled"
-                value={shippmentDetails.SE_ValorTotal || ""}
-                InputLabelProps={{
-                  shrink: shippmentDetails.SE_ValorTotal ? true : false,
-                }}
-                {...(true && {
-                  disabled: true,
-                })}
-              ></TextField>
-            </CustomStack>
-
-            
+            <Chip label="Vaciar contactos" onClick={handleDeleteAllContacts} />
+          </Box>
+          <Grid
+            sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
+            container
+          >
+            {contactList.map((contact, index) => {
+              return (
+                <Chip
+                  label={`${contact.contactInfo}`}
+                  deleteIcon={<DeleteTwoToneIcon />}
+                  variant="outlined"
+                  onDelete={() => handleDeleteContact(index)}
+                />
+              );
+            })}
           </Grid>
+          {/* Shippment Information */}
+          <CustomStack>
+            <TextField
+              label="Id del Envío"
+              variant="filled"
+              type="number"
+              id="SE_Id"
+              name="SE_Id"
+              fullWidth
+              onChange={handleShippmentChange}
+              value={shippmentDetails.SE_Id || null}
+              {...(shippmentDetails.SE_Id && {InputLabelProps:{
+                shrink: true,
+              }} )}
+            />
+          </CustomStack>
+          <CustomStack>
+            <TextField
+              id="SE_Fecha"
+              name="SE_Fecha"
+              label="Fecha del Pedido"
+              type="date"
+              variant="filled"
+              color="primary"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              onChange={handleShippmentChange}
+              value={shippmentDetails.SE_Fecha && shippmentDetails.SE_Fecha}
+              fullWidth
+            />
+            <TextField
+              id="SE_Status"
+              name="SE_Status"
+              select
+              label="Estado del Envío"
+              value={shippmentDetails.SE_Status || ""}
+              onChange={handleShippmentChange}
+              variant="filled"
+              fullWidth
+            >
+              {shippmentStatusList.map((status) => (
+                <MenuItem key={status.letter} value={status.letter}>
+                  {status.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </CustomStack>
+          <CustomStack>
+            <TextField
+              id="federal_entity"
+              select
+              label="Entidad Federal"
+              value={federalEntity}
+              onChange={handleFederalEntityChange}
+              variant="filled"
+              SelectProps={{
+                onOpen: getFederalEntities,
+              }}
+              fullWidth
+            >
+              {federalEntities ? (
+                federalEntities.map((federalEntity) => (
+                  <MenuItem
+                    key={federalEntity.EF_Id}
+                    value={federalEntity.EF_Id}
+                  >
+                    {federalEntity.EF_Nombre}
+                  </MenuItem>
+                ))
+              ) : loadingFederalEntities ? (
+                <MenuItem>
+                  <Spinner loading={loadingFederalEntities} />
+                </MenuItem>
+              ) : (
+                <MenuItem value={0}>Hubo un error</MenuItem>
+              )}
+            </TextField>
+            <TextField
+              id="municipality"
+              select
+              label="Municipio"
+              value={municipality}
+              onChange={handleMunicipalityChange}
+              variant="filled"
+              SelectProps={{
+                onOpen: () => getMunicipities(federalEntity),
+              }}
+              fullWidth
+              {...(federalEntity
+                ? {
+                    disabled: false,
+                  }
+                : { disabled: true })}
+            >
+              {municipalities ? (
+                municipalities.map((municipality) => (
+                  <MenuItem
+                    key={municipality.Municipio_Id}
+                    value={municipality.Municipio_Id}
+                  >
+                    {municipality.Municipio_Nombre}
+                  </MenuItem>
+                ))
+              ) : loadingMunicipalities ? (
+                <MenuItem>
+                  <Spinner loading={loadingMunicipalities} />
+                </MenuItem>
+              ) : (
+                <MenuItem value={0}>Hubo un error</MenuItem>
+              )}
+            </TextField>
+            <TextField
+              id="SE_ParroquiaId"
+              select
+              label="Parroquia"
+              name="SE_ParroquiaId"
+              value={parish}
+              onChange={handleParishChange}
+              variant="filled"
+              SelectProps={{
+                onOpen: () => getParishes(municipality),
+              }}
+              fullWidth
+              {...(municipality
+                ? {
+                    disabled: false,
+                  }
+                : { disabled: true })}
+            >
+              {parishes ? (
+                parishes.map((parish) => (
+                  <MenuItem
+                    key={parish.Parroquia_Id}
+                    value={parish.Parroquia_Id}
+                  >
+                    {parish.Parroquia_Nombre}
+                  </MenuItem>
+                ))
+              ) : loadingParishes ? (
+                <MenuItem>
+                  <Spinner loading={loadingParishes} />
+                </MenuItem>
+              ) : (
+                <MenuItem value={0}>Hubo un error</MenuItem>
+              )}
+            </TextField>
+          </CustomStack>
+          <CustomStack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={{ xs: 1, sm: 2, md: 2 }}
+            sx={{ padding: "1rem 0" }}
+          >
+            <TextField
+              label="Peso Total"
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="filled"
+              value={shippmentDetails.SE_PesoTotal || ""}
+              InputLabelProps={{
+                shrink: shippmentDetails.SE_PesoTotal ? true : false,
+              }}
+              {...(true && {
+                disabled: true,
+              })}
+            ></TextField>
+            <TextField
+              label="Valor Total"
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="filled"
+              value={shippmentDetails.SE_ValorTotal || ""}
+              InputLabelProps={{
+                shrink: shippmentDetails.SE_ValorTotal ? true : false,
+              }}
+              {...(true && {
+                disabled: true,
+              })}
+            ></TextField>
+          </CustomStack>
           <Stack
             direction={{ xs: "column", sm: "row" }}
             spacing={{ xs: 1, sm: 2, md: 2 }}
@@ -867,9 +1081,13 @@ function Add() {
           <Button onClick={handleClose} variant="outlined">
             Cancelar
           </Button>
-          <Button variant="outlined" type="submit">
+          <LoadingButton
+            loading={sending}
+            variant="outlined"
+            onClick={handleSubmitShippment}
+          >
             Guardar
-          </Button>
+          </LoadingButton>
         </Box>
       </Dialog>
       {/* File Upload */}

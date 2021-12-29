@@ -1,4 +1,6 @@
-import React from "react";
+import React, {useContext} from "react";
+
+import { OpenEditContext } from "../context/openEditContext";
 
 /* Material UI DataTable */
 import { GridColDef } from "@mui/x-data-grid";
@@ -13,6 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+import { CustomOptionsButtons } from "./CustomOptionsButtons";
 
 /* Envios Columns */
 export const EnviosColumns: GridColDef[] = [
@@ -63,28 +66,9 @@ export const EnviosColumns: GridColDef[] = [
     align: "center",
     width: 200,
     sortable: false,
-    renderCell: (thisRow) => {
+    renderCell: ( thisRow) => {
       return (
-        <>
-          <IconButton
-            component={Link}
-            to={`/Envios/Detalles/${thisRow.row.SE_Id}`}
-          >
-            <VisibilityTwoToneIcon />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Envios/Editar/${thisRow.row.SE_Id}`}
-          >
-            <EditTwoToneIcon color="info" />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Envios/Eliminar/${thisRow.row.SE_Id}`}
-          >
-            <DeleteTwoToneIcon color="error" />
-          </IconButton>
-        </>
+        <CustomOptionsButtons thisRow={thisRow} />
       );
     },
   },
