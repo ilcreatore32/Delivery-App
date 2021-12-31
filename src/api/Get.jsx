@@ -17,15 +17,12 @@ export async function GetShippments() {
 }
 
 export async function GetOneShippment(id) {
-  const shippment = await Api.get(`/shippment/${id}`, {
-    params: {
-      view_option: "admin",
-    },
-  })
+  const shippment = await Api.get(`/shippment/${id}`)
     .then((result) => {
       return result.data;
     })
     .catch((error) => {
+      console.log(error)
       console.log(`Error al consultar el Envio: #${id}`);
     });
   return shippment;
@@ -142,12 +139,22 @@ export async function GetOnePayment(id) {
 /* Usuarios */
 export async function GetUsers() {
   /* Hace falta la ruta en la API */
-  const users = await Api.get(`/user`)
+  const users = await Api.get(`/auth`)
     .then((result) => {
       return result.data;
     })
     .catch((error) => {
       console.log(`Error al consultar los Usuarios`);
+    });
+  return users;
+}
+export async function GetAuthenticatedUser() {
+  const users = await Api.get(`/auth`)
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al consultar el usuario autenticado`);
     });
   return users;
 }

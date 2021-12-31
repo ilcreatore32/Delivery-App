@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 
 /* API */
-import { GetOneShippment } from "../../../api/Get";
+import { GetAuthenticatedUser, GetOneShippment } from "../../../api/Get";
 
 /* React-Router */
 import { useParams } from "react-router";
@@ -45,6 +45,10 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 /* Components */
 import Spinner from "../../../components/Spinner/Spinner";
+import { authContext } from "../../../context/authContext";
+
+/* Context */
+
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -56,6 +60,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function Details() {
   const { id } = useParams();
+  const AuthContext = useContext(authContext);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [Offer, setOffer] = useState(false);
@@ -64,6 +69,7 @@ function Details() {
   const [shippmentDetails, setShippmentDetails] = useState({});
   const [productsList, setproductsList] = useState([]);
   const [servicesAvailable, setServicesAvailable] = useState([]);
+  const [serviceDetails, setServiceDetails] = useState({});
 
   const handleOffer = () => {
     setOffer(true);
@@ -87,13 +93,15 @@ function Details() {
 
   const fetchShippment = useCallback(async () => {
     await setLoading(true);
+    console.log(AuthContext);
     try {
       const response = await GetOneShippment(id);
-      const { shippmentDetails, productsList, servicesAvailable } =
-        await response;
-      await setShippmentDetails(shippmentDetails);
-      await setproductsList(productsList);
-      await setServicesAvailable(servicesAvailable);
+      await setShippmentDetails(response.shippmentDetails);
+      await setproductsList(response.productsList);
+      await setServicesAvailable(response.servicesAvailable);
+      await setServiceDetails(response.serviceDetails);
+      const user = await GetAuthenticatedUser();
+      console.log(user)
     } catch (error) {
       console.log(error);
     }
@@ -156,6 +164,24 @@ function Details() {
                       <TableCell component="th">Peso Total</TableCell>
                       <TableCell align="center">
                         {shippmentDetails.SE_PesoTotal}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th">Entidad Federal</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.EF_Nombre}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th">Municipio</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.Municipio_Nombre}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th">Parroquía</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.Parroquia_Nombre}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -291,7 +317,7 @@ function Details() {
                     </>
                   ) : null}
                   <Divider />
-                  {servicesAvailable.map((service) => {
+                  {servicesAvailable && servicesAvailable.map((service) => {
                     return (
                       <ListItem
                         key={service.ST_Id}
@@ -343,9 +369,9 @@ function Details() {
                         {shippmentDetails.Persona_Apellido}
                       </TableCell>
                     </TableRow>
-                    {shippmentDetails.Telefonos_Persona ? (
+                    {(shippmentDetails && shippmentDetails.Contacto_Persona) ? (
                       <TableRow>
-                        <TableCell component="th">Telefonos</TableCell>
+                        <TableCell component="th">Contacto</TableCell>
                         <TableCell align="center">
                           <IconButton
                             size="small"
@@ -361,7 +387,7 @@ function Details() {
                             <Box sx={{ margin: 1 }}>
                               <Table size="small" aria-label="purchases">
                                 <TableBody>
-                                  {shippmentDetails.Telefonos_Persona.map(
+                                  {shippmentDetails.Contacto_Persona &&shippmentDetails.Contacto_Persona.split(";").map(
                                     (tlf) => {
                                       return (
                                         <TableRow>

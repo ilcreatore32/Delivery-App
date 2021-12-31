@@ -47,7 +47,7 @@ export const authenticateUser = async (req, res) => {
 export const getAuthenticatedUser = async (req, res) => {
   try {
     /* get user */
-    pool.query('SELECT * FROM usuarios WHERE Usuario_Id = ?', [req.user.id], (error, results, fields) => {
+    pool.query('SELECT Usuario_Id, Usuario_Permisos,Usuario_Status FROM usuarios WHERE Usuario_Id = ?', [req.user.id], (error, results, fields) => {
       if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
       /* if user not found */
       if (!results[0]) {

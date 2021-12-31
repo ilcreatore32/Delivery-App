@@ -1,6 +1,18 @@
 import Api from "../config/axiosClient";
 
 /* Envios */
+export async function PutEnvio(id, shippmentDetails) {
+  const shippmentsResult = await Api.put(`/shippment/${id}`, shippmentDetails)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      return error
+    });
+  console.log(shippmentsResult);
+  return shippmentsResult;
+}
+
 export function PutOneEnvio(id) {
   Api.put(`/Envios/${id}`)
     .then((result) => {

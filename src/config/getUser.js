@@ -4,7 +4,6 @@ import jwt from "jwt-simple";
 con informacion del usuario */
 export default async function getUser(token) {
   if (token) {
-      console.log(token.token);
     try {
       let user = await jwt.decode(token.token, process.env.SECRETA);
       await localStorage.setItem("user", user);

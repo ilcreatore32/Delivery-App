@@ -34,7 +34,6 @@ function Envios({ asumidos, admin }) {
     const municipalities = await GetUbication("municipality");
     const federals = await GetUbication("federal_entity");
     await setOptions([municipalities]);
-    await console.log(municipalities, federals);
   };
 
   useEffect(() => {

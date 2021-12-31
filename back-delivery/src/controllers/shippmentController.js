@@ -352,7 +352,8 @@ export const getOneShippment = async function (req, res) {
   /* query to get all shippment's details */
   let query_shippment = `
   SELECT SE_Id, SE_Fecha, SE_Status, SE_ValorTotal, SE_PesoTotal, SE_PersonaId, Persona_Nombre, 
-  Persona_Apellido, GROUP_CONCAT(Contacto_Info SEPARATOR ';') Contacto_Persona, SEST_STId
+  Persona_Apellido, GROUP_CONCAT(Contacto_Info SEPARATOR ';') Contacto_Persona, Parroquia_Nombre,
+  Municipio_Nombre, EF_Nombre, SEST_STId
   
   FROM solicitudesenvio
   
@@ -387,7 +388,7 @@ export const getOneShippment = async function (req, res) {
   /* Query to get shippment's asociated service*/
   let query_detail_service = `
   SELECT ST_Id, ST_HorarioIni, ST_HorarioFin, MT_Nombre, ST_Precio,
-  GROUP_CONCAT(Telefono_Numero SEPARATOR ';') ContactoPersona, 
+  GROUP_CONCAT(Contacto_Info ORDER BY Contacto_Tipo SEPARATOR ';') Contacto_Persona, 
   Persona_Nombre, Persona_Apellido,
   CONCAT (Vehiculo_Marca, ' ',Vehiculo_Modelo) AS DatosMedio
 
@@ -414,7 +415,7 @@ export const getOneShippment = async function (req, res) {
   FROM se_has_st
   
   JOIN serviciotransporte
-  		ON SEST_STId
+  		ON SEST_STId = ST_Id
   JOIN mediotransporte
   		ON MT_Id = ST_MTId
 	LEFT JOIN vehiculos
@@ -423,6 +424,7 @@ export const getOneShippment = async function (req, res) {
 	WHERE SEST_SEId = ? AND SEST_Status <> 'A'
 
   GROUP BY ST_Id
+  
   `;
 
   try {
@@ -467,7 +469,7 @@ export const getOneShippment = async function (req, res) {
                   /* if error in the query */
                   if (errServiceD)
                     return res.status(400).json({
-                      error: "Error al consultar en la base de datos",
+                      error: "Error al consultar en la base de datos"
                     });
                   /* if there is no data */
                   if (serviceD.length === 0 || serviceD[0].ST_Id === null)
@@ -526,11 +528,11 @@ export const getOneShippment = async function (req, res) {
 export const editShippment = async function (req, res) {
   /* Extract shippment's id */
   const { id } = req.params;
-  console.log(id)
+  console.log(id);
   /* Query to get shippment's details */
   let query_shippment = `
   SELECT SE_Id, SE_Fecha, SE_Status, SE_ValorTotal, SE_PesoTotal, EF_Id, 
-  EF_Nombre, Municipio_Id, Municipio_Nombre, Parroquia_Id, Parroquia_Nombre, SEST_Status,
+  EF_Nombre, Municipio_Id, Municipio_Nombre, SE_ParroquiaId, Parroquia_Nombre, SEST_Status,
   SEST_STId, Persona_Id, Persona_TipoId, Persona_Nombre, Persona_Apellido
   
   FROM solicitudesenvio
@@ -562,7 +564,7 @@ export const editShippment = async function (req, res) {
   `;
   /* Query to get person's contact information */
   let query_contact = `
-  SELECT Contacto_Tipo, Contacto_Info from contacto WHERE Contacto_PersonaId = ?
+  SELECT Contacto_Tipo AS contact_type, Contacto_Info AS contactInfo from contacto WHERE Contacto_PersonaId = ?
   `;
 
   try {
@@ -570,7 +572,6 @@ export const editShippment = async function (req, res) {
     await pool.query(
       query_shippment, [id],
       async function (errShippment, shippmentDetails) {
-        console.log(shippmentDetails)
         /* if error in the query */
         if (errShippment)
           return res
@@ -607,7 +608,7 @@ export const editShippment = async function (req, res) {
                     .status(400)
                     .json({ error: "Error al consultar en la base de datos" });
                 /* if there is no data */
-                if (contact.length === 0 || contact[0].Contacto_Info === null)
+                if (contact.length === 0 || contact[0].contactInfo === null)
                   return res
                     .status(404)
                     .json({
