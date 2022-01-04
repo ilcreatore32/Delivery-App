@@ -230,19 +230,19 @@ export const saveVehicle = async function (req, res) {
   let { id } = req.params
 
   /* extract the query body */
-  /*let {
+  let {
     Vehiculo_Matricula, // E.g. 'admin', 'carrier'.
     Vehiculo_Marca, // Toyota
     Vehiculo_Modelo, // Corolla
     Vehiculo_Anio, // 2019
     Vehiculo_Pasajeros, // 4
     Vehiculo_CapacidadCarga, // 50.00
-    Vehiculo_PersonaId, // 20000000
+    Vehiculo_PersonaId=req.user.id,// 20000000
     Vehiculo_MTId // 1
-  } = req.body*/
+  } = req.body
 
   /* Create an object with the properties */
-  /*const vehicleDetails = {
+  const vehicleDetails = {
     Vehiculo_Matricula, 
     Vehiculo_Marca, 
     Vehiculo_Modelo, 
@@ -251,7 +251,7 @@ export const saveVehicle = async function (req, res) {
     Vehiculo_CapacidadCarga, 
     Vehiculo_PersonaId, 
     Vehiculo_MTId 
-  }*/
+  }
   
   /* Query to update vehicle's details */
   let queryDetails = `
@@ -276,7 +276,7 @@ export const saveVehicle = async function (req, res) {
               });
           } else {
               /* save vehicle's details */
-              connection.query(queryDetails, req.body, function(err, saveDetailsResult) {
+              connection.query(queryDetails, vehicleDetails, function(err, saveDetailsResult) {
                   /* if error in the query */
                   if (err) {
                       /* Rollback the transaction */

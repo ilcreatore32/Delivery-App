@@ -17,32 +17,35 @@ export async function PostEnvio(shippmentDetails) {
       return result;
     })
     .catch((error) => {
-      return error
+      return error;
     });
   console.log(shippmentsResult);
   return shippmentsResult;
 }
 
 /* Servicios */
-export function PostOneServicio(id) {
-  Api.post(`/Servicios/${id}`)
+export async function PostServicio(serviceDetails) {
+  const serviceResult = await Api.post(`/service/`, serviceDetails)
     .then((result) => {
-      console.log(result);
+      return result;
     })
     .catch((error) => {
-      console.log(error);
+      return error;
     });
+  return serviceResult;
 }
 
 /* Vehiculos */
-export function PostOneVehiculo(id) {
-  Api.post(`/Vehiculos/${id}`)
+export async function PostVehiculo(vehicleDetails) {
+  const vehicleResults = await Api.post(`/vehicle/`, vehicleDetails)
     .then((result) => {
-      console.log(result);
+      return result;
     })
     .catch((error) => {
-      console.log(error);
+      return error;
     });
+  console.log(vehicleResults);
+  return vehicleResults;
 }
 
 /* Registro de Usuario */

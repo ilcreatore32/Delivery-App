@@ -12,7 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
-import {CustomOptionsButtons} from "./CustomOptionsButtons.jsx";
+import {CustomDeleteArea, CustomOptionsButtons} from "./CustomOptionsButtons.jsx";
 
 /* Envios Columns */
 export const EnviosColumns = [
@@ -65,7 +65,7 @@ export const EnviosColumns = [
     sortable: false,
     renderCell: ( thisRow) => {
       return (
-        <CustomOptionsButtons thisRow={thisRow} />
+        <CustomOptionsButtons thisRow={thisRow} page="shippment" />
       );
     },
   },
@@ -138,26 +138,7 @@ export const ServiciosColumns = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <>
-          <IconButton
-            component={Link}
-            to={`/Servicios/Detalles/${thisRow.row.ST_Id}`}
-          >
-            <VisibilityTwoToneIcon />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Servicios/Detalles/${thisRow.row.ST_Id}`}
-          >
-            <EditTwoToneIcon color="info" />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Servicios/Eliminar/${thisRow.row.ST_Id}`}
-          >
-            <DeleteTwoToneIcon color="error" />
-          </IconButton>
-        </>
+        <CustomOptionsButtons thisRow={thisRow} page="service" />
       );
     },
   },
@@ -414,3 +395,45 @@ export const UsuariosColumns = [
     },
   },
 ];
+
+/* Areas Columns */
+export const AreasColumns = [
+  {
+    headerName: "Entidad Federal",
+    field: "EF_Nombre",
+    headerAlign: "center",
+    align: "center",
+    flex: 1,
+    sortable: true,
+  },
+  {
+    headerName: "Municipio",
+    field: "Municipio_Nombre",
+    headerAlign: "center",
+    align: "center",
+    flex: 1,
+    sortable: true,
+  },
+  {
+    headerName: "Parroquía",
+    field: "Parroquia_Nombre",
+    headerAlign: "center",
+    align: "center",
+    flex: 1,
+    sortable: true,
+  },
+  {
+    field: "actions",
+    headerName: "Acciones",
+    headerAlign: "center",
+    align: "center",
+    flex: 1,
+    sortable: false,
+    renderCell: (thisRow) => {
+      return (
+          <CustomDeleteArea thisRow={thisRow}/>
+      );
+    },
+  },
+];
+

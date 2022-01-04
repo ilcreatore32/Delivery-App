@@ -24,14 +24,16 @@ export function PutOneEnvio(id) {
 }
 
 /* Servicios */
-export function PutOneServicio(id) {
-  Api.put(`/Servicios/${id}`)
+export async function PutServicio(id, service) {
+  const serviceResult = await Api.put(`/service/${id}`, service)
     .then((result) => {
-      console.log(result);
+      return result;
     })
     .catch((error) => {
-      console.log(error);
+      return error
     });
+  console.log(serviceResult);
+  return serviceResult;
 }
 
 /* Vehiculos */

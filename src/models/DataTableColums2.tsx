@@ -68,7 +68,7 @@ export const EnviosColumns: GridColDef[] = [
     sortable: false,
     renderCell: ( thisRow) => {
       return (
-        <CustomOptionsButtons thisRow={thisRow} />
+        <CustomOptionsButtons thisRow={thisRow} page="shippment"/>
       );
     },
   },

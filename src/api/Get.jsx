@@ -22,7 +22,7 @@ export async function GetOneShippment(id) {
       return result.data;
     })
     .catch((error) => {
-      console.log(error)
+      console.log(error);
       console.log(`Error al consultar el Envio: #${id}`);
     });
   return shippment;
@@ -70,6 +70,21 @@ export async function GetOneService(id) {
     })
     .catch((error) => {
       console.log(`Error al consultar el Servicio: #${id}`);
+    });
+  return service;
+}
+
+export async function GetOneServiceToEdit(id) {
+  const service = await Api.get(`/service/edit/${id}`, {
+    params: {
+      view_option: "admin",
+    },
+  })
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al consultar el Envio: #${id}`);
     });
   return service;
 }
@@ -165,7 +180,7 @@ export async function GetUbication(option, federal_entity, municipality) {
     params: {
       option,
       federal_entity: federal_entity,
-      municipality: municipality
+      municipality: municipality,
     },
   })
     .then((result) => {
@@ -191,4 +206,31 @@ export async function GetProducts(option, type_product) {
       console.log(`Error al consultar la opción: #${option}`);
     });
   return products;
+}
+
+export async function GetConveyances() {
+  const conveyance = await Api.get(`/options/conveyance`)
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al obtener el medio de transporte`);
+    });
+  return conveyance;
+}
+
+export async function GetVehiclesOption(conveyance, personaId) {
+  const vehicles = await Api.get(`/options/vehicles`, {
+    params: {
+      conveyance,
+      personaId,
+    }
+  })
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al obtener el medio de transporte`);
+    });
+  return vehicles;
 }

@@ -337,8 +337,8 @@ export const editService = async function (req, res) {
   /* Query to get service's details */
   let query_service = `
   SELECT DISTINCT ST_Id, ST_Horarioini, ST_Horariofin, ST_Status, ST_Precio,
-  ST_Descripcion, MT_Id, MT_Nombre, ST_VehiculoId, Vehiculo_Marca, Vehiculo_Modelo,
-  Vehiculo_Pasajeros, Vehiculo_CapacidadCarga
+  ST_Descripcion, ST_MTId, MT_Nombre, ST_VehiculoId, Vehiculo_Marca, Vehiculo_Modelo,
+  Vehiculo_Pasajeros, Vehiculo_CapacidadCarga, ST_PersonaId
     
   FROM serviciotransporte
 
@@ -351,7 +351,7 @@ export const editService = async function (req, res) {
   `;
   /* Query to get all service's areas */
   let query_areas = `
-  SELECT EF_Nombre, Municipio_Nombre, Parroquia_Nombre
+  SELECT EF_Id, EF_Nombre, Municipio_Id, Municipio_Nombre, Parroquia_Id, Parroquia_Nombre
   FROM areaoperaciones
 
   LEFT JOIN entidadesfederales
@@ -380,7 +380,7 @@ export const editService = async function (req, res) {
         /* if there is no data */
         if (areas.length === 0 || areas[0].AO_EFId === null) return res.status(404).json({error: "No posee servicios de transporte"})
         /* send results */
-        res.status(200).json( {serviceDetails: serviceDetails[0], areasList: areas}  )
+        res.status(200).json( {...serviceDetails[0], areasList: areas}  )
         
       })
     });
@@ -404,8 +404,8 @@ export const saveService = async function (req, res) {
     ST_Descripcion, // E.g. 'Example'
     ST_MTId, // E.g. '1'
     ST_VehiculoId,  // E.g. '2'
-    ST_PersonaId, // E.g. '28044244'
-    areasList // E.g. [[1,1,1],[1,4,2]]
+    ST_PersonaId=req.user.id, // E.g. '28044244'
+    areasList // E.g. [[1,1,1],[1,4,2]] 'EF_Id, Municipio_Id, Parroquia_Id'
   } = req.body
 
   /* Create an object with the properties */
@@ -493,6 +493,7 @@ export const saveService = async function (req, res) {
                       } else {
                         /* If there is an areas list save them, else finish the transaction */
                         if (areasList.length > 0) {
+                          console.log(areasList)
                           /* Insert areas */
                           connection.query(queryUpdateAreas,[areasList], function(err, updateAreasResult) {
                             /* if error in the query */
