@@ -28,6 +28,9 @@ import Api from "../../../config/axiosClient";
 import { PostPago } from "../../../api/Post";
 import { userContext } from "../../../context/userContext";
 import Spinner from "../../../components/Spinner/Spinner";
+import { GetOnePayment } from "../../../api/Get";
+import { OpenEditContext } from "../../../context/openEditContext";
+import { PutPago } from "../../../api/Put";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -49,11 +52,15 @@ const CustomStack = (props) => {
  */
 function Add() {
   const [open, setOpen] = useState(false);
+  const {
+    paymentToEdit,
+    openEditPayment,
+    setPaymentToEdit,
+    setOpenEditPayment,
+  } = useContext(OpenEditContext);
   const UserContext = useContext(userContext);
 
   const [payment, setPayment] = useState({});
-  const [selectedFile, setSelectedFile] = useState({});
-  const [monto, setMonto] = useState("");
 
   const [loading, setLoading] = useState(false);
 
@@ -62,13 +69,13 @@ function Add() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const onFileChange = (e) => {
-    if (e.target.files[0].size  / 1024 / 1024 > 16) {
+    if (e.target.files[0].size / 1024 / 1024 > 16) {
       setErrorMessage("La imagen es demasiado grande");
       setTimeout(() => {
         setErrorMessage("");
       }, 1500);
     } else {
-      setSelectedFile(e.target.files[0]);
+      setPayment({ ...payment, PS_ArchivoReferencia: e.target.files[0] });
     }
   };
 
@@ -85,11 +92,14 @@ function Add() {
 
   const handleClose = () => {
     setOpen(false);
+    setPaymentToEdit("")
+    setOpenEditPayment(false)
+    setPayment({});
   };
 
   const handleSubmitPayment = async (e) => {
     e.preventDefault();
-    if (!selectedFile["name"] && !payment["PS_Referencia"]) {
+    if (!payment["PS_ArchivoReferencia"] && !payment["PS_Referencia"]) {
       setErrorMessage("Debe ingresar una referencia o imagen de prueba");
       setTimeout(() => {
         setErrorMessage("");
@@ -124,24 +134,33 @@ function Add() {
 
     setSending(true);
   };
+
   useEffect(() => {
     if (!sending) return;
-    let openEditShippment, shippmentToEdit;
-    if (openEditShippment && shippmentToEdit) {
-      /* (async function () {
+    if (openEditPayment && paymentToEdit) {
+      (async function () {
         try {
-          const response = await PutEnvio(shippmentToEdit, shippmentDetails);
+          let form = new FormData();
+          Object.keys(payment).forEach((key) => {
+            if (key === "PS_ArchivoReferencia" && payment[key].name) {
+              console.debug(payment[key].name);
+              form.append("PS_ArchivoReferencia", payment[key], payment[key].name);
+            } else {
+              form.append(key, payment[key]);
+            }
+          });
+          const response = await PutPago(paymentToEdit, form,{
+            "Content-Type": "multipart/form-data",
+          });
           if (response.status === 200) {
-            setSuccessMessage("Envío editado correctamente");
+            setSuccessMessage("Pago editado correctamente");
             setTimeout(() => {
               setSuccessMessage("");
-              window.location.href = "/Envios"
+              window.location.href = "/Pagos";
             }, 2000);
             setSending(false);
           } else {
-            setErrorMessage(
-              "Error al editar el envío, puede que el ID ya exista"
-            );
+            setErrorMessage("Error al editar el Pago");
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
@@ -158,21 +177,19 @@ function Add() {
             setSending(false);
           }
         }
-      })(); */
+      })(); 
     } else {
       (async function () {
         try {
           let form = new FormData();
           Object.keys(payment).forEach((key) => {
-            form.append(key, payment[key]);
+            if (key === "PS_ArchivoReferencia" && payment[key].name) {
+              console.debug(payment[key]);
+              form.append(key, payment[key], payment[key].name);
+            } else {
+              form.append(key, payment[key]);
+            }
           });
-          if (selectedFile["name"]) {
-            form.append(
-              "PS_ArchivoReferencia",
-              selectedFile,
-              selectedFile.name
-            );
-          }
           const response = await PostPago(form, {
             "Content-Type": "multipart/form-data",
           });
@@ -184,16 +201,14 @@ function Add() {
             }, 2000);
             setSending(false);
           } else {
-            setErrorMessage(
-              "Error al crear el Pago"
-            );
+            setErrorMessage("Error al crear el Pago");
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
             setSending(false);
           }
         } catch (e) {
-          console.log(e)
+          console.log(e);
           if (e) {
             setErrorMessage("Hubo un error al enviar los datos");
             setTimeout(() => {
@@ -207,10 +222,32 @@ function Add() {
   }, [sending]);
 
   useEffect(() => {
-    setPayment({...payment,
-      PS_SuscripcionId: UserContext?.user?.Suscripcion_Id
-    })
-  },[UserContext])
+    if (paymentToEdit || openEditPayment || Object.keys(payment).length > 0) return;
+    setPayment({
+      ...payment,
+      PS_SuscripcionId: UserContext?.user?.Suscripcion_Id,
+    });
+  }, [UserContext, payment]);
+
+  useEffect(async () => {
+    if (!paymentToEdit || !openEditPayment) return;
+    try {
+      setLoading(true);
+      let paymentDetails = await GetOnePayment(paymentToEdit);
+      await setPayment(() => paymentDetails);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    } catch (error) {
+      setErrorMessage("Hubo un error al obtener los datos del pago");
+      setTimeout(() => {
+        setErrorMessage("");
+        setOpenEditPayment(false);
+        setPaymentToEdit("")
+        setLoading(false);
+      }, 3000);
+    }
+  }, [paymentToEdit, openEditPayment]);
 
   return (
     <>
@@ -218,7 +255,7 @@ function Add() {
         <AddCircleTwoToneIcon color="primary" />
       </IconButton>
       <Dialog
-        open={open}
+        open={open || openEditPayment}
         TransitionComponent={Transition}
         keepMounted
         maxWidth="md"
@@ -236,7 +273,11 @@ function Add() {
             {successMessage}
           </Alert>
         </Collapse>
-        <DialogTitle>{"Creación de Pago"}</DialogTitle>
+        <DialogTitle>
+          {openEditPayment && paymentToEdit
+            ? "Edición del Pago"
+            : "Creación de Pago"}
+        </DialogTitle>
         {loading || sending ? (
           <Box
             sx={{
@@ -278,7 +319,7 @@ function Add() {
                     label="Metodo de Pago"
                     variant="filled"
                     fullWidth
-                    value={payment.PS_Metodo}
+                    value={payment.PS_Metodo || ""}
                     onChange={handlePaymentChange}
                   >
                     {[
@@ -314,7 +355,7 @@ function Add() {
                     variant="filled"
                     fullWidth
                     onChange={handlePaymentChange}
-                    value={payment.PS_Monto}
+                    value={payment.PS_Monto || ""}
                   />
                 </CustomStack>
                 <CustomStack>
@@ -324,7 +365,7 @@ function Add() {
                     label="Referencia"
                     variant="filled"
                     onChange={handlePaymentChange}
-                    value={payment.PS_Referencia}
+                    value={payment.PS_Referencia || ""}
                     fullWidth
                   />
                   <TextField
@@ -332,7 +373,7 @@ function Add() {
                     name="PS_Status"
                     select
                     label="Status"
-                    value={payment.PS_Status}
+                    value={payment.PS_Status || ""}
                     onChange={handlePaymentChange}
                     variant="filled"
                     fullWidth
@@ -348,7 +389,7 @@ function Add() {
                     ))}
                   </TextField>
                   <TextField
-                    value={UserContext?.user?.Suscripcion_Id}
+                    value={payment.PS_SuscripcionId || ""}
                     disabled={true && true}
                     label="Suscripcion"
                     variant="filled"
@@ -356,12 +397,18 @@ function Add() {
                   />
                 </CustomStack>
                 <CustomStack>
-                  {selectedFile?.name && (
-                    <CardMedia
+                  {payment["PS_ArchivoReferencia"] && (
+                  <CardMedia
                       component="img"
                       height="140"
                       width="140"
-                      image={URL.createObjectURL(selectedFile)}
+                      {...(payment["PS_ArchivoReferencia"].name ? {
+                        image: URL.createObjectURL(payment["PS_ArchivoReferencia"]),
+                        }
+                      : {
+                        src: `data:image/jpeg;base64,${payment.PS_ArchivoReferencia}`
+                      }
+                      )}
                       title="material"
                     />
                   )}

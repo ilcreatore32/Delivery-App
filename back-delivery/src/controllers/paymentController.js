@@ -137,9 +137,9 @@ export const getOnePayment = async function (req, res) {
 
   /* extract the query params */
   let queryPayments = `
-    SELECT PS_Id, PS_Status, PS_Metodo, PS_Fecha, PS_Monto, PS_Referencia, PS_ArchivoReferencia
+    SELECT PS_Id, PS_Status, PS_Metodo, PS_Fecha, PS_Monto, PS_Referencia, PS_ArchivoReferencia, PS_SuscripcionId
     FROM pago_suscripcion 
-    WHERE PS_Id = ${id}
+    WHERE PS_Id = ?
   `;
   try {
     /* Get all data */

@@ -277,24 +277,7 @@ export const PagosColumns = [
     renderCell: (thisRow) => {
       return (
         <>
-          <IconButton
-            component={Link}
-            to={`/Pagos/Detalles/${thisRow.row.PS_Id}`}
-          >
-            <VisibilityTwoToneIcon />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Pagos/Editar/${thisRow.row.PS_Id}`}
-          >
-            <EditTwoToneIcon color="info" />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Pagos/Eliminar/${thisRow.row.PS_Id}`}
-          >
-            <DeleteTwoToneIcon color="error" />
-          </IconButton>
+          <CustomOptionsButtons thisRow={thisRow} page="payment" />
         </>
       );
     },

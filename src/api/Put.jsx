@@ -46,3 +46,16 @@ export function PutVehiculo(id, vehicle) {
   });
   return serviceResult;
 }
+
+/* Pagos */
+
+export async function PutPago(id,paymentDetails,headers) {
+  const payment = await Api.put(`/payment/${id}`,paymentDetails, headers)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      return error;
+    });
+  return payment;
+}

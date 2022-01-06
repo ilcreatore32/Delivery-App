@@ -9,6 +9,8 @@ const OpenEditProvider = (props) => {
     const [openEditService, setOpenEditService] = useState(false);
     const [vehicleToEdit, setVehicleToEdit] = useState("")
     const [openEditVehicle, setOpenEditVehicle] = useState(false);
+    const [paymentToEdit, setPaymentToEdit] = useState("")
+    const [openEditPayment, setOpenEditPayment] = useState(false);
 
     return (
         <OpenEditContext.Provider
@@ -19,12 +21,16 @@ const OpenEditProvider = (props) => {
                 openEditService,
                 vehicleToEdit,
                 openEditVehicle,
+                paymentToEdit,
+                openEditPayment,
                 setOpenEditShippment,
                 setShippmentToEdit,
                 setServiceToEdit,
                 setOpenEditService,
                 setVehicleToEdit,
-                setOpenEditVehicle
+                setOpenEditVehicle,
+                setPaymentToEdit,
+                setOpenEditPayment
             }}
         >
             {props.children}
