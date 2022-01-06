@@ -1,5 +1,5 @@
-import { useState, forwardRef, useEffect } from "react";
-import { useHistory } from 'react-router'
+import { useState, forwardRef, useEffect, useContext } from "react";
+import { useHistory } from "react-router";
 
 /* Material UI */
 import {
@@ -18,15 +18,17 @@ import {
   MenuItem,
   Collapse,
   Alert,
-  InputAdornment
+  InputAdornment,
 } from "@mui/material";
 import { DesktopDatePicker, LoadingButton } from "@mui/lab";
 
 /* Material UI Icons */
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 import Spinner from "../../../components/Spinner/Spinner";
-import { GetConveyances } from "../../../api/Get";
+import { GetConveyances, GetOneVehicle } from "../../../api/Get";
 import { PostVehiculo } from "../../../api/Post";
+import { OpenEditContext } from "../../../context/openEditContext";
+import { PutVehiculo } from "../../../api/Put";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -45,11 +47,18 @@ const CustomStack = (props) => {
   );
 };
 function Add() {
-  const history = useHistory()
+  const {
+    vehicleToEdit,
+    openEditVehicle,
+    setVehicleToEdit,
+    setOpenEditVehicle,
+  } = useContext(OpenEditContext);
+
+  const history = useHistory();
   const [open, setOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [redirect, setRedirect] = useState(false)
+  const [redirect, setRedirect] = useState(false);
 
   const [vehicle, setVehicle] = useState({});
 
@@ -66,6 +75,9 @@ function Add() {
 
   const handleClose = () => {
     setOpen(false);
+    setVehicleToEdit("")
+    setOpenEditVehicle(false)
+    setVehicle({});
   };
 
   const getConveyanceTypes = () => {
@@ -82,7 +94,7 @@ function Add() {
 
   const handleSubmitVehicle = (e) => {
     e.preventDefault();
-    console.log(!vehicle["Vehiculo_MTId"])
+    console.log(!vehicle["Vehiculo_MTId"]);
     if (!vehicle["Vehiculo_MTId"]) {
       setErrorMessage("Debe ingresar el tipo de vehículo");
       setTimeout(() => {
@@ -123,7 +135,10 @@ function Add() {
       setSending(false);
       return;
     }
-    if (!vehicle["Vehiculo_CapacidadCarga"] || vehicle["Vehiculo_CapacidadCarga"] < 1) {
+    if (
+      !vehicle["Vehiculo_CapacidadCarga"] ||
+      vehicle["Vehiculo_CapacidadCarga"] < 1
+    ) {
       setErrorMessage("Debe ingresar capacidad de carga del vehículo");
       setTimeout(() => {
         setErrorMessage("");
@@ -136,20 +151,25 @@ function Add() {
 
   useEffect(() => {
     if (!sending) return;
-    let openEditService, serviceToEdit
-    if (openEditService && serviceToEdit) {
-      /* (async function () {
+    if (openEditVehicle && vehicleToEdit) {
+      (async function () {
         try {
-          const response = await PutServicio(serviceToEdit, serviceDetails);
+          const response = await PutVehiculo(vehicleToEdit, vehicle);
           if (response.status === 200) {
-            setSuccessMessage("Servicio editado correctamente");
+            setSuccessMessage("Vehiculo editado correctamente");
             setTimeout(() => {
               setSuccessMessage("");
-              window.location.href = "/Servicios";
+              history.go(0);
+            }, 2000);
+            setSending(false);
+          } else if (response.errno === 1062) {
+            setErrorMessage("Error matrícula ya registrada en el sistema");
+            setTimeout(() => {
+              setErrorMessage("");
             }, 2000);
             setSending(false);
           } else {
-            setErrorMessage("Error al editar el servicio");
+            setErrorMessage("Error al guardar el vehículo");
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
@@ -164,7 +184,7 @@ function Add() {
             setSending(false);
           }
         }
-      })(); */
+      })();
     } else {
       (async function () {
         try {
@@ -173,21 +193,21 @@ function Add() {
             setSuccessMessage("Vehículo creado correctamente");
             setTimeout(() => {
               setSuccessMessage("");
-              history.go(0)
+              history.go(0);
             }, 2000);
             setSending(false);
           } else if (response.errno === 1062) {
-            setErrorMessage("Error matrícula repetida");
+            setErrorMessage("Error matrícula ya registrada en el sistema");
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
             setSending(false);
           } else {
-            setErrorMessage("Error matrícula repetida");
+            setErrorMessage("Error al guardar el vehículo");
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
-            setSending(false);     
+            setSending(false);
           }
         } catch (e) {
           if (e) {
@@ -202,13 +222,34 @@ function Add() {
     }
   }, [sending, vehicle]);
 
+  useEffect(async () => {
+    if (!vehicleToEdit || !openEditVehicle) return;
+    try {
+      setLoading(true);
+      let vehicleDetails = await GetOneVehicle(vehicleToEdit);
+      await setVehicle(() => vehicleDetails);
+      await getConveyanceTypes();
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    } catch (error) {
+      setErrorMessage("Hubo un error al obtener los datos del vehículo");
+      setTimeout(() => {
+        setErrorMessage("");
+        setOpenEditVehicle(false);
+        setVehicleToEdit("")
+        setLoading(false);
+      }, 3000);
+    }
+  }, [vehicleToEdit, openEditVehicle]);
+
   return (
     <>
       <IconButton onClick={handleClickOpen}>
         <AddCircleTwoToneIcon color="primary" />
       </IconButton>
       <Dialog
-        open={open}
+        open={open || openEditVehicle}
         TransitionComponent={Transition}
         keepMounted
         maxWidth="md"
@@ -226,7 +267,12 @@ function Add() {
             {successMessage}
           </Alert>
         </Collapse>
-        <DialogTitle>{"Creación de Vehiculo"}</DialogTitle>
+        <DialogTitle>
+          {openEditVehicle && vehicleToEdit
+            ? "Edición del Servicio"
+            : "Creación de Servicio"}
+        </DialogTitle>
+
         {loading ? (
           <Box
             sx={{
@@ -300,6 +346,7 @@ function Add() {
                     label="Marca"
                     variant="filled"
                     fullWidth
+                    value={(vehicle && vehicle.Vehiculo_Marca) || ""}
                     onChange={handleVehicleChange}
                   />
                   <TextField
@@ -308,6 +355,7 @@ function Add() {
                     label="Modelo"
                     variant="filled"
                     fullWidth
+                    value={(vehicle && vehicle.Vehiculo_Modelo) || ""}
                     onChange={handleVehicleChange}
                   />
                 </CustomStack>
@@ -320,11 +368,15 @@ function Add() {
                     views={["year"]}
                     minDate={new Date("1901-01-01")}
                     inputFormat="yyyy"
-                    value={(vehicle && (() => {
-                      let date = new Date(vehicle.Vehiculo_Anio,0);
-                      console.log(date);
-                      return date;
-                    })()) || ""}
+                    value={
+                      (vehicle &&
+                        (() => {
+                          let date = new Date(vehicle.Vehiculo_Anio, 0);
+                          console.log(date);
+                          return date;
+                        })()) ||
+                      ""
+                    }
                     onChange={(date) => {
                       let year = new Date(date);
                       console.log(year.getFullYear());
@@ -343,6 +395,7 @@ function Add() {
                     label="Matricula"
                     variant="filled"
                     fullWidth
+                    value={(vehicle && vehicle.Vehiculo_Matricula) || ""}
                     onChange={handleVehicleChange}
                     inputProps={{
                       maxLength: 7,
@@ -356,6 +409,7 @@ function Add() {
                     type="number"
                     label="Máximo de Pasajeros"
                     variant="filled"
+                    value={(vehicle && vehicle.Vehiculo_Pasajeros) || ""}
                     onChange={handleVehicleChange}
                     fullWidth
                   />
@@ -367,8 +421,11 @@ function Add() {
                     variant="filled"
                     onChange={handleVehicleChange}
                     fullWidth
+                    value={(vehicle && vehicle.Vehiculo_CapacidadCarga) || ""}
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">kg</InputAdornment>,
+                      startAdornment: (
+                        <InputAdornment position="start">kg</InputAdornment>
+                      ),
                     }}
                   />
                   <TextField
@@ -378,6 +435,7 @@ function Add() {
                     label="Persona"
                     variant="filled"
                     fullWidth
+                    value={(vehicle && vehicle.Vehiculo_PersonaId) || ""}
                     disabled={true}
                   />
                 </CustomStack>

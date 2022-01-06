@@ -181,6 +181,8 @@ export const savePayment = async function (req, res) {
     PS_Referencia,
     PS_ArchivoReferencia: req.file ? req.file.buffer : null,
   }
+  console.log(req.file)
+  console.log(req.body.PS_Monto)
   
   /* Query to update payment's details */
   let queryPayments = `

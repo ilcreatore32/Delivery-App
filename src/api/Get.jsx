@@ -115,7 +115,7 @@ export async function GetOneVehicle(id) {
       return result.data;
     })
     .catch((error) => {
-      console.log(`Error al consultar el Vehiculo: #${id}`);
+      return error;
     });
   return vehicle;
 }

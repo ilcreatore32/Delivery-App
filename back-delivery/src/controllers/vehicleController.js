@@ -200,8 +200,8 @@ export const getOneVehicle = async function (req, res) {
 
   /* extract the query params */
   let queryVehicles = `
-    SELECT Vehiculo_Id, Vehiculo_Matricula, MT_Nombre, Vehiculo_Marca, Vehiculo_Modelo, Vehiculo_Anio, 
-    Vehiculo_Pasajeros, Vehiculo_CapacidadCarga
+    SELECT Vehiculo_Id, Vehiculo_Matricula, MT_Nombre, Vehiculo_MTId, Vehiculo_Marca, 
+    Vehiculo_Modelo, Vehiculo_Anio, Vehiculo_Pasajeros, Vehiculo_CapacidadCarga, Vehiculo_PersonaId
     FROM vehiculos
     JOIN mediotransporte 
       ON Vehiculo_MTId = MT_Id

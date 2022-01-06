@@ -32,17 +32,17 @@ export async function PutServicio(id, service) {
     .catch((error) => {
       return error
     });
-  console.log(serviceResult);
   return serviceResult;
 }
 
 /* Vehiculos */
-export function PutOneVehiculo(id) {
-  Api.put(`/Vehiculos/${id}`)
-    .then((result) => {
-      console.log(result);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+export function PutVehiculo(id, vehicle) {
+  const serviceResult = Api.put(`/vehicle/${id}`, vehicle)
+  .then((result) => {
+    return result;
+  })
+  .catch((error) => {
+    return error
+  });
+  return serviceResult;
 }

@@ -15,10 +15,16 @@ import {
   Stack,
   Grid,
   MenuItem,
+  Input,
+  CardMedia,
 } from "@mui/material";
 
 /* Material UI Icons */
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
+import UploadFileTwoToneIcon from "@mui/icons-material/UploadFileTwoTone";
+import Api from "../../../config/axiosClient";
+import { PostPago } from "../../../api/Post";
+
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -40,6 +46,13 @@ const CustomStack = (props) => {
 function Add() {
   const [open, setOpen] = useState(false);
 
+  const [selectedFile, setSelectedFile] = useState({})
+  const [monto, setMonto] = useState("");
+
+  const onFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  }
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -47,6 +60,94 @@ function Add() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleSubmitPayment = async (e) => {
+    e.preventDefault();
+    let form = new FormData();
+    form.append("PS_ArchivoReferencia", selectedFile, selectedFile.name)
+    form.append("PS_Monto", monto)
+    let result = await PostPago(form, {"Content-Type": "multipart/form-data"})
+    console.log(result)
+  };
+
+/*   useEffect(() => {
+    if (!sending) return;
+    let { productsList, ContactInformation } = shippmentDetails;
+    if (
+      !productsList ||
+      !ContactInformation ||
+      productsList.length === 0 ||
+      ContactInformation.length === 0
+    ) {
+      setSending(false);
+      return;
+    }
+    if (openEditShippment && shippmentToEdit) {
+      (async function () {
+        try {
+          const response = await PutEnvio(shippmentToEdit, shippmentDetails);
+          if (response.status === 200) {
+            setSuccessMessage("Envío editado correctamente");
+            setTimeout(() => {
+              setSuccessMessage("");
+              window.location.href = "/Envios"
+            }, 2000);
+            setSending(false);
+          } else {
+            setErrorMessage(
+              "Error al editar el envío, puede que el ID ya exista"
+            );
+            setTimeout(() => {
+              setErrorMessage("");
+            }, 2000);
+            setSending(false);
+          }
+        } catch (e) {
+          if (e) {
+            setErrorMessage(
+              "Hubo un error al enviar los datos"
+            );
+            setTimeout(() => {
+              setErrorMessage("");
+            }, 2000);
+            setSending(false);
+          }
+        }
+      })();
+    } else {
+      (async function () {
+        try {
+          const response = await PostEnvio(shippmentDetails);
+          if (response.status === 200) {
+            setSuccessMessage("Envío creado correctamente");
+            setTimeout(() => {
+              setSuccessMessage("");
+              window.location.href = "/Envios"
+            }, 2000);
+            setSending(false);
+          } else {
+            setErrorMessage(
+              "Error al crear el envío, puede que el ID ya exista"
+            );
+            setTimeout(() => {
+              setErrorMessage("");
+            }, 2000);
+            setSending(false);
+          }
+        } catch (e) {
+          if (e) {
+            setErrorMessage(
+              "Hubo un error al enviar los datos"
+            );
+            setTimeout(() => {
+              setErrorMessage("");
+            }, 2000);
+            setSending(false);
+          }
+        }
+      })();
+    }
+  }, [shippmentDetails]); */
 
   return (
     <>
@@ -108,6 +209,8 @@ function Add() {
                 label="Monto"
                 variant="filled"
                 fullWidth
+                onChange={(e) => setMonto(e.target.value)}
+                value={monto}
               />
               <TextField
                 id=""
@@ -118,6 +221,40 @@ function Add() {
               />
             </CustomStack>
           </Grid>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
+            }}
+          >
+            {selectedFile && selectedFile.name && <CardMedia
+            component="img"
+            height="140"
+            width="140"
+            image={URL.createObjectURL(selectedFile)}
+            title="material"
+          />}
+            <p>{selectedFile && selectedFile.name }</p>
+            <label htmlFor="icon-button-file">
+              <Input
+                id="icon-button-file"
+                type="file"
+                sx={{ display: "none" }}
+                onChange={onFileChange}
+                inputProps={{
+                  accept:"image/*"
+                }}
+              />
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="span"
+              >
+                <UploadFileTwoToneIcon size="large" />
+              </IconButton>
+            </label>
+          </Box>
         </DialogContent>
         <Box
           sx={{
@@ -131,7 +268,7 @@ function Add() {
           <Button variant="outlined" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button variant="outlined" type="submit">
+          <Button variant="outlined" onClick={handleSubmitPayment}>
             Guardar
           </Button>
         </Box>
