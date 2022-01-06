@@ -27,7 +27,7 @@ function LeftSideComponent({
 }) {
   const FilterMenuContext = useContext(filterMenuContext);
   const UserContext = useContext(userContext);
-  const permissions = UserContext.user.Usuario_Permisos;
+  const permissions = UserContext?.user?.Usuario_Permisos;
   return (
     <>
       <Collapse in={FilterMenuContext.filterMenu}>

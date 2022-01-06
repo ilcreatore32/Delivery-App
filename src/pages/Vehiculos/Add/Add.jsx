@@ -94,7 +94,6 @@ function Add() {
 
   const handleSubmitVehicle = (e) => {
     e.preventDefault();
-    console.log(!vehicle["Vehiculo_MTId"]);
     if (!vehicle["Vehiculo_MTId"]) {
       setErrorMessage("Debe ingresar el tipo de vehículo");
       setTimeout(() => {

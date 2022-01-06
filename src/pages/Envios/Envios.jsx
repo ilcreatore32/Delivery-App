@@ -12,7 +12,7 @@ import "./Envios.css";
 
 function Envios() {
   const UserContext = useContext(userContext);
-  const permissions = UserContext.user.Usuario_Permisos;
+  const permissions = UserContext?.user?.Usuario_Permisos;
 
   return (
     <>

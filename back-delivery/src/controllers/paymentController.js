@@ -171,6 +171,7 @@ export const savePayment = async function (req, res) {
     PS_Fecha, // E.g '2020-01-01'
     PS_Monto, // E.g '50.00'
     PS_Referencia, // E.g '123456789'
+    PS_SuscripcionId // E.g '7'
   } = req.body
   /* Create an object with the properties */
   const paymentDetail = {
@@ -180,9 +181,8 @@ export const savePayment = async function (req, res) {
     PS_Monto,
     PS_Referencia,
     PS_ArchivoReferencia: req.file ? req.file.buffer : null,
+    PS_SuscripcionId
   }
-  console.log(req.file)
-  console.log(req.body.PS_Monto)
   
   /* Query to update payment's details */
   let queryPayments = `

@@ -86,10 +86,10 @@ export async function PostPago(paymentDetails,headers) {
   }
   const payment = await Api.post(`/payment`,paymentDetails, headers)
     .then((result) => {
-      return result.data;
+      return result;
     })
     .catch((error) => {
-      console.log(error);
+      return error;
     });
   return payment;
 }
