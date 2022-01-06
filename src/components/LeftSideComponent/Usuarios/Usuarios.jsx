@@ -229,7 +229,7 @@ function Usuarios({ admin }) {
               </TextField>
             </Box>
           </Paper>
-          {admin ? (
+          {admin === "A" ? (
             <>
               <Divider variant="middle" />
               <Paper variant="outlined" sx={{ padding: "1rem" }}>
