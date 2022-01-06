@@ -2,6 +2,7 @@ import { useContext } from "react";
 
 /* Context */
 import { filterMenuContext } from "../../context/filterMenuContext";
+import { userContext } from "../../context/userContext";
 
 /* Material UI */
 import { Paper, Collapse } from "@mui/material";
@@ -23,23 +24,24 @@ function LeftSideComponent({
   asumidos,
   pagos,
   usuarios,
-  admin,
 }) {
   const FilterMenuContext = useContext(filterMenuContext);
+  const UserContext = useContext(userContext);
+  const permissions = UserContext.user.Usuario_Permisos;
   return (
     <>
       <Collapse in={FilterMenuContext.filterMenu}>
         <Paper variant="outlined">
           {envios ? (
-            <Envios asumidos={asumidos} admin={admin} />
+            <Envios asumidos={asumidos} admin={permissions} />
           ) : servicios ? (
-            <Servicios admin={admin} />
+            <Servicios admin={permissions} />
           ) : vehiculos ? (
-            <Vehiculos admin={admin} />
+            <Vehiculos admin={permissions} />
           ) : pagos ? (
-            <Pagos admin={admin} />
+            <Pagos admin={permissions} />
           ) : usuarios ? (
-            <Usuarios admin={admin} />
+            <Usuarios admin={permissions} />
           ) : null}
         </Paper>
       </Collapse>

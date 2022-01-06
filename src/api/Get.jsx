@@ -163,15 +163,16 @@ export async function GetUsers() {
     });
   return users;
 }
-export async function GetAuthenticatedUser() {
-  const users = await Api.get(`/auth`)
+
+export async function GetAuthenticatedUser(values) {
+  const user = await Api.get(`/auth`, values)
     .then((result) => {
       return result.data;
     })
     .catch((error) => {
       console.log(`Error al consultar el usuario autenticado`);
     });
-  return users;
+  return user;
 }
 
 /* Opciones */
@@ -224,7 +225,7 @@ export async function GetVehiclesOption(conveyance, personaId) {
     params: {
       conveyance,
       personaId,
-    }
+    },
   })
     .then((result) => {
       return result.data;

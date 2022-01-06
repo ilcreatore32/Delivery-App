@@ -2,6 +2,7 @@ import { useContext } from "react";
 
 /* Context */
 import { appMenuContext } from "../../context/appMenuContext";
+import { userContext } from "../../context/userContext";
 
 /* React-Router */
 import { Link, useRouteMatch } from "react-router-dom";
@@ -28,7 +29,8 @@ function AppTabs() {
   ]);
   const currentTab = routeMatch?.path;
   const AppMenuContext = useContext(appMenuContext);
-
+  const UserContext = useContext(userContext);
+  const permissions = UserContext.user.Usuario_Permisos;
   return (
     <>
       <Collapse in={AppMenuContext.appMenu}>
@@ -43,7 +45,6 @@ function AppTabs() {
           }}
         >
           <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
-            
             <Tabs
               value={currentTab}
               centered
@@ -57,13 +58,15 @@ function AppTabs() {
                 icon={<ExploreTwoToneIcon />}
                 component={Link}
               />
-              <Tab
-                label="Asumidos"
-                value={`/Asumidos`}
-                to={`/Asumidos`}
-                icon={<AddTaskIcon />}
-                component={Link}
-              />
+              {permissions === "T" || "A" ? (
+                <Tab
+                  label="Asumidos"
+                  value={`/Asumidos`}
+                  to={`/Asumidos`}
+                  icon={<AddTaskIcon />}
+                  component={Link}
+                />
+              ) : null}
               <Tab
                 label="Servicios"
                 value={`/Servicios`}
@@ -71,13 +74,15 @@ function AppTabs() {
                 icon={<WorkTwoToneIcon />}
                 component={Link}
               />
-              <Tab
-                label="Vehiculos"
-                value={`/Vehiculos`}
-                to={`/Vehiculos`}
-                icon={<CommuteIcon />}
-                component={Link}
-              />
+              {permissions === "T" || "A" ? (
+                <Tab
+                  label="Vehiculos"
+                  value={`/Vehiculos`}
+                  to={`/Vehiculos`}
+                  icon={<CommuteIcon />}
+                  component={Link}
+                />
+              ) : null}
               <Tab
                 label="Pagos"
                 value={`/Pagos`}
@@ -85,13 +90,15 @@ function AppTabs() {
                 icon={<PaymentsTwoToneIcon />}
                 component={Link}
               />
-              <Tab
-                label="Usuarios"
-                value={`/Usuarios`}
-                to={`/Usuarios`}
-                icon={<GroupTwoToneIcon />}
-                component={Link}
-              />
+              {permissions === "A" ? (
+                <Tab
+                  label="Usuarios"
+                  value={`/Usuarios`}
+                  to={`/Usuarios`}
+                  icon={<GroupTwoToneIcon />}
+                  component={Link}
+                />
+              ) : null}
             </Tabs>
           </Toolbar>
         </Box>

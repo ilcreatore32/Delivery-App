@@ -16,7 +16,7 @@ import AppTabs from "../../../components/AppTabs/AppTabs";
 import RightSideComponent from "../../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideComponent";
 
-function EnviosCliente(Shippments) {
+function EnviosCliente(permissions) {
   const [shippments, setShippments] = useState(null);
   const [loading, setLoading] = useState(false);
 

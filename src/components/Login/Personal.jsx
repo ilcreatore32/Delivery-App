@@ -6,6 +6,7 @@ import * as yup from "yup";
 
 /* API */
 import { Login as loginPersonal } from "../../api/Login";
+import { GetAuthenticatedUser } from "../../api/Get";
 
 /* Context */
 import { authContext } from "../../context/authContext";
@@ -29,7 +30,7 @@ import {
 
 /* Material UI Icons */
 import CloseIcon from "@mui/icons-material/CloseTwoTone";
-import PersonalAccess from '@mui/icons-material/FaceRetouchingNaturalRounded';
+import PersonalAccess from "@mui/icons-material/FaceRetouchingNaturalRounded";
 
 /* Material UI Styles */
 import { useTheme } from "@mui/material/styles";
@@ -64,6 +65,9 @@ function Login({ shop }) {
       await localStorage.setItem("token", auth.token);
       (await auth) ? Alert.loginSuccess() : Alert.loginError();
       await AuthContext.setAuth(auth);
+      const user = await GetAuthenticatedUser(values);
+      await localStorage.setItem("user", JSON.stringify(user));
+      await console.log(user);
       await handleClose();
     },
   });
@@ -82,10 +86,10 @@ function Login({ shop }) {
 
   return (
     <>
-    <Tooltip title="Acceso Personal" arrow>
-      <IconButton onClick={handleToggle} color="primary">
-        <PersonalAccess />
-      </IconButton>
+      <Tooltip title="Acceso Personal" arrow>
+        <IconButton onClick={handleToggle} color="primary">
+          <PersonalAccess />
+        </IconButton>
       </Tooltip>
       <div>
         <Backdrop

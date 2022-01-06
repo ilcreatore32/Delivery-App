@@ -244,7 +244,7 @@ function Envios({ asumidos, admin }) {
               </Paper>
             </>
           ) : null}
-          {admin ? (
+          {admin === "A" ? (
             <>
               <Divider variant="middle" />
               <Paper variant="outlined" sx={{ padding: "1rem" }}>
