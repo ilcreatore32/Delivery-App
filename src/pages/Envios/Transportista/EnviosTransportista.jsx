@@ -71,9 +71,7 @@ function EnviosTransportista(permissions) {
                 rowId="SE_Id"
                 Columns={EnviosColumns}
                 Data={shippments}
-              >
-                <Add />
-              </RightSideComponent>
+              />
             )}
           </Grid>
         </Grid>

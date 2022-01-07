@@ -79,6 +79,16 @@ function App() {
     setAnchorEl(null);
   };
 
+  const handleChangePermission = () => {
+    if (user.Usuario_Permisos === "C") {
+      setUser({ ...user, Usuario_Permisos: "T" });
+    }
+    if (user.Usuario_Permisos === "T") {
+      setUser({ ...user, Usuario_Permisos: "C" });
+    }
+    handleClose();
+  };
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -217,14 +227,27 @@ function App() {
                                       backgroundColor: "rgba(0, 0, 0, 0.20)",
                                     }}
                                   >
-                                    <MenuItem
-                                      component={Link}
-                                      to="/Cuenta"
-                                      onClick={handleClose}
-                                      color="primary"
-                                    >
-                                      Cambiar a Cliente
-                                    </MenuItem>
+                                    {user.Usuario_Permisos === "C" ? (
+                                      <MenuItem
+                                        onClick={handleChangePermission}
+                                        color="primary"
+                                      >
+                                        Cambiar a Transportista
+                                      </MenuItem>
+                                    ) : null}
+                                    {user.Usuario_Permisos === "T" ? (
+                                      <MenuItem
+                                        onClick={handleChangePermission}
+                                        color="primary"
+                                      >
+                                        Cambiar a Cliente
+                                      </MenuItem>
+                                    ) : null}
+                                    {user.Usuario_Permisos === "A" ? (
+                                      <MenuItem color="primary">
+                                        Usted es Administrador
+                                      </MenuItem>
+                                    ) : null}
                                     <MenuItem
                                       component={Link}
                                       to="/Cuenta"
@@ -236,6 +259,7 @@ function App() {
                                     <MenuItem
                                       onClick={() => {
                                         setAuth(false);
+                                        setUser(false);
                                         handleClose();
                                       }}
                                       color="primary"

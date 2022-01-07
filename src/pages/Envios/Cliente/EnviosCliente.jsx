@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+
+/* Context */
+import { filterMenuContext } from "../../../context/filterMenuContext";
 
 /* API */
 import { GetShippments } from "../../../api/Get";
@@ -16,9 +19,10 @@ import AppTabs from "../../../components/AppTabs/AppTabs";
 import RightSideComponent from "../../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideComponent";
 
-function EnviosCliente(permissions) {
+function EnviosCliente() {
   const [shippments, setShippments] = useState(null);
   const [loading, setLoading] = useState(false);
+  const FilterMenuContext = useContext(filterMenuContext);
 
   const fetchShippments = async () => {
     await setLoading(true);
@@ -39,13 +43,18 @@ function EnviosCliente(permissions) {
       </Typography>
       <div className="dashboard">
         <Grid container spacing={3}>
-          <Grid item xs={6} md={4}>
+        <Grid
+            item
+            xs={FilterMenuContext.filterMenu ? 6 : 0}
+            md={FilterMenuContext.filterMenu ? 4 : 0}
+          >
             <LeftSideComponent envios={true} />
           </Grid>
-          <Grid item xs={6} md={8}>
-            <Paper variant="outlined" sx={{ margin: ".3rem auto" }}>
-              <Add />
-            </Paper>
+          <Grid
+            item
+            xs={FilterMenuContext.filterMenu ? 6 : 12}
+            md={FilterMenuContext.filterMenu ? 8 : 12}
+          >
             {loading ? (
               <Paper
                 variant="outlined"
@@ -62,7 +71,9 @@ function EnviosCliente(permissions) {
                 rowId="SE_Id"
                 Columns={EnviosColumns}
                 Data={shippments}
-              />
+              >
+                <Add />
+              </RightSideComponent>
             )}
           </Grid>
         </Grid>

@@ -58,7 +58,7 @@ function AppTabs() {
                 icon={<ExploreTwoToneIcon />}
                 component={Link}
               />
-              {permissions === "T" || "A" ? (
+              {permissions === "T" ? (
                 <Tab
                   label="Asumidos"
                   value={`/Asumidos`}
@@ -74,7 +74,16 @@ function AppTabs() {
                 icon={<WorkTwoToneIcon />}
                 component={Link}
               />
-              {permissions === "T" || "A" ? (
+              {permissions === "T" ? (
+                <Tab
+                  label="Vehiculos"
+                  value={`/Vehiculos`}
+                  to={`/Vehiculos`}
+                  icon={<CommuteIcon />}
+                  component={Link}
+                />
+              ) : null}
+              {permissions === "A" ? (
                 <Tab
                   label="Vehiculos"
                   value={`/Vehiculos`}
