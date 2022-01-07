@@ -16,6 +16,6 @@ router.get('/', getPayments)
 router.get('/:id', getOnePayment)
 router.delete('/:id', deletePayment)
 router.put('/:id', paymentImage, savePayment) 
-router.post('/', savePayment)
+router.post('/', paymentImage, savePayment)
  
 export default router;

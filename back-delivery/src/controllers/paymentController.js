@@ -137,9 +137,9 @@ export const getOnePayment = async function (req, res) {
 
   /* extract the query params */
   let queryPayments = `
-    SELECT PS_Id, PS_Status, PS_Metodo, PS_Fecha, PS_Monto, PS_Referencia, PS_ArchivoReferencia
+    SELECT PS_Id, PS_Status, PS_Metodo, PS_Fecha, PS_Monto, PS_Referencia, PS_ArchivoReferencia, PS_SuscripcionId
     FROM pago_suscripcion 
-    WHERE PS_Id = ${id}
+    WHERE PS_Id = ?
   `;
   try {
     /* Get all data */
@@ -171,6 +171,7 @@ export const savePayment = async function (req, res) {
     PS_Fecha, // E.g '2020-01-01'
     PS_Monto, // E.g '50.00'
     PS_Referencia, // E.g '123456789'
+    PS_SuscripcionId // E.g '7'
   } = req.body
   /* Create an object with the properties */
   const paymentDetail = {
@@ -180,6 +181,7 @@ export const savePayment = async function (req, res) {
     PS_Monto,
     PS_Referencia,
     PS_ArchivoReferencia: req.file ? req.file.buffer : null,
+    PS_SuscripcionId
   }
   
   /* Query to update payment's details */

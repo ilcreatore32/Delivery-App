@@ -32,17 +32,30 @@ export async function PutServicio(id, service) {
     .catch((error) => {
       return error
     });
-  console.log(serviceResult);
   return serviceResult;
 }
 
 /* Vehiculos */
-export function PutOneVehiculo(id) {
-  Api.put(`/Vehiculos/${id}`)
+export function PutVehiculo(id, vehicle) {
+  const serviceResult = Api.put(`/vehicle/${id}`, vehicle)
+  .then((result) => {
+    return result;
+  })
+  .catch((error) => {
+    return error
+  });
+  return serviceResult;
+}
+
+/* Pagos */
+
+export async function PutPago(id,paymentDetails,headers) {
+  const payment = await Api.put(`/payment/${id}`,paymentDetails, headers)
     .then((result) => {
-      console.log(result);
+      return result;
     })
     .catch((error) => {
-      console.log(error);
+      return error;
     });
+  return payment;
 }

@@ -22,6 +22,10 @@ export function CustomOptionsButtons({ thisRow, page }) {
     setShippmentToEdit,
     setServiceToEdit,
     setOpenEditService,
+    setVehicleToEdit,
+    setOpenEditVehicle,
+    setOpenEditPayment,
+    setPaymentToEdit
   } = useContext(OpenEditContext);
   const editFunction = () => {
     switch (page) {
@@ -32,6 +36,14 @@ export function CustomOptionsButtons({ thisRow, page }) {
       case "service":
         setOpenEditService(true);
         setServiceToEdit(thisRow.row.ST_Id);
+        return;
+      case "vehicle":
+        setOpenEditVehicle(true);
+        setVehicleToEdit(thisRow.row.Vehiculo_Id);
+        return;
+      case "payment":
+        setOpenEditPayment(true);
+        setPaymentToEdit(thisRow.row.PS_Id);
         return;
       default:
         break;

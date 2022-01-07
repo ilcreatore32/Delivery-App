@@ -77,3 +77,19 @@ export async function PostUser({
     });
   return payment;
 }
+
+/* Pagos */
+
+export async function PostPago(paymentDetails,headers) {
+  for (var key of paymentDetails.entries()) {
+      console.log(key[0] + ', ' + key[1]);
+  }
+  const payment = await Api.post(`/payment`,paymentDetails, headers)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      return error;
+    });
+  return payment;
+}

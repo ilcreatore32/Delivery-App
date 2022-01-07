@@ -211,26 +211,7 @@ export const VehiculosColumns = [
     sortable: false,
     renderCell: (thisRow) => {
       return (
-        <>
-          <IconButton
-            component={Link}
-            to={`/Vehiculos/Detalles/${thisRow.row.Vehiculo_Id}`}
-          >
-            <VisibilityTwoToneIcon />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Vehiculos/Editar/${thisRow.row.Vehiculo_Id}`}
-          >
-            <EditTwoToneIcon color="info" />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Vehiculos/Eliminar/${thisRow.row.Vehiculo_Id}`}
-          >
-            <DeleteTwoToneIcon color="error" />
-          </IconButton>
-        </>
+        <CustomOptionsButtons thisRow={thisRow} page="vehicle" />
       );
     },
   },
@@ -296,24 +277,7 @@ export const PagosColumns = [
     renderCell: (thisRow) => {
       return (
         <>
-          <IconButton
-            component={Link}
-            to={`/Pagos/Detalles/${thisRow.row.PS_Id}`}
-          >
-            <VisibilityTwoToneIcon />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Pagos/Editar/${thisRow.row.PS_Id}`}
-          >
-            <EditTwoToneIcon color="info" />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Pagos/Eliminar/${thisRow.row.PS_Id}`}
-          >
-            <DeleteTwoToneIcon color="error" />
-          </IconButton>
+          <CustomOptionsButtons thisRow={thisRow} page="payment" />
         </>
       );
     },
