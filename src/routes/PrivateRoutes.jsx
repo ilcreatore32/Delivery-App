@@ -53,7 +53,7 @@ function PrivateRoutes({ auth }) {
       {/* Cuenta */}
       <PrivateRoute path="/Cuenta" exact component={Cuenta} auth={auth} />
       <PrivateRoute
-        path="/Cuenta/Editar"
+        path="/Cuenta/Editar/:id"
         exact
         component={CuentaEdit}
         auth={auth}

@@ -153,8 +153,7 @@ export async function GetOnePayment(id) {
 
 /* Usuarios */
 export async function GetUsers() {
-  /* Hace falta la ruta en la API */
-  const users = await Api.get(`/auth`)
+  const users = await Api.get(`/user`)
     .then((result) => {
       return result.data;
     })
@@ -162,6 +161,31 @@ export async function GetUsers() {
       console.log(`Error al consultar los Usuarios`);
     });
   return users;
+}
+export async function GetOneUser(id) {
+  const user = await Api.get(`/user/${id}`)
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al consultar el Usuario`);
+    });
+  return user;
+}
+
+export async function GetUserEdit(id) {
+  const user = await Api.get(`/user/edit/${id}`,{
+    params: {
+      view_option: "admin",
+    },
+  })
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al consultar el Usuario`);
+    });
+  return user;
 }
 
 export async function GetAuthenticatedUser(values) {
@@ -234,4 +258,21 @@ export async function GetVehiclesOption(conveyance, personaId) {
       console.log(`Error al obtener el medio de transporte`);
     });
   return vehicles;
+}
+
+/* Suscriptions */
+
+export async function GetSuscriptions(id) {
+  const suscription = await Api.get(`/options/suscription`, {
+    params: {
+      id
+    },
+  })
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al consultar las suscripciones`);
+    });
+  return suscription;
 }

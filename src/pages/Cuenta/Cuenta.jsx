@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 /* React-Router */
 import { Link } from "react-router-dom";
@@ -29,9 +29,12 @@ import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 
 /* Components */
 import AppTabs from "../../components/AppTabs/AppTabs";
+import { userContext } from "../../context/userContext";
 
 function Cuenta() {
   const [open, setOpen] = useState(false);
+  const {user} = useContext(userContext);
+
   return (
     <>
       <AppTabs />
@@ -204,7 +207,7 @@ function Cuenta() {
             margin: "1rem 2rem",
           }}
         >
-          <Button component={Link} variant="outlined" to="/Cuenta/Editar">
+          <Button component={Link} variant="outlined" to={`/Cuenta/Editar/${user.Usuario_Id}`}>
             Editar Cuenta
           </Button>
           <Button component={Link} variant="outlined" to="/Cuenta/Pagos">

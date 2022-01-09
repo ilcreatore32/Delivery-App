@@ -174,15 +174,16 @@ export const savePayment = async function (req, res) {
     PS_SuscripcionId // E.g '7'
   } = req.body
   /* Create an object with the properties */
-  const paymentDetail = {
+  let paymentDetail = {
     PS_Status,
     PS_Metodo,
     PS_Fecha,
     PS_Monto,
     PS_Referencia,
-    PS_ArchivoReferencia: req.file ? req.file.buffer : null,
     PS_SuscripcionId
   }
+
+  if (req.file && req.file.buffer) paymentDetail = {...paymentDetail, PS_ArchivoReferencia: req.file.buffer};
   
   /* Query to update payment's details */
   let queryPayments = `

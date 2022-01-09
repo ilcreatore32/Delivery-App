@@ -5,7 +5,8 @@ import {
   getProducts,
   getConveyance,
   getVehicles,
-  getContact
+  getContact,
+  getSuscriptions
 } from '../controllers/optionsController'
 
 // api/options
@@ -17,5 +18,6 @@ router.get('/products', getProducts)
 router.get('/conveyance', getConveyance)
 router.get('/vehicles', getVehicles)
 router.get('/contact', getContact)
- 
+router.get('/suscription', getSuscriptions)
+
 export default router;

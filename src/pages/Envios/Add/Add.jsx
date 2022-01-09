@@ -22,7 +22,6 @@ import {
   Tooltip,
   MenuItem,
   Alert,
-  DialogActions,
   Collapse,
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -283,9 +282,8 @@ function Add() {
     setContactInfo("");
   };
 
-  const handleDeleteContact = (i) => {
-    let contactListCheck = [...contactList];
-    contactListCheck.splice(i, 1);
+  const handleDeleteContact = (index) => {
+    let contactListCheck = contactList.filter((item, i) => i !== index);
     setContactList(contactListCheck);
   };
 
@@ -364,7 +362,7 @@ function Add() {
       return;
     }
     if (contactList.length === 0) {
-      setErrorMessage("Debe ingresar al menos un contacto");
+      setErrorMessage("Debe ingresar al menos una información de contacto");
       setTimeout(() => {
         setErrorMessage("");
       }, 1500);

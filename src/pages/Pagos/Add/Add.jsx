@@ -31,6 +31,7 @@ import Spinner from "../../../components/Spinner/Spinner";
 import { GetOnePayment } from "../../../api/Get";
 import { OpenEditContext } from "../../../context/openEditContext";
 import { PutPago } from "../../../api/Put";
+import { LoadingButton } from "@mui/lab";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -456,9 +457,9 @@ function Add() {
               <Button variant="outlined" onClick={handleClose}>
                 Cancelar
               </Button>
-              <Button variant="outlined" onClick={handleSubmitPayment}>
+              <LoadingButton loading={sending} variant="outlined" onClick={handleSubmitPayment}>
                 Guardar
-              </Button>
+              </LoadingButton>
             </Box>
           </>
         )}

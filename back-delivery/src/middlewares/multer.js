@@ -27,5 +27,9 @@ const storageExcel = multer.diskStorage({
 //     }
 // });
 export const uploadExcel = multer({ storage: storageExcel, fileFilter: excelFilter }); */
-export const paymentImage = multer().single("PS_ArchivoReferencia");
-export const personImage = multer().single("Persona_Archivo")
+export const paymentImage = multer({
+  limits: { fieldSize: 16 * 1024 * 1024 }
+}).single("PS_ArchivoReferencia");
+export const personImage = multer({
+  limits: { fieldSize: 16 * 1024 * 1024 }
+}).single("Persona_Archivo")

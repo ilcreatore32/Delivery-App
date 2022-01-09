@@ -84,7 +84,7 @@ export const getOneUser = async function (req, res) {
     LEFT JOIN suscripcion ON Persona_Id = Suscripcion_PersonaId
     LEFT JOIN tipo_suscripcion ON Suscripcion_TSId = TS_Id
 
-    WHERE Persona_Id = ?
+    WHERE Persona_Id = ? ORDER BY Suscripcion_FechaV DESC
   `;
   let queryContact = `
     SELECT Contacto_Tipo, Contacto_Info FROM contacto
@@ -132,7 +132,7 @@ export const editUser = async function (req, res) {
 
   /* extract the query params */
   let queryUserDetails = `
-      SELECT Persona_Id, Persona_TipoId Persona_Nombre, Persona_Apellido, Persona_Archivo,
+      SELECT Persona_Id, Persona_TipoId, Persona_Nombre, Persona_Apellido, Persona_Archivo,
       Usuario_Correo, TS_Id, TS_Nombre, Suscripcion_Monto,
       ${
         view_option === "admin"
@@ -146,10 +146,10 @@ export const editUser = async function (req, res) {
       LEFT JOIN suscripcion ON Persona_Id = Suscripcion_PersonaId
       LEFT JOIN tipo_suscripcion ON Suscripcion_TSId = TS_Id
   
-      WHERE Persona_Id = ?
+      WHERE Persona_Id = ? ORDER BY Suscripcion_FechaV DESC
     `;
   let queryContact = `
-      SELECT Contacto_Tipo, Contacto_Info FROM contacto
+      SELECT Contacto_Info, Contacto_Tipo FROM contacto
       WHERE Contacto_PersonaId = ?
     `;
   try {
@@ -158,7 +158,8 @@ export const editUser = async function (req, res) {
     /* Get all data */
     let transactionResult = await withTransaction(connection, res, async () => {
       let [user, fields] = await connection.query(queryUserDetails, id);
-      if (user[0].Persona_Archivo) user[0].Persona_Archivo = user[0].Persona_Archivo.toString("base64")
+      if (user[0].Persona_Archivo)
+        user[0].Persona_Archivo = user[0].Persona_Archivo.toString("base64");
       const [contact, fields2] = await connection.query(queryContact, id);
       return { user: user[0], contact: contact };
     });
@@ -184,7 +185,7 @@ export const updateUser = async function (req, res) {
     Persona_Apellido, // Perez
     Usuario_Correo, // email@email.com
     Usuario_Status = "A", // A
-    TS_Id, // 1 
+    TS_Id, // 1
     Suscripcion_Id, // 1
     Suscripcion_Monto, // 100.00
     Suscripcion_Status = "P", // P
@@ -193,14 +194,18 @@ export const updateUser = async function (req, res) {
     contactos, // [["email@email.net", "C"], ["4242843235", "T"]]
   } = req.body;
 
+  if (contactos) {
+    contactos = JSON.parse(contactos);
+  }
   /* Create an object with the properties */
-  const person = {
+  let person = {
     Persona_Id,
     Persona_TipoId,
     Persona_Nombre,
     Persona_Apellido,
-    Persona_Archivo: req.file ? req.file.buffer : null,
   };
+
+  if (req.file && req.file.buffer) person = {...person, Persona_Archivo: req.file.buffer};
 
   let queryUpdatePerson = `
     UPDATE personas SET ? WHERE Persona_Id = ?
@@ -216,6 +221,10 @@ export const updateUser = async function (req, res) {
 
   const queryInsertSuscription = `
     INSERT INTO suscripcion SET ?
+  `;
+
+  const queryCancelSuscriptions = `
+    UPDATE suscripcion SET Suscripcion_Status = "C" WHERE Suscripcion_PersonaId = ? AND Suscripcion_Status = "P" AND Suscripcion_Id <> ?
   `;
 
   const queryUpdateSuscription = `
@@ -264,6 +273,11 @@ export const updateUser = async function (req, res) {
           queryInsertSuscription,
           newSuscription
         );
+        /* Cancel others suscriptions */
+        const [cancelSuscriptionsResult] = await connection.query(
+          queryCancelSuscriptions,
+          [Persona_Id, suscriptionResult.insertId]
+        );
       } else if (Suscripcion_Id) {
         /* Update Suscription */
         const newSuscription = {
@@ -279,18 +293,16 @@ export const updateUser = async function (req, res) {
           [newSuscription, Suscripcion_Id]
         );
       }
-        await connection.query(queryDeleteContactInfo, [Persona_Id]);
-        contactos.map((contacto) => {
-          contacto.push(Persona_Id);
-        });
-        await connection.query(queryContactInfo, [contactos]);
+      await connection.query(queryDeleteContactInfo, [Persona_Id]);
+      contactos.map((contacto) => {
+        contacto.push(Persona_Id);
+      });
+      await connection.query(queryContactInfo, [contactos]);
     });
     if (transactionResult) {
-      res
-        .status(200)
-        .json({
-          message: "Usuario actualizado correctamente",
-        });
+      res.status(200).json({
+        message: "Usuario actualizado correctamente",
+      });
     }
   } catch (err) {
     /* error in the server */

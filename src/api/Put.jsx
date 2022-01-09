@@ -59,3 +59,18 @@ export async function PutPago(id,paymentDetails,headers) {
     });
   return payment;
 }
+
+/* Usuarios */
+
+export async function PutUser(id, userDetails) {
+  const user = await Api.put(`/user/${id}`,userDetails, {
+    "Content-Type": "multipart/form-data",
+  })
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      return error;
+    });
+  return user;
+}
