@@ -41,6 +41,7 @@ import logo from "../../assets/logo.png";
 
 /* Components */
 import Alert from "../Alert/Alert";
+import { UserContext } from "../../context/UserContextT";
 
 const validationSchema = yup.object({
   email: yup
@@ -54,6 +55,13 @@ const validationSchema = yup.object({
 });
 
 function Login({ shop }) {
+  const [open, setOpen] = useState(false);
+  const [selectedView, setSelectedView] = useState("C")
+  const theme = useTheme();
+  const mode = useRef(theme.palette.mode);
+/*   const AuthContext = useContext(authContext); */
+  const { setToken, setView_type } = useContext(UserContext);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -62,20 +70,15 @@ function Login({ shop }) {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       const auth = await loginPersonal(values);
-      await localStorage.setItem("token", auth.token);
-      (await auth) ? Alert.loginSuccess() : Alert.loginError();
-      await AuthContext.setAuth(auth);
-      const user = await GetAuthenticatedUser(values);
-      await localStorage.setItem("user", JSON.stringify(user));
-      await console.log(user);
-      await handleClose();
+      (await auth?.token) ? Alert.loginSuccess() : Alert.loginError();
+      if (auth?.token) {
+        setToken(auth.token);
+        setView_type(selectedView);
+        await handleClose();
+      }
     },
   });
 
-  const [open, setOpen] = useState(false);
-  const theme = useTheme();
-  const mode = useRef(theme.palette.mode);
-  const AuthContext = useContext(authContext);
 
   const handleClose = () => {
     setOpen(false);
@@ -83,6 +86,9 @@ function Login({ shop }) {
   const handleToggle = () => {
     setOpen(!open);
   };
+  const handleViewTypeChange = (e) => {
+    setSelectedView(e.target.value);
+  }
 
   return (
     <>
@@ -179,8 +185,9 @@ function Login({ shop }) {
                       </Typography>
                       <FormControl component="fieldset">
                         <RadioGroup
-                          defaultValue="client"
+                          value={selectedView}
                           name="radios"
+                          onChange={handleViewTypeChange}
                           row
                           sx={{
                             display: "flex",
@@ -188,12 +195,12 @@ function Login({ shop }) {
                           }}
                         >
                           <FormControlLabel
-                            value="client"
+                            value="C"
                             control={<Radio />}
                             label="Cliente"
                           />
                           <FormControlLabel
-                            value="carrier"
+                            value="T"
                             control={<Radio />}
                             label="Transportista"
                           />

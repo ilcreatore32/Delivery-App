@@ -1,7 +1,8 @@
 import { useState, useContext, useEffect, useCallback } from "react";
 
 /* Context */
-import { authContext } from "../../context/authContext";
+/* import { authContext } from "../../context/authContext"; */
+import { UserContext } from "../../context/UserContextT";
 import { appMenuContext } from "../../context/appMenuContext";
 
 /* Material UI */
@@ -26,15 +27,18 @@ import AppTabs from "../../components/AppTabs/AppTabs";
 import "./Home.css";
 
 function Home() {
-  const AuthContext = useContext(authContext);
+  /* const AuthContext = useContext(authContext); */
   const AppMenuContext = useContext(appMenuContext);
+  const {
+    token,
+  } = useContext(UserContext);
 
   const welcome = useCallback(() => {
-    let auth = AuthContext.auth;
+    let auth = token;
     if (auth) {
       AppMenuContext.setAppMenu(true);
     }
-  }, [AuthContext, AppMenuContext]);
+  }, [token, AppMenuContext]);
 
   useEffect(() => {
     welcome();
@@ -78,7 +82,7 @@ function Home() {
               padding: "1rem",
             }}
           >
-            {AuthContext.auth ? (
+            {token ? (
               <>
                 <Typography variant="h6" color="primary" component="span">
                   Bienvenido
@@ -228,27 +232,27 @@ function Home() {
             return (
               <Card
                 elevation={3}
-                key={user.id}
+                key={user?.id}
                 sx={{
                   display: "flex",
                   padding: "1rem",
                 }}
               >
                 <Avatar
-                  alt={user.login}
-                  src={user.avatar_url}
+                  alt={user?.login}
+                  src={user?.avatar_url}
                   sx={{ width: "100px", height: "100px" }}
                 />
                 <CardContent>
                   <Typography variant="h5" component="h2">
-                    {user.name}
+                    {user?.name}
                   </Typography>
                   <Typography
                     variant="subtitle2"
                     color="primary"
                     component="span"
                   >
-                    @{user.login}, {user.location}
+                    @{user?.login}, {user?.location}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -257,13 +261,13 @@ function Home() {
                     gutterBottom
                     component="p"
                   >
-                    {user.bio}
+                    {user?.bio}
                   </Typography>
                 </CardContent>
                 <CardActions>
                   <Button
                     component="a"
-                    href={user.html_url}
+                    href={user?.html_url}
                     size="small"
                     sx={{ display: "flex", flexDirection: "column" }}
                   >

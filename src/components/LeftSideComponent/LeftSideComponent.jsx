@@ -2,7 +2,7 @@ import { useContext } from "react";
 
 /* Context */
 import { filterMenuContext } from "../../context/filterMenuContext";
-import { userContext } from "../../context/userContext";
+/* import { userContext } from "../../context/userContext"; */
 
 /* Material UI */
 import { Paper, Collapse } from "@mui/material";
@@ -16,6 +16,7 @@ import Usuarios from "./Usuarios/Usuarios";
 
 /* CSS*/
 import "./LeftSideComponent.css";
+import { UserContext } from "../../context/UserContextT";
 
 function LeftSideComponent({
   envios,
@@ -26,22 +27,24 @@ function LeftSideComponent({
   usuarios,
 }) {
   const FilterMenuContext = useContext(filterMenuContext);
-  const UserContext = useContext(userContext);
-  const permissions = UserContext?.user?.Usuario_Permisos;
+  /* const UserContext = useContext(userContext);
+  const permissions = UserContext?.user?.Usuario_Permisos; */
+  const { view_type } = useContext(UserContext);
+
   return (
     <>
       <Collapse in={FilterMenuContext.filterMenu}>
         <Paper variant="outlined">
           {envios ? (
-            <Envios asumidos={asumidos} admin={permissions} />
+            <Envios asumidos={asumidos} admin={view_type} />
           ) : servicios ? (
-            <Servicios admin={permissions} />
+            <Servicios admin={view_type} />
           ) : vehiculos ? (
-            <Vehiculos admin={permissions} />
+            <Vehiculos admin={view_type} />
           ) : pagos ? (
-            <Pagos admin={permissions} />
+            <Pagos admin={view_type} />
           ) : usuarios ? (
-            <Usuarios admin={permissions} />
+            <Usuarios admin={view_type} />
           ) : null}
         </Paper>
       </Collapse>

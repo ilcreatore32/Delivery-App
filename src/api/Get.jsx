@@ -188,8 +188,8 @@ export async function GetUserEdit(id) {
   return user;
 }
 
-export async function GetAuthenticatedUser(values) {
-  const user = await Api.get(`/auth`, values)
+export async function GetAuthenticatedUser() {
+  const user = await Api.get(`/auth`)
     .then((result) => {
       return result.data;
     })

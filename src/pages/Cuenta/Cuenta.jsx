@@ -30,10 +30,24 @@ import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 /* Components */
 import AppTabs from "../../components/AppTabs/AppTabs";
 import { userContext } from "../../context/userContext";
+import { UserContext as UserContextT } from "../../context/UserContextT";
+import axios from "axios";
+import Api, { tokerAuth } from "../../config/axiosClient";
 
 function Cuenta() {
   const [open, setOpen] = useState(false);
   const {user} = useContext(userContext);
+  const {token, setToken} = useContext(UserContextT)
+
+  const testFun = async () => {
+    let token = await Api.post("/auth", {
+      email: "jesuscarrera25@gmail.com",
+      password: "1999",
+    })
+    if (token?.data?.token) {
+      setToken(token.data.token)
+    }
+  }
 
   return (
     <>
@@ -206,7 +220,9 @@ function Cuenta() {
             justifyContent: "space-between",
             margin: "1rem 2rem",
           }}
-        >
+        ><Button  variant="outlined" onClick={testFun}>
+        Testy
+      </Button>
           <Button component={Link} variant="outlined" to={`/Cuenta/Editar/${user.Usuario_Id}`}>
             Editar Cuenta
           </Button>

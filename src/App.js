@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 /* React-Router */
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
@@ -57,7 +57,16 @@ import { Light, Dark } from "./themes/theme";
 import "./styles/App.css";
 import "./styles/Responsive.css";
 
+import { UserContext as UserContextT } from "./context/UserContextT";
+
 function App() {
+  const {
+    token,
+    view_type,
+    setToken,
+    setView_type,
+    setLogged_user,
+  } = useContext(UserContextT);
   const [anchorEl, setAnchorEl] = useState(null);
   const [auth, setAuth] = useLocalStorage("token", null);
   const [user, setUser] = useLocalStorage("user", null);
@@ -79,212 +88,201 @@ function App() {
     setAnchorEl(null);
   };
 
-  const handleChangePermission = () => {
-    if (user.Usuario_Permisos === "C") {
-      setUser({ ...user, Usuario_Permisos: "T" });
-    }
-    if (user.Usuario_Permisos === "T") {
-      setUser({ ...user, Usuario_Permisos: "C" });
-    }
-    handleClose();
-  };
-
   return (
     <>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={DateAdapter}>
-          <authContext.Provider value={{ auth, setAuth }}>
-            <userContext.Provider value={{ user, setUser }}>
-              <OpenEditProvider>
-                <DeleteProvider>
-                  <appMenuContext.Provider value={{ appMenu, setAppMenu }}>
-                    <filterMenuContext.Provider
-                      value={{ filterMenu, setFilterMenu }}
-                    >
-                      <Router>
-                        <Box sx={{ flexGrow: 1 }}>
-                          <AppBar position="static" enableColorOnDark>
-                            <Toolbar>
-                              {auth ? (
-                                <>
-                                  <IconButton
-                                    edge="start"
+          <userContext.Provider value={{ user, setUser }}>
+            <OpenEditProvider>
+              <DeleteProvider>
+                <appMenuContext.Provider value={{ appMenu, setAppMenu }}>
+                  <filterMenuContext.Provider
+                    value={{ filterMenu, setFilterMenu }}
+                  >
+                    <Router>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <AppBar position="static" enableColorOnDark>
+                          <Toolbar>
+                            {token ? (
+                              <>
+                                <IconButton
+                                  edge="start"
+                                  color="primary"
+                                  aria-label="Menu"
+                                  sx={{ mr: 2 }}
+                                  onClick={() => setAppMenu(!appMenu)}
+                                >
+                                  {appMenu ? <CloseIcon /> : <MenuIcon />}
+                                </IconButton>
+                              </>
+                            ) : null}
+                            <Typography
+                              variant="h6"
+                              component="div"
+                              color="text.primary"
+                              sx={{ flexGrow: 1 }}
+                            >
+                              Delivery App
+                            </Typography>
+                            {token ? (
+                              <>
+                                <Box sx={{ display: "flex", gap: "1rem" }}>
+                                  <Button
+                                    component={Link}
+                                    size="small"
+                                    variant="text"
                                     color="primary"
-                                    aria-label="Menu"
-                                    sx={{ mr: 2 }}
-                                    onClick={() => setAppMenu(!appMenu)}
+                                    to="/Envios"
+                                    sx={{ padding: ".2rem" }}
                                   >
-                                    {appMenu ? <CloseIcon /> : <MenuIcon />}
-                                  </IconButton>
-                                </>
-                              ) : null}
-                              <Typography
-                                variant="h6"
-                                component="div"
-                                color="text.primary"
-                                sx={{ flexGrow: 1 }}
-                              >
-                                Delivery App
-                              </Typography>
-                              {auth ? (
-                                <>
-                                  <Box sx={{ display: "flex", gap: "1rem" }}>
-                                    <Button
-                                      component={Link}
-                                      size="small"
-                                      variant="text"
-                                      color="primary"
-                                      to="/Envios"
-                                      sx={{ padding: ".2rem" }}
+                                    Dashboard
+                                  </Button>
+                                  <Tooltip
+                                    title={`Cambiar a ${
+                                      mode ? "Oscuro" : "Claro"
+                                    }`}
+                                    arrow
+                                  >
+                                    <IconButton
+                                      onClick={handleModeToggle}
+                                      color="inherit"
                                     >
-                                      Dashboard
-                                    </Button>
-                                    <Tooltip
-                                      title={`Cambiar a ${
-                                        mode ? "Oscuro" : "Claro"
-                                      }`}
-                                      arrow
-                                    >
-                                      <IconButton
-                                        onClick={handleModeToggle}
-                                        color="inherit"
-                                      >
-                                        {mode ? (
-                                          <Brightness7Icon color="primary" />
-                                        ) : (
-                                          <Brightness4Icon color="primary" />
-                                        )}
-                                      </IconButton>
-                                    </Tooltip>
-                                    <IconButton>
-                                      <Badge
-                                        size="sm"
-                                        color="secondary"
-                                        showZero
-                                        badgeContent={0}
-                                      >
-                                        <NotificationsIcon color="primary" />
-                                      </Badge>
+                                      {mode ? (
+                                        <Brightness7Icon color="primary" />
+                                      ) : (
+                                        <Brightness4Icon color="primary" />
+                                      )}
                                     </IconButton>
-                                  </Box>
-                                </>
-                              ) : (
-                                <>
-                                  <Box sx={{ display: "flex", gap: ".3rem" }}>
-                                    <Tooltip
-                                      title={`Cambiar a ${
-                                        mode ? "Oscuro" : "Claro"
-                                      }`}
-                                      arrow
+                                  </Tooltip>
+                                  <IconButton>
+                                    <Badge
+                                      size="sm"
+                                      color="secondary"
+                                      showZero
+                                      badgeContent={0}
                                     >
-                                      <IconButton
-                                        onClick={handleModeToggle}
-                                        color="inherit"
-                                      >
-                                        {mode ? (
-                                          <Brightness7Icon color="primary" />
-                                        ) : (
-                                          <Brightness4Icon color="primary" />
-                                        )}
-                                      </IconButton>
-                                    </Tooltip>
-                                    <Login />
-                                    <Login shop={true} />
-                                    <SignUp />
-                                  </Box>
-                                </>
-                              )}
+                                      <NotificationsIcon color="primary" />
+                                    </Badge>
+                                  </IconButton>
+                                </Box>
+                              </>
+                            ) : (
+                              <>
+                                <Box sx={{ display: "flex", gap: ".3rem" }}>
+                                  <Tooltip
+                                    title={`Cambiar a ${
+                                      mode ? "Oscuro" : "Claro"
+                                    }`}
+                                    arrow
+                                  >
+                                    <IconButton
+                                      onClick={handleModeToggle}
+                                      color="inherit"
+                                    >
+                                      {mode ? (
+                                        <Brightness7Icon color="primary" />
+                                      ) : (
+                                        <Brightness4Icon color="primary" />
+                                      )}
+                                    </IconButton>
+                                  </Tooltip>
+                                  <Login />
+                                  <Login shop={true} />
+                                  <SignUp />
+                                </Box>
+                              </>
+                            )}
 
-                              {auth && (
-                                <div>
-                                  <IconButton
-                                    aria-label="Cuenta"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleMenu}
+                            {token && (
+                              <div>
+                                <IconButton
+                                  aria-label="Cuenta"
+                                  aria-controls="menu-appbar"
+                                  aria-haspopup="true"
+                                  onClick={handleMenu}
+                                  color="primary"
+                                >
+                                  <AccountCircle />
+                                </IconButton>
+                                <Menu
+                                  id="menu-appbar"
+                                  anchorEl={anchorEl}
+                                  keepMounted
+                                  open={Boolean(anchorEl)}
+                                  onClose={handleClose}
+                                  transformOrigin={{
+                                    horizontal: "right",
+                                    vertical: "top",
+                                  }}
+                                  anchorOrigin={{
+                                    horizontal: "right",
+                                    vertical: "bottom",
+                                  }}
+                                  MenuListProps={{
+                                    "aria-labelledby": "basic-button",
+                                  }}
+                                  sx={{
+                                    backgroundColor: "rgba(0, 0, 0, 0.20)",
+                                  }}
+                                >
+                                  {view_type === "C" ? (
+                                    <MenuItem
+                                      onClick={() => setView_type("T")}
+                                      color="primary"
+                                    >
+                                      Cambiar a Transportista
+                                    </MenuItem>
+                                  ) : null}
+                                  {view_type === "T" ? (
+                                    <MenuItem
+                                      onClick={() => setView_type("C")}
+                                      color="primary"
+                                    >
+                                      Cambiar a Cliente
+                                    </MenuItem>
+                                  ) : null}
+                                  {view_type === "A" ? (
+                                    <MenuItem color="primary">
+                                      Usted es Administrador
+                                    </MenuItem>
+                                  ) : null}
+                                  <MenuItem
+                                    component={Link}
+                                    to="/Cuenta"
+                                    onClick={handleClose}
                                     color="primary"
                                   >
-                                    <AccountCircle />
-                                  </IconButton>
-                                  <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    keepMounted
-                                    open={Boolean(anchorEl)}
-                                    onClose={handleClose}
-                                    transformOrigin={{
-                                      horizontal: "right",
-                                      vertical: "top",
+                                    Su Cuenta
+                                  </MenuItem>
+                                  <MenuItem
+                                    onClick={() => {
+                                      setLogged_user({});
+                                      setToken("");
+                                      setView_type("C");
+                                      handleClose();
                                     }}
-                                    anchorOrigin={{
-                                      horizontal: "right",
-                                      vertical: "bottom",
-                                    }}
-                                    MenuListProps={{
-                                      "aria-labelledby": "basic-button",
-                                    }}
-                                    sx={{
-                                      backgroundColor: "rgba(0, 0, 0, 0.20)",
-                                    }}
+                                    color="primary"
                                   >
-                                    {user.Usuario_Permisos === "C" ? (
-                                      <MenuItem
-                                        onClick={handleChangePermission}
-                                        color="primary"
-                                      >
-                                        Cambiar a Transportista
-                                      </MenuItem>
-                                    ) : null}
-                                    {user.Usuario_Permisos === "T" ? (
-                                      <MenuItem
-                                        onClick={handleChangePermission}
-                                        color="primary"
-                                      >
-                                        Cambiar a Cliente
-                                      </MenuItem>
-                                    ) : null}
-                                    {user.Usuario_Permisos === "A" ? (
-                                      <MenuItem color="primary">
-                                        Usted es Administrador
-                                      </MenuItem>
-                                    ) : null}
-                                    <MenuItem
-                                      component={Link}
-                                      to="/Cuenta"
-                                      onClick={handleClose}
-                                      color="primary"
-                                    >
-                                      Su Cuenta
-                                    </MenuItem>
-                                    <MenuItem
-                                      onClick={() => {
-                                        setAuth(false);
-                                        setUser(false);
-                                        handleClose();
-                                      }}
-                                      color="primary"
-                                    >
-                                      Salir
-                                    </MenuItem>
-                                  </Menu>
-                                </div>
-                              )}
-                            </Toolbar>
-                          </AppBar>
-                        </Box>
-                        <Paper square elevation={0}>
-                          <Switch>
-                            <Routes auth={auth} />
-                            <Route path="*" component={NoMatch} />
-                          </Switch>
-                        </Paper>
-                      </Router>
-                    </filterMenuContext.Provider>
-                  </appMenuContext.Provider>
-                </DeleteProvider>
-              </OpenEditProvider>
-            </userContext.Provider>
-          </authContext.Provider>
+                                    Salir
+                                  </MenuItem>
+                                </Menu>
+                              </div>
+                            )}
+                          </Toolbar>
+                        </AppBar>
+                      </Box>
+                      <Paper square elevation={0}>
+                        <Switch>
+                          <Routes auth={token} />
+                          <Route path="*" component={NoMatch} />
+                        </Switch>
+                      </Paper>
+                    </Router>
+                  </filterMenuContext.Provider>
+                </appMenuContext.Provider>
+              </DeleteProvider>
+            </OpenEditProvider>
+          </userContext.Provider>
         </LocalizationProvider>
       </ThemeProvider>
     </>

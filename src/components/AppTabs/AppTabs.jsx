@@ -17,6 +17,7 @@ import WorkTwoToneIcon from "@mui/icons-material/WorkTwoTone";
 import CommuteIcon from "@mui/icons-material/Commute";
 import GroupTwoToneIcon from "@mui/icons-material/GroupTwoTone";
 import PaymentsTwoToneIcon from "@mui/icons-material/PaymentsTwoTone";
+import { UserContext } from "../../context/UserContextT";
 
 function AppTabs() {
   const routeMatch = useRouteMatch([
@@ -29,8 +30,10 @@ function AppTabs() {
   ]);
   const currentTab = routeMatch?.path;
   const AppMenuContext = useContext(appMenuContext);
-  const UserContext = useContext(userContext);
-  const permissions = UserContext?.user?.Usuario_Permisos;
+/*   const UserContext = useContext(userContext);
+  const permissions = UserContext?.user?.Usuario_Permisos; */
+  const { view_type } = useContext(UserContext);
+
   return (
     <>
       <Collapse in={AppMenuContext.appMenu}>
@@ -58,7 +61,7 @@ function AppTabs() {
                 icon={<ExploreTwoToneIcon />}
                 component={Link}
               />
-              {permissions === "T" ? (
+              {view_type === "T" ? (
                 <Tab
                   label="Asumidos"
                   value={`/Asumidos`}
@@ -74,7 +77,7 @@ function AppTabs() {
                 icon={<WorkTwoToneIcon />}
                 component={Link}
               />
-              {permissions === "T" ? (
+              {view_type === "T" ? (
                 <Tab
                   label="Vehiculos"
                   value={`/Vehiculos`}
@@ -83,7 +86,7 @@ function AppTabs() {
                   component={Link}
                 />
               ) : null}
-              {permissions === "A" ? (
+              {view_type === "A" ? (
                 <Tab
                   label="Vehiculos"
                   value={`/Vehiculos`}
@@ -99,7 +102,7 @@ function AppTabs() {
                 icon={<PaymentsTwoToneIcon />}
                 component={Link}
               />
-              {permissions === "A" ? (
+              {view_type === "A" ? (
                 <Tab
                   label="Usuarios"
                   value={`/Usuarios`}

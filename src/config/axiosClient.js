@@ -17,10 +17,18 @@ const Api = axios.create({
 
 /* Configuracion de la instancia de Axios 
    para que envie el token en cada peticion 
-   y que envie los parametros segun el usuario 
-*/
+   y que envie los parametros segun el usuario  */
+   
+   export const tokenAuth = token => {
+     if (token) {
+      Api.defaults.headers.common['x-auth-token'] = token;
+     } else {
+       delete Api.defaults.headers.common['x-auth-token'];
+     }
+   }
+   /*
 Api.interceptors.request.use((config) => {
-  /* Obtencion del token */
+   Obtencion del token 
 let token = getToken();
   if (token) {
     config.headers = {
@@ -29,11 +37,11 @@ let token = getToken();
   }
   // if (user) {
   //   config.params = {
-  //     /* Obtencion de Parametros */
+  //      Obtencion de Parametros 
   //     "view_option": getParams(user.permission),
   //   };
   // }
   return config;
-});
+});*/
 
 export default Api;
