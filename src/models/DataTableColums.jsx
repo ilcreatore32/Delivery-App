@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 
 import { OpenEditContext } from "../context/openEditContext";
 
@@ -12,7 +12,11 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
-import {CustomDeleteArea, CustomOptionsButtons} from "./CustomOptionsButtons.jsx";
+import {
+  CustomDeleteArea,
+  CustomOptionsButtons,
+} from "./CustomOptionsButtons.jsx";
+import CustomProductsCell from "./CustomProductsCell.jsx";
 
 /* Envios Columns */
 export const EnviosColumns = [
@@ -31,6 +35,9 @@ export const EnviosColumns = [
     align: "center",
     width: 200,
     sortable: true,
+    renderCell: (thisRow) => {
+      return thisRow.row.SE_Fecha.split("T")[0];
+    },
   },
   {
     headerName: "Valor del Pedido",
@@ -55,6 +62,13 @@ export const EnviosColumns = [
     align: "center",
     width: 200,
     sortable: true,
+    renderCell: (thisRow) => {
+      return (
+        <>
+          <CustomProductsCell thisRow={thisRow} />
+        </>
+      );
+    },
   },
   {
     field: "actions",
@@ -63,10 +77,8 @@ export const EnviosColumns = [
     align: "center",
     width: 200,
     sortable: false,
-    renderCell: ( thisRow) => {
-      return (
-        <CustomOptionsButtons thisRow={thisRow} page="shippment" />
-      );
+    renderCell: (thisRow) => {
+      return <CustomOptionsButtons thisRow={thisRow} page="shippment" />;
     },
   },
 ];
@@ -137,9 +149,7 @@ export const ServiciosColumns = [
     width: 200,
     sortable: false,
     renderCell: (thisRow) => {
-      return (
-        <CustomOptionsButtons thisRow={thisRow} page="service" />
-      );
+      return <CustomOptionsButtons thisRow={thisRow} page="service" />;
     },
   },
 ];
@@ -210,9 +220,7 @@ export const VehiculosColumns = [
     width: 200,
     sortable: false,
     renderCell: (thisRow) => {
-      return (
-        <CustomOptionsButtons thisRow={thisRow} page="vehicle" />
-      );
+      return <CustomOptionsButtons thisRow={thisRow} page="vehicle" />;
     },
   },
 ];
@@ -242,6 +250,9 @@ export const PagosColumns = [
     align: "center",
     width: 200,
     sortable: true,
+    renderCell: (thisRow) => {
+      return thisRow.row.PS_Fecha.split("T")[0];
+    },
   },
   {
     headerName: "Monto",
@@ -394,10 +405,7 @@ export const AreasColumns = [
     flex: 1,
     sortable: false,
     renderCell: (thisRow) => {
-      return (
-          <CustomDeleteArea thisRow={thisRow}/>
-      );
+      return <CustomDeleteArea thisRow={thisRow} />;
     },
   },
 ];
-
