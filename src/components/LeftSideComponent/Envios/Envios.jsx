@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 /* API */
 import { GetUbication } from "../../../api/Get";
@@ -17,28 +17,90 @@ import {
   Divider,
   Typography,
   Paper,
+  Button,
+  Stack,
 } from "@mui/material";
 
 /* Material UI Icons */
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
+/* Context */
+import { FilterContext } from "../../../context/FilterContext";
+import Spinner from "../../Spinner/Spinner";
+
+const options = [
+  { value: "E", label: "Eliminado" },
+  { value: "P", label: "Pendiente de servicio transporte" },
+  { value: "S", label: "Servicio de transporte activo" },
+  { value: "T", label: "Producto entregado al transportista" },
+  { value: "C", label: "Producto entregado al cliente" },
+  { value: "F", label: "Transporte finalizado con exito" },
+  { value: "X", label: "Problemas con el transporte" },
+];
+
 function Envios({ asumidos, admin }) {
-  const [Status, setStatus] = useState("");
-  const [options, setOptions] = useState([]);
+  const { shippmentFilter, setShippmentFilter } = useContext(FilterContext);
+
+  const [federalEntities, setFederalEntities] = useState([]);
+  const [loadingFederalEntities, setLoadingFederalEntities] = useState(false);
+
+  const [municipalities, setMunicipalities] = useState([]);
+  const [loadingMunicipalities, setLoadingMunicipalities] = useState(false);
+
+  const [parishes, setParishes] = useState([]);
+  const [loadingParishes, setLoadingParishes] = useState(false);
+
+  const getFederalEntities = () => {
+    setLoadingFederalEntities(true);
+    GetUbication("federal_entity").then((res) => {
+      setFederalEntities(res);
+      setLoadingFederalEntities(false);
+    });
+  };
+
+  const getMunicipities = (federal_entity) => {
+    if (!federal_entity) return;
+    setLoadingMunicipalities(true);
+    GetUbication("municipality", federal_entity).then((res) => {
+      setMunicipalities(res);
+      setLoadingMunicipalities(false);
+    });
+  };
+
+  const getParishes = (municipality) => {
+    if (!municipality) return;
+    setLoadingParishes(true);
+    GetUbication("parish", null, municipality).then((res) => {
+      setParishes(res);
+      setLoadingParishes(false);
+    });
+  };
 
   const handleChange = (e) => {
-    setStatus(e.target.value);
+    setShippmentFilter({ ...shippmentFilter, [e.target.name]: e.target.value });
   };
 
-  const fetchOptions = async () => {
-    const municipalities = await GetUbication("municipality");
-    const federals = await GetUbication("federal_entity");
-    await setOptions([municipalities]);
+  const handleFederalEntityChange = (e) => {
+    setMunicipalities([]);
+    setParishes([]);
+    setShippmentFilter((prevData) => {
+      let newState = { ...prevData };
+      newState.federal_entity = e.target.value;
+      delete newState.municipality;
+      delete newState.parish;
+      return newState;
+    });
   };
 
-  useEffect(() => {
-    fetchOptions();
-  }, []);
+  const handleMunicipalityChange = (e) => {
+    setParishes([]);
+    setShippmentFilter((prevData) => {
+      let newState = { ...prevData };
+      newState.municipality = e.target.value;
+      delete newState.parish;
+      return newState;
+    });
+  };
 
   return (
     <>
@@ -64,23 +126,111 @@ function Envios({ asumidos, admin }) {
               }}
             >
               <TextField
-                id=""
-                label="Estado"
+                id="federal_entity"
+                name="federal_entity"
+                select
+                label="Entidad Federal"
+                value={
+                  (shippmentFilter && shippmentFilter.federal_entity) || ""
+                }
+                onChange={handleFederalEntityChange}
                 variant="filled"
                 color="secondary"
-              />
+                SelectProps={{
+                  onOpen: getFederalEntities,
+                }}
+                fullWidth
+              >
+                {federalEntities ? (
+                  federalEntities.map((federalEntity) => (
+                    <MenuItem
+                      key={federalEntity.EF_Id}
+                      value={federalEntity.EF_Id}
+                    >
+                      {federalEntity.EF_Nombre}
+                    </MenuItem>
+                  ))
+                ) : loadingFederalEntities ? (
+                  <MenuItem>
+                    <Spinner loading={loadingFederalEntities} />
+                  </MenuItem>
+                ) : (
+                  <MenuItem value={0}>Hubo un error</MenuItem>
+                )}
+              </TextField>
               <TextField
-                id=""
+                id="municipality"
+                name="municipality"
+                select
                 label="Municipio"
+                value={(shippmentFilter && shippmentFilter.municipality) || ""}
+                onChange={handleMunicipalityChange}
                 variant="filled"
                 color="secondary"
-              />
+                SelectProps={{
+                  onOpen: () =>
+                    getMunicipities(shippmentFilter?.federal_entity),
+                }}
+                fullWidth
+                {...(shippmentFilter?.federal_entity
+                  ? {
+                      disabled: false,
+                    }
+                  : { disabled: true })}
+              >
+                {municipalities ? (
+                  municipalities.map((municipality) => (
+                    <MenuItem
+                      key={municipality.Municipio_Id}
+                      value={municipality.Municipio_Id}
+                    >
+                      {municipality.Municipio_Nombre}
+                    </MenuItem>
+                  ))
+                ) : loadingMunicipalities ? (
+                  <MenuItem>
+                    <Spinner loading={loadingMunicipalities} />
+                  </MenuItem>
+                ) : (
+                  <MenuItem value={0}>Hubo un error</MenuItem>
+                )}
+              </TextField>
               <TextField
-                id=""
+                id="parish"
+                name="parish"
+                select
                 label="Parroquia"
+                value={(shippmentFilter && shippmentFilter.parish) || ""}
+                onChange={handleChange}
                 variant="filled"
                 color="secondary"
-              />
+                SelectProps={{
+                  onOpen: () => getParishes(shippmentFilter?.municipality),
+                }}
+                fullWidth
+                {...(shippmentFilter?.municipality
+                  ? {
+                      disabled: false,
+                    }
+                  : { disabled: true })}
+              >
+                {parishes ? (
+                  parishes.map((parish) => (
+                    <MenuItem
+                      key={parish.Parroquia_Id}
+                      value={parish.Parroquia_Id}
+                    >
+                      {parish.Parroquia_Nombre}
+                    </MenuItem>
+                  ))
+                ) : loadingParishes ? (
+                  <MenuItem>
+                    <Spinner loading={loadingParishes} />
+                  </MenuItem>
+                ) : (
+                  <MenuItem value={0}>Hubo un error</MenuItem>
+                )}
+              </TextField>
             </Box>
           </Paper>
           <Divider variant="middle" />
@@ -96,26 +246,44 @@ function Envios({ asumidos, admin }) {
               }}
             >
               <TextField
-                id=""
+                id="min_date"
+                name="min_date"
                 label="Mínima"
                 type="date"
+                variant="filled"
+                color="secondary"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                variant="filled"
-                color="secondary"
+                onChange={handleChange}
+                value={
+                  (shippmentFilter &&
+                    shippmentFilter.min_date &&
+                    shippmentFilter.min_date.split("T")[0]) ||
+                  ""
+                }
                 size="small"
+                fullWidth
               />
               <TextField
-                id=""
-                label="Maxima"
+                id="max_date"
+                name="max_date"
+                label="Máxima"
                 type="date"
+                variant="filled"
+                color="secondary"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                variant="filled"
-                color="secondary"
+                onChange={handleChange}
+                value={
+                  (shippmentFilter &&
+                    shippmentFilter.max_date &&
+                    shippmentFilter.max_date.split("T")[0]) ||
+                  ""
+                }
                 size="small"
+                fullWidth
               />
             </Box>
           </Paper>
@@ -132,7 +300,8 @@ function Envios({ asumidos, admin }) {
               }}
             >
               <TextField
-                id=""
+                id="min_value"
+                name="min_value"
                 label="Mínima"
                 type="number"
                 InputLabelProps={{
@@ -147,9 +316,12 @@ function Envios({ asumidos, admin }) {
                 }}
                 variant="filled"
                 color="secondary"
+                onChange={handleChange}
+                value={shippmentFilter?.min_value}
               />
               <TextField
-                id=""
+                id="max_value"
+                name="max_value"
                 label="Maxima"
                 type="number"
                 InputLabelProps={{
@@ -164,6 +336,8 @@ function Envios({ asumidos, admin }) {
                 }}
                 variant="filled"
                 color="secondary"
+                onChange={handleChange}
+                value={shippmentFilter?.max_value}
               />
             </Box>
           </Paper>
@@ -180,7 +354,8 @@ function Envios({ asumidos, admin }) {
               }}
             >
               <TextField
-                id=""
+                id="min_weight"
+                name="min_weight"
                 label="Mínimo"
                 type="number"
                 InputLabelProps={{
@@ -195,9 +370,12 @@ function Envios({ asumidos, admin }) {
                 }}
                 variant="filled"
                 color="secondary"
+                onChange={handleChange}
+                value={shippmentFilter?.min_weight}
               />
               <TextField
-                id=""
+                id="max_weight"
+                name="max_weight"
                 label="Maximo"
                 type="number"
                 InputLabelProps={{
@@ -212,6 +390,8 @@ function Envios({ asumidos, admin }) {
                 }}
                 variant="filled"
                 color="secondary"
+                onChange={handleChange}
+                value={shippmentFilter?.max_weight}
               />
             </Box>
           </Paper>
@@ -226,26 +406,55 @@ function Envios({ asumidos, admin }) {
                   Estado del Envío
                 </Typography>
                 <TextField
-                  id=""
+                  id="status"
+                  name="status"
                   select
                   label="Estado del Envío"
-                  value={Status}
+                  value={(shippmentFilter && shippmentFilter.status) || ""}
                   onChange={handleChange}
                   helperText="Selecciona el Estado"
                   variant="filled"
                   color="secondary"
                 >
-                  {options.id && options.map(({ id, value, label }) => (
-                    <MenuItem key={id} value={value}>
-                      {label}
-                    </MenuItem>
-                  ))}
+                  {options &&
+                    options.map(({ value, label }) => (
+                      <MenuItem key={value} value={value}>
+                        {label}
+                      </MenuItem>
+                    ))}
                 </TextField>
               </Paper>
             </>
           ) : null}
           {admin === "A" ? (
             <>
+              <Divider variant="middle" />
+              <Paper
+                variant="outlined"
+                sx={{ display: "grid", rowGap: 1, padding: "1rem" }}
+              >
+                <Typography variant="h6" component="span">
+                  Estado del Envío
+                </Typography>
+                <TextField
+                  id="status"
+                  name="status"
+                  select
+                  label="Estado del Envío"
+                  value={(shippmentFilter && shippmentFilter.status) || ""}
+                  onChange={handleChange}
+                  helperText="Selecciona el Estado"
+                  variant="filled"
+                  color="secondary"
+                >
+                  {options &&
+                    options.map(({ value, label }) => (
+                      <MenuItem key={value} value={value}>
+                        {label}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Paper>
               <Divider variant="middle" />
               <Paper variant="outlined" sx={{ padding: "1rem" }}>
                 <Typography variant="h6" component="span">
@@ -259,25 +468,68 @@ function Envios({ asumidos, admin }) {
                   }}
                 >
                   <TextField
-                    id=""
+                    id="person_name"
+                    name="person_name"
                     label="Nombres"
                     variant="filled"
                     color="secondary"
+                    onChange={handleChange}
+                    value={(shippmentFilter && shippmentFilter.person_name) || ""}
+                    {...(shippmentFilter && shippmentFilter.person_name && {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      })}
                   />
                   <TextField
-                    id=""
+                    id="person_lastname"
+                    name="person_lastname"
                     label="Apellidos"
                     variant="filled"
                     color="secondary"
+                    onChange={handleChange}
+                    value={(shippmentFilter && shippmentFilter.person_lastname) || ""}
+                    {...(shippmentFilter && shippmentFilter.person_lastname && {
+                      InputLabelProps: {
+                        shrink: true,
+                      },
+                    })}
                   />
                   <TextField
-                    id=""
+                    id="person_id"
+                    name="person_id"
                     label="Cedula"
                     variant="filled"
                     color="secondary"
+                    type="number"
+                    value={(shippmentFilter && shippmentFilter.person_id) || ""}
+                    onChange={handleChange}
+                    {...(shippmentFilter && shippmentFilter.person_id && {
+                      InputLabelProps: {
+                        shrink: true,
+                      },
+                    })}
                   />
                 </Box>
               </Paper>
+              {shippmentFilter && Object.keys(shippmentFilter).length !== 0 && (
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  sx={{
+                    paddingTop: 3,
+                  }}
+                >
+                  <Button
+                    variant="filled"
+                    color="info"
+                    onClick={() => setShippmentFilter({})}
+                  >
+                    Limpiar
+                  </Button>
+                </Stack>
+              )}
             </>
           ) : null}
         </Box>

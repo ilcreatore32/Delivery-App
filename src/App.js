@@ -58,6 +58,7 @@ import "./styles/App.css";
 import "./styles/Responsive.css";
 
 import { UserContext as UserContextT } from "./context/UserContextT";
+import FilterProvider from "./context/FilterContext";
 
 function App() {
   const {
@@ -68,8 +69,6 @@ function App() {
     setLogged_user,
   } = useContext(UserContextT);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [auth, setAuth] = useLocalStorage("token", null);
-  const [user, setUser] = useLocalStorage("user", null);
   const [mode, setMode] = useState(true);
   const [theme, setTheme] = useState(Light);
   const [appMenu, setAppMenu] = useState(false);
@@ -92,7 +91,7 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={DateAdapter}>
-          <userContext.Provider value={{ user, setUser }}>
+          <FilterProvider>
             <OpenEditProvider>
               <DeleteProvider>
                 <appMenuContext.Provider value={{ appMenu, setAppMenu }}>
@@ -282,7 +281,7 @@ function App() {
                 </appMenuContext.Provider>
               </DeleteProvider>
             </OpenEditProvider>
-          </userContext.Provider>
+            </FilterProvider>
         </LocalizationProvider>
       </ThemeProvider>
     </>

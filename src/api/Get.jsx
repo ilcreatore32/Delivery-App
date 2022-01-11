@@ -1,10 +1,12 @@
 import Api from "../config/axiosClient";
 
 /* Envios */
-export async function GetShippments() {
+export async function GetShippments(view_option, params) {
+
   const shippments = await Api.get("/shippment", {
     params: {
-      view_option: "admin",
+      view_option: view_option,
+      ...params,
     },
   })
     .then((result) => {

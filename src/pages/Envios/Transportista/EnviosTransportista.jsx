@@ -18,22 +18,30 @@ import Spinner from "../../../components/Spinner/Spinner";
 import AppTabs from "../../../components/AppTabs/AppTabs";
 import RightSideComponent from "../../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideComponent";
+/* Context */
+import { FilterContext } from "../../../context/FilterContext";
 
 function EnviosTransportista(permissions) {
+  const { shippmentFilter, setShippmentFilter } = useContext(FilterContext);
   const [shippments, setShippments] = useState(null);
   const [loading, setLoading] = useState(false);
   const FilterMenuContext = useContext(filterMenuContext);
 
-  const fetchShippments = async () => {
+  const fetchShippments = async (view_option, params) => {
     await setLoading(true);
-    const response = await GetShippments();
+    const response = await GetShippments(view_option, params);
     await setShippments(response);
     await setLoading(false);
   };
 
   useEffect(() => {
-    fetchShippments();
+    fetchShippments("admin");
   }, []);
+
+  useEffect(() => {
+    if (!shippmentFilter) return
+    fetchShippments("admin",shippmentFilter);
+  }, [shippmentFilter]);
 
   return (
     <>
