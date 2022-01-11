@@ -3,8 +3,8 @@ import { createContext, useState, useEffect } from 'react';
 export const FilterContext = createContext();
 
 const FilterProvider = (props) => {
+    const [shippmentFilter, setShippmentFilter] = useState({});
     const [openEditShippment, setOpenEditShippment] = useState(false);
-    const [shippmentToEdit, setShippmentToEdit] = useState("")
     const [serviceToEdit, setServiceToEdit] = useState("")
     const [openEditService, setOpenEditService] = useState(false);
     const [vehicleToEdit, setVehicleToEdit] = useState("")
@@ -15,16 +15,16 @@ const FilterProvider = (props) => {
     return (
         <FilterContext.Provider
             value={{
+                shippmentFilter,
                 openEditShippment,
-                shippmentToEdit,
                 serviceToEdit,
                 openEditService,
                 vehicleToEdit,
                 openEditVehicle,
                 paymentToEdit,
                 openEditPayment,
+                setShippmentFilter,
                 setOpenEditShippment,
-                setShippmentToEdit,
                 setServiceToEdit,
                 setOpenEditService,
                 setVehicleToEdit,

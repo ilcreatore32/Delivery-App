@@ -23,6 +23,7 @@ export const getShippments = async (req, res) => {
     person_id = "", // 20000000
     person_name = "", // 'Juan'
     person_lastname = "", // 'Perez'
+    status = "", // 'E'
   } = req.query;
   let queryShippment = "";
 
@@ -97,6 +98,7 @@ export const getShippments = async (req, res) => {
               ? `AND SE_PesoTotal <= ${max_weight} `
               : ""
           }
+          ${status ? `AND SE_Status = '${status}'` : ""}
           GROUP BY SE_ID
           `;
       break;
@@ -131,55 +133,58 @@ export const getShippments = async (req, res) => {
           JOIN personas
             ON SE_PersonaId = Persona_Id
 
-          WHERE 1=1
-          ${
-            parish
-              ? `AND SE_ParroquiaId = ${parish}`
-              : municipality !== ""
-              ? `AND Parroquia_MunicipioId = ${municipality}`
-              : federal_entity
-              ? `AND Municipio_EFId = ${federal_entity}`
-              : ""
-          }
-          ${
-            min_value
-              ? max_value
-                ? `AND SE_ValorTotal between ${min_value} and ${max_value}`
-                : `AND SE_ValorTotal >= ${min_value} `
-              : max_value
-              ? `AND SE_ValorTotal <= ${max_value} `
-              : ""
-          }
-          ${
-            min_date
-              ? max_date
-                ? `AND SE_Fecha between '${min_date}' and '${max_date}'`
-                : `AND SE_Fecha >= '${min_date}' `
-              : max_date
-              ? `AND SE_Fecha <= '${max_date}' `
-              : ""
-          }
-          ${
-            min_weight
-              ? max_weight
-                ? `AND SE_PesoTotal between ${min_weight} and ${max_weight}`
-                : `AND SE_PesoTotal >= ${min_weight} `
-              : max_weight
-              ? `AND SE_PesoTotal <= ${max_weight} `
-              : ""
-          }
-          ${person_id ? `AND SE_PersonaId = ${person_id}` : ""}
-          ${
-            person_name
-              ? `AND Persona_Nombre LIKE '%${person_name.trim()}%'`
-              : ""
-          }
+            
+            WHERE 1=1
+            ${
+              parish
+                ? `AND SE_ParroquiaId = ${parish}`
+                : municipality !== ""
+                ? `AND Parroquia_MunicipioId = ${municipality}`
+                : federal_entity
+                ? `AND Municipio_EFId = ${federal_entity}`
+                : ""
+            }
+            ${
+              min_value
+                ? max_value
+                  ? `AND SE_ValorTotal between ${min_value} and ${max_value}`
+                  : `AND SE_ValorTotal >= ${min_value} `
+                : max_value
+                ? `AND SE_ValorTotal <= ${max_value} `
+                : ""
+            }
+            ${
+              min_date
+                ? max_date
+                  ? `AND SE_Fecha between '${min_date}' and '${max_date}'`
+                  : `AND SE_Fecha >= '${min_date}' `
+                : max_date
+                ? `AND SE_Fecha <= '${max_date}' `
+                : ""
+            }
+            ${
+              min_weight
+                ? max_weight
+                  ? `AND SE_PesoTotal between ${min_weight} and ${max_weight}`
+                  : `AND SE_PesoTotal >= ${min_weight} `
+                : max_weight
+                ? `AND SE_PesoTotal <= ${max_weight} `
+                : ""
+            }
+            ${person_id ? `AND SE_PersonaId = ${person_id}` : ""}
+            ${
+              person_name
+                ? `AND Persona_Nombre LIKE '%${person_name.trim()}%'`
+                : ""
+            }
           ${
             person_lastname
               ? `AND Persona_Apellido LIKE '%${person_lastname.trim()}%'`
               : ""
           }
-            
+          
+          ${status ? `AND SE_Status = '${status}'` : ""}
+          
           GROUP BY SE_ID
           `;
       break;
@@ -251,6 +256,7 @@ export const getShippments = async (req, res) => {
               ? `AND SE_PesoTotal <= ${max_weight} `
               : ""
           }
+          ${status ? `AND SE_Status = '${status}'` : ""}
           GROUP BY SE_ID
           `;
       break;
@@ -278,7 +284,7 @@ export const getShippments = async (req, res) => {
           JOIN personas
             ON SE_PersonaId = Persona_Id
           
-          WHERE SE_Status=1
+          WHERE SE_Status='P
           ${
             parish
               ? `AND SE_ParroquiaId = ${parish}`
@@ -469,7 +475,7 @@ export const getOneShippment = async function (req, res) {
                   /* if error in the query */
                   if (errServiceD)
                     return res.status(400).json({
-                      error: "Error al consultar en la base de datos"
+                      error: "Error al consultar en la base de datos",
                     });
                   /* if there is no data */
                   if (serviceD.length === 0 || serviceD[0].ST_Id === null)
@@ -570,7 +576,8 @@ export const editShippment = async function (req, res) {
   try {
     /* Get all shippment's details */
     await pool.query(
-      query_shippment, [id],
+      query_shippment,
+      [id],
       async function (errShippment, shippmentDetails) {
         /* if error in the query */
         if (errShippment)
@@ -609,11 +616,9 @@ export const editShippment = async function (req, res) {
                     .json({ error: "Error al consultar en la base de datos" });
                 /* if there is no data */
                 if (contact.length === 0 || contact[0].contactInfo === null)
-                  return res
-                    .status(404)
-                    .json({
-                      error: "Esta persona no posee información de contacto",
-                    });
+                  return res.status(404).json({
+                    error: "Esta persona no posee información de contacto",
+                  });
                 /* send results */
                 res.status(200).json({
                   ...shippmentDetails[0],
