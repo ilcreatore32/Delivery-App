@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 
 /* React-Router */
 import { Link, useLocation, useParams } from "react-router-dom";
@@ -51,6 +51,7 @@ import addDate from "date-fns/add";
 import format from "date-fns/format";
 import { PutUser } from "../../../api/Put";
 import AppTabs from "../../../components/AppTabs/AppTabs";
+import { UserContext } from "../../../context/UserContextT";
 
 const CustomStack = (props) => {
   return (
@@ -101,10 +102,24 @@ function useQuery() {
 
   return useMemo(() => new URLSearchParams(search), [search]);
 }
-
+const statusOptions = [
+  {
+    value: "P",
+    label: "Pendiente de Comprobación",
+  },
+  {
+    value: "A",
+    label: "Activa",
+  },
+  {
+    value: "S",
+    label: "Suspendido",
+  },
+];
 function Edit() {
   const { id } = useParams();
-  const query = useQuery()
+  const query = useQuery();
+  const { view_type } = useContext(UserContext);
   const [open, setOpen] = useState(false);
   const [add, setAdd] = useState(false);
 
@@ -254,8 +269,8 @@ function Edit() {
       setLoading(true);
       let data = await GetUserEdit(id);
       if (!data) {
-      setLoading(false);
-      return;
+        setLoading(false);
+        return;
       }
       setUser(data.user);
       setContacts(data.contact);
@@ -265,8 +280,8 @@ function Edit() {
           `No se encuentra suscripto a un plan, seleccione uno en la opción "Cambiar Suscripcion"`
         );
         setSeverity("error");
-      setLoading(false);
-      return;
+        setLoading(false);
+        return;
       }
       if (data?.user?.Suscripcion_FechaV) {
         let dateV = new Date(data.user.Suscripcion_FechaV);
@@ -332,10 +347,7 @@ function Edit() {
               dataToSend[key].name
             );
           } else if (key === "contactos") {
-            form.append(
-              "contactos",
-              JSON.stringify(dataToSend[key])
-            );
+            form.append("contactos", JSON.stringify(dataToSend[key]));
           } else {
             form.append(key, dataToSend[key]);
           }
@@ -345,7 +357,9 @@ function Edit() {
           setSuccessMessage("Usuario editado correctamente");
           setTimeout(() => {
             setSuccessMessage("");
-            window.location.href = query.get("adminView") ? "/Usuarios" : "/Cuenta";
+            window.location.href = query.get("adminView")
+              ? "/Usuarios"
+              : "/Cuenta";
           }, 2000);
           setSending(false);
         } else {
@@ -366,7 +380,6 @@ function Edit() {
       }
     })();
   }, [sending]);
-
 
   return (
     <>
@@ -490,6 +503,29 @@ function Edit() {
                             />
                           </TableCell>
                         </TableRow>
+                        {view_type === "A" && (
+                          <TableRow>
+                            <TableCell>Estatus de la cuenta</TableCell>
+                            <TableCell>
+                              <TextField
+                                id="Usuario_Status"
+                                name="Usuario_Status"
+                                select
+                                label="Tipo"
+                                value={user && user.Usuario_Status}
+                                onChange={handleUserChange}
+                                variant="filled"
+                                sx={{ marginRight: 1 }}
+                              >
+                                {statusOptions.map(({ value, label }) => (
+                                  <MenuItem key={value} value={value}>
+                                    {label}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            </TableCell>
+                          </TableRow>
+                        )}
                         <TableRow>
                           <TableCell component="th">
                             Comprobante Documento de Identidad
@@ -822,7 +858,11 @@ function Edit() {
                     margin: "1rem 2rem",
                   }}
                 >
-                  <Button variant="outlined" component={Link} to={query.get("adminView") ? "/Usuarios" : "/Cuenta"}>
+                  <Button
+                    variant="outlined"
+                    component={Link}
+                    to={query.get("adminView") ? "/Usuarios" : "/Cuenta"}
+                  >
                     Cancel
                   </Button>
                   <Button variant="outlined" onClick={handleSubmitUser}>

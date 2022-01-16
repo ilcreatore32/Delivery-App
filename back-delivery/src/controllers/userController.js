@@ -19,6 +19,7 @@ export const getUsers = async (req, res) => {
     email, // Example: "example@example.com"
     suscription_type, // Example: "1"
     suscription_status, // Example: "S"
+    user_status, // Example: "A"
   } = req.query;
   /* SELECT Persona_Nombre, Persona_Apellido, Persona_Id, Usuario_Correo, Suscripcion_Id, 
   Suscripcion_Status, TS_Id, TS_Nombre
@@ -30,7 +31,7 @@ export const getUsers = async (req, res) => {
     WHERE 1=1  */
     /* build the query */
   let queryUsers = `
-  SELECT Persona_Nombre, Persona_Apellido, Persona_Id, Usuario_Correo, Suscripcion_Id, 
+  SELECT Persona_Nombre, Persona_Apellido, Persona_Id, Usuario_Correo,Usuario_Status, Suscripcion_Id, 
   Suscripcion_Status, TS_Id, TS_Nombre
   FROM personas
   RIGHT JOIN usuarios ON Persona_Id = Usuario_Id
@@ -55,6 +56,9 @@ export const getUsers = async (req, res) => {
             suscription_status
               ? `AND Suscripcion_Status = '${suscription_status}'`
               : ""
+          }
+          ${
+            user_status ? `AND Usuario_Status = '${user_status}'` : ""
           }
     `;
   try {
@@ -144,7 +148,7 @@ export const editUser = async function (req, res) {
   /* extract the query params */
   let queryUserDetails = `
       SELECT Persona_Id, Persona_TipoId, Persona_Nombre, Persona_Apellido, Persona_Archivo,
-      Usuario_Correo, TS_Id, TS_Nombre, Suscripcion_Monto,
+      Usuario_Correo, Usuario_Status,  TS_Id, TS_Nombre, Suscripcion_Monto,
       ${
         view_option === "admin"
           ? `Suscripcion_Status,
@@ -195,7 +199,7 @@ export const updateUser = async function (req, res) {
     Persona_Nombre, // Juan
     Persona_Apellido, // Perez
     Usuario_Correo, // email@email.com
-    Usuario_Status = "A", // A
+    Usuario_Status, // A
     TS_Id, // 1
     Suscripcion_Id, // 1
     Suscripcion_Monto, // 100.00

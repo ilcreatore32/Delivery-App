@@ -43,6 +43,20 @@ function Usuarios({ admin }) {
       label: "Vencida",
     },
   ];
+  const statusUser = [
+    {
+      value: "P",
+      label: "Pendiente de Comprobación",
+    },
+    {
+      value: "A",
+      label: "Activa",
+    },
+    {
+      value: "S",
+      label: "Suspendido",
+    },
+  ];
 
   const handleChange = (e) => {
     setUserFilter({
@@ -147,6 +161,30 @@ function Usuarios({ admin }) {
                     color="secondary"
                   >
                     {status.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+                <Box
+                  sx={{
+                    display: "grid",
+                    marginTop: 4,
+                  }}
+                >
+                  <TextField
+                    fullWidth
+                    id="user_status"
+                    name="user_status"
+                    select
+                    label="Estatus de la cuenta"
+                    value={userFilter?.user_status || ""}
+                    onChange={handleChange}
+                    variant="filled"
+                    color="secondary"
+                  >
+                    {statusUser.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
                       </MenuItem>

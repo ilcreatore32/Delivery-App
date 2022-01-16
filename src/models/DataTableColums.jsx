@@ -369,8 +369,16 @@ export const UsuariosColumns = [
     sortable: true,
   },
   {
-    headerName: "Estatus",
+    headerName: "Suscripcion Estatus",
     field: "Suscripcion_Status",
+    headerAlign: "center",
+    align: "center",
+    width: 130,
+    sortable: true,
+  },
+  {
+    headerName: "Estatus Cuenta",
+    field: "Usuario_Status",
     headerAlign: "center",
     align: "center",
     width: 130,
