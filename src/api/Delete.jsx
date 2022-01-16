@@ -11,6 +11,17 @@ export function DeleteOneEnvio(id) {
     });
 }
 
+export async function DeleteAsociatedService(id) {
+  const shippmentResult = await Api.delete(`/shippment/deleteAsociateService/${id}`)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      return error;
+    });
+  return shippmentResult;
+}
+
 /* Servicios */
 export function DeleteOneServicio(id) {
   Api.delete(`/Servicios/${id}`)

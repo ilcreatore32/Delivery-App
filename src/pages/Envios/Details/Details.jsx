@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 
 /* API */
-import { GetAuthenticatedUser, GetOneShippment } from "../../../api/Get";
+import {
+  GetAuthenticatedUser,
+  GetOffersOption,
+  GetOneShippment,
+} from "../../../api/Get";
 
 /* React-Router */
 import { useParams } from "react-router";
@@ -32,7 +36,12 @@ import {
   Button,
   Divider,
   ListItemButton,
+  Snackbar,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { styled } from "@mui/material/styles";
 
@@ -51,6 +60,11 @@ import ConfirmationDialog from "../../../components/ConfirmationDialog/Confirmat
 /* Context */
 import { authContext } from "../../../context/authContext";
 import { UserContext } from "../../../context/UserContextT";
+import { format, parse } from "date-fns";
+import { PutEnvioStatus, PutOfertaStatus } from "../../../api/Put";
+import { faWindowRestore } from "@fortawesome/free-solid-svg-icons";
+import { AsociarServicio } from "../../../api/Post";
+import { DeleteAsociatedService } from "../../../api/Delete";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -79,10 +93,16 @@ const switchShippmentState = (key) => {
     T: "¿Confirmar que se entrego el producto?",
     C: "¿Confirmar que recibio el producto?",
   };
+  let next = {
+    S: "T",
+    T: "C",
+    C: "F",
+  };
   const State = {
     message: messages[key],
     state: states[key],
     question: questions[key],
+    next: next[key],
   };
   return State;
 };
@@ -91,20 +111,34 @@ function Details() {
   const { id } = useParams();
 
   const AuthContext = useContext(authContext);
-  const { view_type } = useContext(UserContext);
+  const { view_type, logged_user } = useContext(UserContext);
 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [Offer, setOffer] = useState(false);
-  const [SelectedOffer, setSelectedOffer] = useState(null);
+  const [selectedOffer, setSelectedOffer] = useState("");
+  const [offers, setOffers] = useState([]);
 
   const [shippmentDetails, setShippmentDetails] = useState({});
   const [productsList, setproductsList] = useState([]);
   const [servicesAvailable, setServicesAvailable] = useState([]);
   const [serviceDetails, setServiceDetails] = useState({});
-  const [shippmentState, setShippmentState] = useState(
-    switchShippmentState("S")
-  );
+
+  const [startHours, setStartHours] = useState("");
+  const [finishHours, setFinishHours] = useState("");
+
+  const [shippmentState, setShippmentState] = useState("");
+  const [changeStatus, setChangeStatus] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const [loadingStatus, setLoadingStatus] = useState(false);
+  const [sendingOffer, setSendingOffer] = useState(false);
+
+  const [selectOfferToDelete, setSelectOfferToDelete] = useState({});
+  const [deletingOffer, setDeletingOffer] = useState(false);
+  const [changingStatusOffer, setChangingStatusOffer] = useState(false);
 
   const handleOffer = () => {
     setOffer(true);
@@ -125,7 +159,18 @@ function Details() {
     setTransportistaAccepted(event.target.checked);
   };
   */
-
+  const updateShippmentStatus = async (id, status) => {
+    if (!id || !status) return;
+    setLoadingStatus(true);
+    let result = await PutEnvioStatus(id, status);
+    if (result?.status === 200) {
+      setSuccessMessage("Se actualizo el estado del envio");
+      fetchShippment();
+    } else {
+      setErrorMessage("No se pudo actualizar el estado del envio");
+    }
+    setLoadingStatus(true);
+  };
   const fetchShippment = useCallback(async () => {
     await setLoading(true);
     console.log(AuthContext);
@@ -143,11 +188,192 @@ function Details() {
     await setLoading(false);
   }, [id]);
 
+  const getOffers = async () => {
+    try {
+      let offers = await GetOffersOption();
+      if (offers) {
+        if (servicesAvailable) {
+          let filteredOffers = offers.filter(
+            (offer) =>
+              !servicesAvailable.some(
+                (service) => service.ST_Id === offer.ST_Id
+              )
+          );
+          setOffers(filteredOffers);
+        } else {
+          setOffers(offers);
+        }
+      }
+    } catch (error) {
+      console.debug(error);
+    }
+  };
+
+  const sendOffer = async () => {
+    if (!selectedOffer) return;
+    setSendingOffer(true);
+    try {
+      const response = await AsociarServicio({
+        SEST_SEId: id,
+        SEST_STId: selectedOffer,
+        SEST_Status: "P",
+      });
+      if (response.status === 200) {
+        setSuccessMessage("Oferta enviada correctamente");
+        setSelectedOffer("");
+        fetchShippment();
+      } else {
+        setErrorMessage("Error al enviar la oferta");
+      }
+    } catch (e) {
+      if (e) {
+        setErrorMessage("Hubo un error al enviar los datos");
+        setSendingOffer(false);
+      }
+    }
+    setSendingOffer(false);
+  };
+
+  const deleteOffer = async (id) => {
+    if (!id) return;
+    setDeletingOffer(true);
+    setSelectOfferToDelete({ ...selectOfferToDelete, ST_Id: null });
+    try {
+      let result = await DeleteAsociatedService(id);
+      if (result.status === 200) {
+        setSuccessMessage("Oferta eliminada correctamente");
+        setSelectOfferToDelete({});
+        fetchShippment();
+      } else {
+        setSelectOfferToDelete({});
+        setErrorMessage("Error al eliminar la oferta");
+      }
+    } catch (e) {
+      if (e) {
+        setSelectOfferToDelete({});
+        setErrorMessage("Hubo un error al enviar los datos");
+      }
+    }
+    setDeletingOffer(false);
+  };
+
+  const acceptRejectOffer = async (id, status) => {
+    if (!id || !status || !status?.status || !status?.serviceId) return;
+    let successMsg, errorMsg;
+    switch (status?.status) {
+      case "A":
+        successMsg = "Oferta aceptada correctamente";
+        errorMsg = "Error al aceptar la oferta";
+        break;
+      case "R":
+        successMsg = "Oferta rechazada correctamente";
+        errorMsg = "Error al rechazar la oferta";
+        break;
+      case "P":
+        successMsg = "Cancelación de la oferta correcta";
+        errorMsg = "Error al cambiar la oferta";
+    }
+    setChangingStatusOffer(true);
+    try {
+      let result = await PutOfertaStatus(id, status);
+      if (result.status === 200) {
+        setSuccessMessage(successMsg);
+        fetchShippment();
+      } else {
+        setErrorMessage(errorMsg);
+      }
+    } catch (e) {
+      if (e) {
+        setErrorMessage(errorMsg);
+      }
+    }
+    setChangingStatusOffer(false);
+  };
   useEffect(() => {
     fetchShippment();
   }, [fetchShippment]);
 
-  console.log(shippmentState);
+  useEffect(() => {
+    if (shippmentDetails?.SE_Status) {
+      setShippmentState(switchShippmentState(shippmentDetails.SE_Status));
+    }
+  }, [shippmentDetails]);
+
+  useEffect(() => {
+    if (!view_type) return;
+    if (
+      view_type === "T" &&
+      serviceDetails?.ST_PersonaId &&
+      serviceDetails.ST_PersonaId !== logged_user.Usuario_Id
+    )
+      window.location.replace("/");
+    if (
+      view_type === "C" &&
+      shippmentDetails["SE_PersonaId"] &&
+      shippmentDetails.SE_PersonaId !== logged_user.Usuario_Id
+    )
+      window.location.replace("/");
+  }, [view_type]);
+
+  useEffect(() => {
+    if (
+      shippmentState.state === "Servicio de transporte activo" &&
+      view_type === "A"
+    ) {
+      setChangeStatus(true);
+      return;
+    }
+
+    if (
+      shippmentState.state === "Producto entregado al transportista" &&
+      view_type === "T" &&
+      logged_user &&
+      serviceDetails &&
+      logged_user.Usuario_Id === serviceDetails.ST_PersonaId
+    ) {
+      setChangeStatus(true);
+      return;
+    }
+    if (
+      shippmentState.state === "Producto entregado al cliente" &&
+      view_type === "C" &&
+      logged_user &&
+      shippmentDetails &&
+      logged_user.Usuario_Id === shippmentDetails.SE_PersonaId
+    ) {
+      setChangeStatus(true);
+      return;
+    }
+    setChangeStatus(false);
+  }, [
+    shippmentState,
+    view_type,
+    logged_user,
+    serviceDetails,
+    shippmentDetails,
+  ]);
+
+  useEffect(() => {
+    if (
+      !serviceDetails ||
+      !serviceDetails.ST_HorarioIni ||
+      !serviceDetails.ST_HorarioFin
+    ) {
+      setStartHours("");
+      setFinishHours("");
+      return;
+    }
+    let startH = format(
+      parse(serviceDetails.ST_HorarioIni, "HH:mm:ss", new Date()),
+      "hh:mm aaaaa'm'"
+    );
+    let finishH = format(
+      parse(serviceDetails.ST_HorarioFin, "HH:mm:ss", new Date()),
+      "hh:mm aaaaa'm'"
+    );
+    setStartHours(startH);
+    setFinishHours(finishH);
+  });
   return (
     <>
       <AppTabs />
@@ -165,6 +391,25 @@ function Details() {
         </Paper>
       ) : (
         <>
+          <Snackbar
+            open={errorMessage}
+            autoHideDuration={6000}
+            message={errorMessage}
+            onClose={() => setErrorMessage("")}
+          >
+            <Alert severity="error" onClose={() => setErrorMessage("")}>
+              {errorMessage}
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={successMessage}
+            autoHideDuration={6000}
+            onClose={() => setSuccessMessage("")}
+          >
+            <Alert severity="success" onClose={() => setSuccessMessage("")}>
+              {successMessage}
+            </Alert>
+          </Snackbar>
           <Stack
             direction={{ xs: "column", sm: "row" }}
             spacing={{ xs: 1, sm: 2, md: 2 }}
@@ -289,7 +534,7 @@ function Details() {
                   </Table>
                 </TableContainer>
               </Box>
-              {view_type === "T" ? (
+              {view_type === "T" && !serviceDetails?.ST_Id && (
                 <Box
                   sx={{
                     padding: "1rem",
@@ -324,50 +569,170 @@ function Details() {
                             margin: "2rem 3rem",
                           }}
                         >
-                          <ListSubheader>
-                            Ofrecer Servicios de Transporte
-                          </ListSubheader>
-                          <FormControl fullWidth>
-                            <InputLabel id="offer">Sus Servicios</InputLabel>
-                            <Select
-                              labelId="offer"
-                              id="offer"
-                              variant="filled"
-                              value={SelectedOffer}
-                              label="Sus Servicios"
-                              onChange={handleSelectedOffer}
-                            >
-                              <MenuItem value={1}>Carro</MenuItem>
-                              <MenuItem value={2}>Moto</MenuItem>
-                              <MenuItem value={3}>Camion</MenuItem>
-                            </Select>
-                          </FormControl>
-                          <Box
-                            sx={{
-                              margin: ".5rem 0",
-                              display: "flex",
-                              alignContent: "center",
-                              justifyContent: "space-around",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Button
-                              onClick={handleCloseOffer}
-                              variant="outlined"
-                              color="secondary"
-                            >
-                              Cancelar
-                            </Button>
-                            <Button variant="outlined" color="secondary">
-                              Ofrecer Servicio
-                            </Button>
-                          </Box>
+                          {sendingOffer ? (
+                            <CircularProgress />
+                          ) : (
+                            <>
+                              <ListSubheader>
+                                Ofrecer Servicios de Transporte
+                              </ListSubheader>
+                              <FormControl fullWidth>
+                                <InputLabel id="offer">
+                                  Sus Servicios
+                                </InputLabel>
+                                <Select
+                                  labelId="offer"
+                                  id="offer"
+                                  variant="filled"
+                                  value={selectedOffer}
+                                  label="Sus Servicios"
+                                  onChange={handleSelectedOffer}
+                                  onOpen={getOffers}
+                                >
+                                  {offers &&
+                                    offers.map((offer) => {
+                                      let {
+                                        ST_Id,
+                                        MT_Nombre,
+                                        ST_Precio,
+                                        ST_HorarioIni,
+                                        ST_HorarioFin,
+                                        DatosMedio,
+                                      } = offer;
+                                      return (
+                                        <MenuItem value={ST_Id}>
+                                          {`${MT_Nombre} || ${ST_Precio}$ || ${format(
+                                            parse(
+                                              ST_HorarioIni,
+                                              "HH:mm:ss",
+                                              new Date()
+                                            ),
+                                            "hh:mm aaaaa'm'"
+                                          )} a ${format(
+                                            parse(
+                                              ST_HorarioFin,
+                                              "HH:mm:ss",
+                                              new Date()
+                                            ),
+                                            "hh:mm aaaaa'm'"
+                                          )}`}
+                                          {DatosMedio && ` || ${DatosMedio}`}{" "}
+                                        </MenuItem>
+                                      );
+                                    })}
+                                </Select>
+                              </FormControl>
+                              <Box
+                                sx={{
+                                  margin: ".5rem 0",
+                                  display: "flex",
+                                  alignContent: "center",
+                                  justifyContent: "space-around",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Button
+                                  onClick={handleCloseOffer}
+                                  variant="outlined"
+                                  color="secondary"
+                                >
+                                  Cancelar
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  color="secondary"
+                                  onClick={sendOffer}
+                                >
+                                  Ofrecer Servicio
+                                </Button>
+                              </Box>
+                            </>
+                          )}
                         </Box>
                       </>
                     ) : null}
                     <Divider />
-                    {servicesAvailable &&
+                    <ConfirmationDialog
+                      title="Alerta ¿Deseas eliminar la siguiente oferta?"
+                      message={
+                        selectOfferToDelete &&
+                        `${
+                          selectOfferToDelete.DatosMedio ||
+                          selectOfferToDelete.MT_Nombre
+                        } - ${selectOfferToDelete.ST_Precio}$`
+                      }
+                      customClose={
+                        <Button
+                          onClick={() =>
+                            setSelectOfferToDelete({
+                              ...selectOfferToDelete,
+                              ST_Id: null,
+                            })
+                          }
+                        >
+                          Cancelar
+                        </Button>
+                      }
+                      customOpen={selectOfferToDelete?.ST_Id ? true : false}
+                    >
+                      <Button
+                        onClick={() => deleteOffer(selectOfferToDelete?.ST_Id)}
+                      >
+                        Eliminar
+                      </Button>
+                    </ConfirmationDialog>
+                    {deletingOffer ? (
+                      <CircularProgress />
+                    ) : (
+                      servicesAvailable &&
                       servicesAvailable.map((service) => {
+                        if (
+                          view_type === "T" &&
+                          service.ST_PersonaId === logged_user.Usuario_Id
+                        )
+                          return (
+                            <ListItem
+                              key={service.ST_Id}
+                              divider
+                              secondaryAction={
+                                service.SEST_Status === "R" ? (
+                                  <IconButton
+                                    edge="end"
+                                    aria-label="Aceptar Ofrecer"
+                                    disabled
+                                  >
+                                    Rechazado
+                                  </IconButton>
+                                ) : (
+                                  <IconButton
+                                    edge="end"
+                                    aria-label="Eliminar Ofrecer"
+                                    onClick={() =>
+                                      setSelectOfferToDelete(service)
+                                    }
+                                  >
+                                    <DeleteTwoToneIcon
+                                      color="error"
+                                      size="small"
+                                    />
+                                  </IconButton>
+                                )
+                              }
+                              disablePadding
+                            >
+                              <ListItemButton role={undefined}>
+                                <ListItemIcon>
+                                  <BookmarkAddedTwoToneIcon color="secondary" />
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={`${
+                                    service.DatosMedio || service.MT_Nombre
+                                  } - ${service.ST_Precio}$`}
+                                  secondary={`Horario: ${service.ST_HorarioIni} - ${service.ST_HorarioFin}`}
+                                />
+                              </ListItemButton>
+                            </ListItem>
+                          );
                         return (
                           <ListItem
                             key={service.ST_Id}
@@ -376,6 +741,7 @@ function Details() {
                               <IconButton
                                 edge="end"
                                 aria-label="Eliminar Ofrecer"
+                                onClick={() => setSelectOfferToDelete(service)}
                               >
                                 <DeleteTwoToneIcon color="error" size="small" />
                               </IconButton>
@@ -387,16 +753,119 @@ function Details() {
                                 <BookmarkAddedTwoToneIcon color="secondary" />
                               </ListItemIcon>
                               <ListItemText
-                                primary={`${service.DatosMedio} - ${service.ST_Precio}$`}
+                                primary={`${
+                                  service.DatosMedio || service.MT_Nombre
+                                } - ${service.ST_Precio}$`}
                                 secondary={`Horario: ${service.ST_HorarioIni} - ${service.ST_HorarioFin}`}
                               />
                             </ListItemButton>
                           </ListItem>
                         );
-                      })}
+                      })
+                    )}
                   </List>
                 </Box>
-              ) : null}
+              )}
+              {view_type !== "T" && !serviceDetails?.ST_Id && (
+                <Box
+                  sx={{
+                    padding: "1rem",
+                  }}
+                >
+                  <List
+                    sx={{
+                      width: "100%",
+                      bgcolor: "background.paper",
+                    }}
+                  >
+                    <ListSubheader
+                      sx={{
+                        display: "flex",
+                        alignContent: "center",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      Servicios de Transporte Ofertados{" "}
+                    </ListSubheader>
+                    <Divider />
+                    {changingStatusOffer ? (
+                      <CircularProgress />
+                    ) : (
+                      servicesAvailable &&
+                      servicesAvailable.map((service) => {
+                        if (view_type !== "T")
+                          return (
+                            <ListItem
+                              key={service.ST_Id}
+                              divider
+                              secondaryAction={
+                                service.SEST_Status === "R" ? (
+                                  <IconButton
+                                    edge="end"
+                                    aria-label="Aceptar Ofrecer"
+                                    disabled
+                                  >
+                                    Rechazado
+                                  </IconButton>
+                                ) : (
+                                  <>
+                                    <IconButton
+                                      edge="end"
+                                      aria-label="Aceptar Ofrecer"
+                                      onClick={() =>
+                                        acceptRejectOffer(
+                                          shippmentDetails.SE_Id,
+                                          {
+                                            status: "A",
+                                            serviceId: service.ST_Id,
+                                          }
+                                        )
+                                      }
+                                    >
+                                      <CheckCircleIcon
+                                        color="success"
+                                        size="small"
+                                      />
+                                    </IconButton>
+                                    <IconButton
+                                      edge="end"
+                                      aria-label="Rechazar Ofrecer"
+                                      onClick={() =>
+                                        acceptRejectOffer(
+                                          shippmentDetails.SE_Id,
+                                          {
+                                            status: "R",
+                                            serviceId: service.ST_Id,
+                                          }
+                                        )
+                                      }
+                                    >
+                                      <CancelIcon color="error" size="small" />
+                                    </IconButton>
+                                  </>
+                                )
+                              }
+                              disablePadding
+                            >
+                              <ListItemButton role={undefined}>
+                                <ListItemIcon>
+                                  <BookmarkAddedTwoToneIcon color="secondary" />
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={`${
+                                    service.DatosMedio || service.MT_Nombre
+                                  } - ${service.ST_Precio}$`}
+                                  secondary={`Horario: ${service.ST_HorarioIni} - ${service.ST_HorarioFin}`}
+                                />
+                              </ListItemButton>
+                            </ListItem>
+                          );
+                      })
+                    )}
+                  </List>
+                </Box>
+              )}
               <Box
                 sx={{
                   display: "flex",
@@ -413,33 +882,49 @@ function Details() {
                   {shippmentState.state} / {shippmentState.message}
                 </Typography>
               </Box>
-              <Box
-                component={Paper}
-                variant="outlined"
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  margin: "1rem 0",
-                  padding: "2rem",
-                  gap: "1rem",
-                }}
-              >
-                <Typography variant="subtitle1" component="h4">
-                  {shippmentState.question}
-                </Typography>
+              {changeStatus && (
                 <Box
+                  component={Paper}
+                  variant="outlined"
                   sx={{
                     display: "flex",
-                    justifyContent: "center",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    margin: "1rem 0",
+                    padding: "2rem",
                     gap: "1rem",
                   }}
                 >
-                  <Button variant="outlined">No</Button>
-                  <Button variant="outlined">Si</Button>
+                  {loadingStatus ? (
+                    <CircularProgress />
+                  ) : (
+                    <>
+                      <Typography variant="subtitle1" component="h4">
+                        {shippmentState.question}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          gap: "1rem",
+                        }}
+                      >
+                        <Button
+                          variant="outlined"
+                          onClick={() =>
+                            updateShippmentStatus(shippmentDetails?.SE_Id, {
+                              status: shippmentState?.next,
+                            })
+                          }
+                        >
+                          Confirmar
+                        </Button>
+                      </Box>
+                    </>
+                  )}
                 </Box>
-              </Box>
+              )}
             </Item>
             <Item xs={6} sm={4} md={4}>
               <Typography align="center" variant="h4" component="h2">
@@ -513,116 +998,149 @@ function Details() {
                   </TableBody>
                 </Table>
               </TableContainer>
-              <Box
-                sx={{
-                  padding: "1rem",
-                }}
-                variant="outlined"
-              >
-                <Typography align="center" variant="h4" component="h2">
-                  Detalles del Servicio de Transporte
-                </Typography>
-                <TableContainer
-                  component={Paper}
-                  variant="outlined"
-                  sx={{ margin: "1rem 0" }}
-                >
-                  <Table>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell component="th">
-                          Medio de Transporte
-                        </TableCell>
-                        <TableCell align="center">Carro</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">
-                          Nombre del Vehiculo
-                        </TableCell>
-                        <TableCell align="center">Weishler Joice</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Horario</TableCell>
-                        <TableCell align="center">De 7am a 8pm</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Precio</TableCell>
-                        <TableCell align="center">50$</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
-              <Box
-                sx={{
-                  padding: "1rem",
-                }}
-              >
-                <Typography align="center" variant="h4" component="h2">
-                  Detalles del Transportista
-                </Typography>
-                <TableContainer
-                  component={Paper}
-                  variant="outlined"
-                  sx={{ margin: "1rem 0" }}
-                >
-                  <Table>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell component="th">Nombres</TableCell>
-                        <TableCell align="center">Weishler Joice</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Apellidos</TableCell>
-                        <TableCell align="center">Berman Torres</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell component="th">Telefonos</TableCell>
-                        <TableCell align="center">
-                          <IconButton
-                            size="small"
-                            onClick={() => setOpen(!open)}
-                          >
-                            {open ? (
-                              <KeyboardArrowUpIcon />
-                            ) : (
-                              <KeyboardArrowDownIcon />
-                            )}
-                          </IconButton>
-                          <Collapse in={open} timeout="auto" unmountOnExit>
-                            <Box sx={{ margin: 1 }}>
-                              <Table size="small" aria-label="purchases">
-                                <TableBody>
-                                  <TableRow>
-                                    <TableCell>04242029818</TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                    <TableCell>04242596061</TableCell>
-                                  </TableRow>
-                                </TableBody>
-                              </Table>
-                            </Box>
-                          </Collapse>
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <ConfirmationDialog
-                    title="¿Estas Seguro?"
-                    buttonText="Cancelar Servicio"
-                    message="¿Desea cancelar la entrega de este envio con este servicio?"
+              {serviceDetails && (
+                <>
+                  <Box
+                    sx={{
+                      padding: "1rem",
+                    }}
+                    variant="outlined"
                   >
-                    <Button variant="text">Si</Button>
-                  </ConfirmationDialog>
-                  <ConfirmationDialog
-                    title="Alerta"
-                    buttonText="Cancelar Servicio"
-                    message="Contacte a la tienda si de verdad desea cancelar está entrega (puede conllevar a una penalización por incumplimiento)"
-                  ></ConfirmationDialog>
-                </Box>
-              </Box>
+                    <Typography align="center" variant="h4" component="h2">
+                      Detalles del Servicio de Transporte
+                    </Typography>
+                    <TableContainer
+                      component={Paper}
+                      variant="outlined"
+                      sx={{ margin: "1rem 0" }}
+                    >
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell component="th">
+                              Medio de Transporte
+                            </TableCell>
+                            <TableCell align="center">
+                              {serviceDetails?.MT_Nombre}
+                            </TableCell>
+                          </TableRow>
+                          {serviceDetails?.DatosMedio && (
+                            <>
+                              <TableRow>
+                                <TableCell component="th">
+                                  Nombre del Vehiculo
+                                </TableCell>
+                                <TableCell align="center">
+                                  {serviceDetails?.DatosMedio}
+                                </TableCell>
+                              </TableRow>
+                            </>
+                          )}
+                          <TableRow>
+                            <TableCell component="th">Horario</TableCell>
+                            <TableCell align="center">{`${startHours} a ${finishHours}`}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell component="th">Precio</TableCell>
+                            <TableCell align="center">
+                              {serviceDetails?.ST_Precio} $
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+                  <Box
+                    sx={{
+                      padding: "1rem",
+                    }}
+                  >
+                    <Typography align="center" variant="h4" component="h2">
+                      Detalles del Transportista
+                    </Typography>
+                    <TableContainer
+                      component={Paper}
+                      variant="outlined"
+                      sx={{ margin: "1rem 0" }}
+                    >
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell component="th">Nombres</TableCell>
+                            <TableCell align="center">
+                              {serviceDetails.Persona_Nombre}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell component="th">Apellidos</TableCell>
+                            <TableCell align="center">
+                              {serviceDetails.Persona_Apellido}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell component="th">Telefonos</TableCell>
+                            <TableCell align="center">
+                              <IconButton
+                                size="small"
+                                onClick={() => setOpen(!open)}
+                              >
+                                {open ? (
+                                  <KeyboardArrowUpIcon />
+                                ) : (
+                                  <KeyboardArrowDownIcon />
+                                )}
+                              </IconButton>
+                              <Collapse in={open} timeout="auto" unmountOnExit>
+                                <Box sx={{ margin: 1 }}>
+                                  <Table size="small" aria-label="purchases">
+                                    <TableBody>
+                                      {serviceDetails.Contacto_Persona &&
+                                        serviceDetails.Contacto_Persona.split(
+                                          ";"
+                                        ).map((tlf) => {
+                                          return (
+                                            <TableRow>
+                                              <TableCell>{tlf}</TableCell>
+                                            </TableRow>
+                                          );
+                                        })}
+                                    </TableBody>
+                                  </Table>
+                                </Box>
+                              </Collapse>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      {(shippmentDetails.SE_Status === "S" || view_type === "A") ? (
+                        <ConfirmationDialog
+                          title="¿Estas Seguro?"
+                          buttonText="Cancelar Servicio"
+                          message="¿Desea cancelar la entrega de este envío con este servicio?"
+                        >
+                          <Button
+                            variant="text"
+                            onClick={() => acceptRejectOffer(shippmentDetails.SE_Id, {
+                              status: "P",
+                              serviceId: serviceDetails.ST_Id,
+                            })}
+                          >
+                            Confirmar
+                          </Button>
+                        </ConfirmationDialog>
+                      ) : (
+                        <ConfirmationDialog
+                          title="Alerta"
+                          buttonText="Cancelar Servicio"
+                          message="Producto ya entregado, contacte a la tienda si de verdad desea cancelar esta entrega (puede conllevar a una penalización por incumplimiento)"
+                        ></ConfirmationDialog>
+                      )}
+                    </Box>
+                  </Box>
+                </>
+              )}
             </Item>
           </Stack>
         </>

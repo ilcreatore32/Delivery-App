@@ -20,7 +20,7 @@ router.use("/vehicle", authMiddleware, suscriptionMiddleware, vehicle);
 router.use("/payment", authMiddleware, suscriptionMiddleware, payment);
 router.use("/options", authMiddleware, suscriptionMiddleware, options);
 router.use("/auth", auth);
-router.use("/register", authMiddleware, register);
+router.use("/register", register);
 router.use("/user", authMiddleware,suscriptionMiddleware, user);
 
 export default router;

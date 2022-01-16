@@ -9,7 +9,7 @@ export const suscriptionMiddleware = async (req, res, next) => {
   let queryStatus = `
     SELECT Suscripcion_Status FROM suscripcion 
     WHERE Suscripcion_PersonaId = ? AND (Suscripcion_Status <> 'V' OR 1=1)
-    ORDER BY Suscripcion_FechaV DESC
+    ORDER BY Suscripcion_Id DESC
     LIMIT 1`;
   try {
     /* Get all data */

@@ -23,6 +23,17 @@ export async function PostEnvio(shippmentDetails) {
   return shippmentsResult;
 }
 
+export async function AsociarServicio(details) {
+  const shippmentResult = await Api.post(`/shippment/asociateService`, details)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      return error;
+    });
+  return shippmentResult;
+}
+
 /* Servicios */
 export async function PostServicio(serviceDetails) {
   const serviceResult = await Api.post(`/service/`, serviceDetails)
@@ -92,4 +103,20 @@ export async function PostPago(paymentDetails,headers) {
       return error;
     });
   return payment;
+}
+
+/* user */
+
+export async function RegisterUser(userDetails) {
+  for (var key of userDetails.entries()) {
+      console.debug(key[0] + ', ' + key[1]);
+  }
+  const userResult = await Api.post(`/register`,userDetails)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      return error;
+    });
+  return userResult;
 }

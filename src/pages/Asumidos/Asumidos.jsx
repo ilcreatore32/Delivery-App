@@ -25,7 +25,7 @@ function Asumidos() {
 
   const fetchShippments = async () => {
     await setLoading(true);
-    const response = await GetShippments();
+    const response = await GetShippments("carrier_taken");
     await setShippments(response);
     await setLoading(false);
   };

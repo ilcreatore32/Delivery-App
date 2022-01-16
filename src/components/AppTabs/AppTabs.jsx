@@ -70,14 +70,16 @@ function AppTabs() {
                   component={Link}
                 />
               ) : null}
+              
+              { (view_type === "T" || view_type === "A") ? (
               <Tab
                 label="Servicios"
                 value={`/Servicios`}
                 to={`/Servicios`}
                 icon={<WorkTwoToneIcon />}
                 component={Link}
-              />
-              {view_type === "T" ? (
+              />) : null}
+              {(view_type === "T" || view_type === "A") ? (
                 <Tab
                   label="Vehiculos"
                   value={`/Vehiculos`}
@@ -87,14 +89,6 @@ function AppTabs() {
                 />
               ) : null}
               {view_type === "A" ? (
-                <Tab
-                  label="Vehiculos"
-                  value={`/Vehiculos`}
-                  to={`/Vehiculos`}
-                  icon={<CommuteIcon />}
-                  component={Link}
-                />
-              ) : null}
               <Tab
                 label="Pagos"
                 value={`/Pagos`}
@@ -102,6 +96,7 @@ function AppTabs() {
                 icon={<PaymentsTwoToneIcon />}
                 component={Link}
               />
+              ) : null}
               {view_type === "A" ? (
                 <Tab
                   label="Usuarios"

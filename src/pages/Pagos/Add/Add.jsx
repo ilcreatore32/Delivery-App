@@ -26,12 +26,13 @@ import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 import UploadFileTwoToneIcon from "@mui/icons-material/UploadFileTwoTone";
 import Api from "../../../config/axiosClient";
 import { PostPago } from "../../../api/Post";
-import { userContext } from "../../../context/userContext";
 import Spinner from "../../../components/Spinner/Spinner";
 import { GetOnePayment } from "../../../api/Get";
 import { OpenEditContext } from "../../../context/openEditContext";
 import { PutPago } from "../../../api/Put";
 import { LoadingButton } from "@mui/lab";
+
+import { UserContext } from "../../../context/UserContextT";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -51,7 +52,7 @@ const CustomStack = (props) => {
 };
 /* PS_Status
  */
-function Add() {
+function Add({AddButton, openAccount, setOpenAccount, redirect}) {
   const [open, setOpen] = useState(false);
   const {
     paymentToEdit,
@@ -59,7 +60,7 @@ function Add() {
     setPaymentToEdit,
     setOpenEditPayment,
   } = useContext(OpenEditContext);
-  const UserContext = useContext(userContext);
+  const { view_type, logged_user } = useContext(UserContext);
 
   const [payment, setPayment] = useState({});
 
@@ -70,6 +71,7 @@ function Add() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const onFileChange = (e) => {
+    if (!e.target.files[0]?.size) return
     if (e.target.files[0].size / 1024 / 1024 > 16) {
       setErrorMessage("La imagen es demasiado grande");
       setTimeout(() => {
@@ -93,6 +95,7 @@ function Add() {
 
   const handleClose = () => {
     setOpen(false);
+    if(setOpenAccount) setOpenAccount(false);
     setPaymentToEdit("")
     setOpenEditPayment(false)
     setPayment({});
@@ -136,6 +139,10 @@ function Add() {
     setSending(true);
   };
 
+  useEffect(() =>{
+    setOpen(openAccount)
+  }, [openAccount])
+
   useEffect(() => {
     if (!sending) return;
     if (openEditPayment && paymentToEdit) {
@@ -143,8 +150,7 @@ function Add() {
         try {
           let form = new FormData();
           Object.keys(payment).forEach((key) => {
-            if (key === "PS_ArchivoReferencia" && payment[key].name) {
-              console.debug(payment[key].name);
+            if (key === "PS_ArchivoReferencia" && payment[key]?.name) {
               form.append("PS_ArchivoReferencia", payment[key], payment[key].name);
             } else {
               form.append(key, payment[key]);
@@ -157,7 +163,7 @@ function Add() {
             setSuccessMessage("Pago editado correctamente");
             setTimeout(() => {
               setSuccessMessage("");
-              window.location.href = "/Pagos";
+              window.location.href = redirect || "/Pagos";
             }, 2000);
             setSending(false);
           } else {
@@ -168,6 +174,7 @@ function Add() {
             setSending(false);
           }
         } catch (e) {
+          console.debug(e);
           if (e) {
             setErrorMessage(
               "Hubo un error al enviar los datos"
@@ -184,8 +191,7 @@ function Add() {
         try {
           let form = new FormData();
           Object.keys(payment).forEach((key) => {
-            if (key === "PS_ArchivoReferencia" && payment[key].name) {
-              console.debug(payment[key]);
+            if (key === "PS_ArchivoReferencia" && payment[key]?.name) {
               form.append(key, payment[key], payment[key].name);
             } else {
               form.append(key, payment[key]);
@@ -198,7 +204,7 @@ function Add() {
             setSuccessMessage("Pago envíado correctamente");
             setTimeout(() => {
               setSuccessMessage("");
-              window.location.href = "/Pagos";
+              window.location.href = redirect || "/Pagos";
             }, 2000);
             setSending(false);
           } else {
@@ -209,7 +215,7 @@ function Add() {
             setSending(false);
           }
         } catch (e) {
-          console.log(e);
+          console.debug(e);
           if (e) {
             setErrorMessage("Hubo un error al enviar los datos");
             setTimeout(() => {
@@ -221,14 +227,14 @@ function Add() {
       })();
     }
   }, [sending]);
-
+  
   useEffect(() => {
     if (paymentToEdit || openEditPayment || Object.keys(payment).length > 0) return;
     setPayment({
       ...payment,
-      PS_SuscripcionId: UserContext?.user?.Suscripcion_Id,
+      PS_SuscripcionId: logged_user?.Suscripcion_Id,
     });
-  }, [UserContext, payment]);
+  }, [logged_user, payment]);
 
   useEffect(async () => {
     if (!paymentToEdit || !openEditPayment) return;
@@ -252,9 +258,9 @@ function Add() {
 
   return (
     <>
-      <IconButton onClick={handleClickOpen}>
+      {AddButton && (<IconButton onClick={handleClickOpen}>
         <AddCircleTwoToneIcon color="primary" />
-      </IconButton>
+      </IconButton>)}
       <Dialog
         open={open || openEditPayment}
         TransitionComponent={Transition}
@@ -317,7 +323,7 @@ function Add() {
                     id="PS_Metodo"
                     name="PS_Metodo"
                     select
-                    label="Metodo de Pago"
+                    label="Método de Pago"
                     variant="filled"
                     fullWidth
                     value={payment.PS_Metodo || ""}
@@ -369,6 +375,7 @@ function Add() {
                     value={payment.PS_Referencia || ""}
                     fullWidth
                   />
+                  {view_type === "A" && (
                   <TextField
                     id="PS_Status"
                     name="PS_Status"
@@ -389,6 +396,7 @@ function Add() {
                       </MenuItem>
                     ))}
                   </TextField>
+                  )}
                   <TextField
                     value={payment.PS_SuscripcionId || ""}
                     disabled={true && true}

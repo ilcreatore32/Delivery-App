@@ -72,7 +72,7 @@ function Pagos() {
                 Columns={PagosColumns}
                 Data={payments}
               >
-                <Add />
+                <Add AddButton={true}/>
               </RightSideComponent>
             )}
           </Grid>

@@ -132,6 +132,18 @@ export const ServiciosColumns = [
     align: "center",
     width: 130,
     sortable: true,
+    renderCell: (thisRow) => {
+      switch (thisRow.row.ST_Status) {
+        case "D":
+          return "Disponible";
+        case "N":
+          return "No Disponible";
+        case "E":
+          return "Eliminado";
+        default:
+          break;
+      }
+    }
   },
   {
     headerName: "Áreas de Operaciones",
@@ -242,6 +254,18 @@ export const PagosColumns = [
     align: "center",
     width: 190,
     sortable: true,
+    renderCell: (thisRow) => {
+      switch (thisRow.row.PS_Metodo) {
+        case "T":
+          return "Transferencia";
+        case "E":
+          return "Efectivo";
+        case "P":
+          return "Pago Móvil";
+        default:
+          break;
+      }
+    }
   },
   {
     headerName: "Fecha",
@@ -269,6 +293,18 @@ export const PagosColumns = [
     align: "center",
     width: 130,
     sortable: true,
+    renderCell: (thisRow) => {
+      switch (thisRow.row.PS_Status) {
+        case "P":
+          return "Pendiente";
+        case "A":
+          return "Aprobado";
+        case "R":
+          return "Rechazado";
+        default:
+          break;
+      }
+    },
   },
   {
     headerName: "Usuario",
@@ -355,7 +391,7 @@ export const UsuariosColumns = [
           </IconButton>
           <IconButton
             component={Link}
-            to={`/Usuarios/Editar/${thisRow.row.Persona_Id}`}
+            to={`/Usuarios/Editar/${thisRow.row.Persona_Id}?adminView=true`}
           >
             <EditTwoToneIcon color="info" />
           </IconButton>

@@ -3,11 +3,12 @@ import { Router } from "express";
 import {
   registerUser
 } from '../controllers/registerController'
+import { personImage } from "../middlewares/multer";
 
 // api/register
 //all the routes
 
 const router = Router();
-router.post('/', registerUser)
+router.post('/',personImage, registerUser)
  
 export default router; 

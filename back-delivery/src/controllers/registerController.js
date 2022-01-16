@@ -12,7 +12,6 @@ export const registerUser = async (req, res) => {
         password, // Example: "example"
         name, // Example: "jesus"
         lastname, // Example: "rivas"
-        file
     } = req.body;
     /* Create an object with the user's properties */
     const newUser = {
@@ -21,13 +20,13 @@ export const registerUser = async (req, res) => {
         Usuario_Clave: password
     };
     /* Create an object with the person's properties */
-    const newPerson = {
+    let newPerson = {
         Persona_Id: person_id,
         Persona_TipoId: type_id,
         Persona_Nombre: name, 
         Persona_Apellido: lastname,
-        Persona_Archivo: file
     }
+    if (req.file && req.file.buffer) newPerson = {...newPerson, Persona_Archivo: req.file.buffer};
     try {
         /* Checl if the user exists */
         pool.query('SELECT Usuario_Id FROM usuarios WHERE Usuario_Correo = ? OR Usuario_Id = ?', [email, person_id], async (error, results) => {
@@ -75,7 +74,9 @@ export const registerUser = async (req, res) => {
                                           /* create payload */
                                           const payload = {
                                             usuario: {
-                                                id: person_id
+                                                id: person_id,
+                                                permission: 'C',
+                                                status: 'P',
                                             }
                                           }
                                           /* create the token */
@@ -112,7 +113,9 @@ export const registerUser = async (req, res) => {
                                     /* create payload */
                                     const payload = {
                                         usuario: {
-                                            id: person_id
+                                            id: person_id,
+                                            permission: 'C',
+                                            status: 'P',
                                         }
                                     }
                                     /* create the token */

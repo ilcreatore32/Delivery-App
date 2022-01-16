@@ -105,6 +105,7 @@ export async function GetVehicles() {
       console.log("Error al consultar los vehiculos");
     });
   return vehicles;
+  
 }
 
 export async function GetOneVehicle(id) {
@@ -117,7 +118,7 @@ export async function GetOneVehicle(id) {
       return result.data;
     })
     .catch((error) => {
-      return error;
+    console.log(`Error al consultar el Vehiculo: #${id}`);
     });
   return vehicle;
 }
@@ -260,6 +261,17 @@ export async function GetVehiclesOption(conveyance, personaId) {
       console.log(`Error al obtener el medio de transporte`);
     });
   return vehicles;
+}
+
+export async function GetOffersOption() {
+  const offers = await Api.get(`/options/servicesOffer`)
+    .then((result) => {
+      return result.data;
+    })
+    .catch((error) => {
+      console.log(`Error al obtener los servicios`);
+    });
+  return offers;
 }
 
 /* Suscriptions */

@@ -63,16 +63,14 @@ function Login({ shop }) {
   const validateUser = async (token) => {
     if (!token) return;
     Api.defaults.headers.common["x-auth-token"] = token;
-    console.debug(token);
     try {
       let user = await Api.get("/auth");
       if (user && user.status === 200) {
         let { Usuario_Permisos } = user.data;
         if (Usuario_Permisos === "A") {
-          Alert.loginSuccess();
           setToken(token);
           setView_type("A");
-          delete Api.defaults.headers.common["x-auth-token"];
+          Alert.loginSuccess();
           handleClose();
         } else {
           Alert.loginError();

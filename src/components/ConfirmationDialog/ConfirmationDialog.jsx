@@ -7,8 +7,16 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import { Box } from "@mui/system";
 
-function ConfirmationDialog({ buttonText, title, message, children }) {
+function ConfirmationDialog({
+  buttonText,
+  title,
+  message,
+  children,
+  customOpen,
+  customClose,
+}) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -20,10 +28,12 @@ function ConfirmationDialog({ buttonText, title, message, children }) {
   };
   return (
     <>
-      <Button variant="text" onClick={handleClickOpen}>
-        {buttonText}
-      </Button>
-      <Dialog open={open} onClose={handleClose}>
+      {buttonText && (
+        <Button variant="text" onClick={handleClickOpen}>
+          {buttonText}
+        </Button>
+      )}
+      <Dialog open={open || customOpen} onClose={handleClose}>
         <DialogTitle>{title}</DialogTitle>
         <Divider />
         <DialogContent>
@@ -32,9 +42,18 @@ function ConfirmationDialog({ buttonText, title, message, children }) {
           </DialogContentText>
         </DialogContent>
         <Divider />
-        <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
+        <DialogActions sx={{display: 'flex', justifyContent: 'space-between'}}>
+        <Box sx={{marginLeft: 2}}>
+
           {children}
+        </Box>
+          <Box sx={{marginRight: 2}}>
+          {customClose ? (
+            customClose
+          ) : (
+            <Button onClick={handleClose}>Regresar</Button>
+          )}
+          </Box>
         </DialogActions>
       </Dialog>
     </>

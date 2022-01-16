@@ -18,9 +18,7 @@ function Envios() {
 
   return (
     <>
-      {view_type === "A" ? <EnviosTransportista /> : null}
-      {view_type === "C" ? <EnviosCliente /> : null}
-      {view_type === "T" ? <EnviosTransportista /> : null}
+      {view_type && <EnviosTransportista /> }
     </>
   );
 }

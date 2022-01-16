@@ -225,3 +225,41 @@ export const getSuscriptions = async (req, res) => {
         res.status(500).send("Error en el servidor");
   }
 }
+
+export const getServicesOffer = async (req, res) => {
+  let query = `
+  SELECT ST_Id, ST_HorarioIni, ST_HorarioFin, MT_Nombre, ST_Precio,
+
+  CONCAT(Vehiculo_Marca, ' ',Vehiculo_Modelo) AS DatosMedio
+
+  FROM serviciotransporte
+  
+  JOIN mediotransporte
+  		ON MT_Id = ST_MTId
+	LEFT JOIN vehiculos
+		ON ST_VehiculoId = Vehiculo_Id
+	
+	WHERE ST_PersonaId = ?
+
+  GROUP BY ST_Id`;
+
+  try {
+    /* Get all data */
+    await pool.query(query, [req.user.id], function (error, results) {
+      /* if error in the query */
+      if (error)
+        return res
+          .status(400)
+          .json({ error: "Error al consultar en la base de datos" });
+      /* if there is no data */
+      if (results.length === 0 || results[0].SE_Id === null)
+        return res.status(404).json({ error: "No posee servicios" });
+      /* send results */
+      res.status(200).json(results);
+    });
+  } catch (err) {
+    /* error in the server */
+    console.log(err);
+    res.status(500).send("Error en el servidor");
+  }
+};

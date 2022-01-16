@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { OpenEditContext } from "../context/openEditContext";
 import { DeleteContext } from "../context/deleteContext";
 
@@ -27,6 +27,7 @@ export function CustomOptionsButtons({ thisRow, page }) {
     setOpenEditPayment,
     setPaymentToEdit
   } = useContext(OpenEditContext);
+  const [details, setDetails] = useState("")
   const editFunction = () => {
     switch (page) {
       case "shippment":
@@ -49,9 +50,28 @@ export function CustomOptionsButtons({ thisRow, page }) {
         break;
     }
   };
+  useEffect(() => {
+    if (!page) return
+    switch (page) {
+      case "shippment":
+        setDetails(`/Envios/Detalles/${thisRow.row.SE_Id}`);
+        return;
+      case "service":
+        setDetails(`/Servicios/Detalles/${thisRow.row.ST_Id}`);
+        return;
+       case "vehicle":
+        setDetails(`/Vehiculos/Detalles/${thisRow.row.Vehiculo_Id}`);
+        return;
+      case "payment":
+        setDetails(`/Pagos/Detalles/${thisRow.row.PS_Id}`);
+        return;
+      default:
+        break;
+    }
+  },[page])
   return (
     <>
-      <IconButton component={Link} to={`/Envios/Detalles/${thisRow.row.SE_Id}`}>
+      <IconButton component={Link} to={details}>
         <VisibilityTwoToneIcon />
       </IconButton>
       <IconButton onClick={editFunction}>

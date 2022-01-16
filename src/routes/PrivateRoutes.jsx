@@ -18,12 +18,14 @@ import { default as ServiciosEdit } from "../pages/Servicios/Edit/Edit";
 
 /* Vehiculos */
 import Vehiculos from "../pages/Vehiculos/Vehiculos";
+import { default as VehiculosDetails } from "../pages/Vehiculos/Details/Details";
 
 /* Usuarios */
 import Usuarios from "../pages/Usuarios/Usuarios";
 
 /* Pagos */
 import Pagos from "../pages/Pagos/Pagos";
+import { default as PagosDetails } from "../pages/Pagos/Details/Details";
 
 /* Cuenta */
 import Cuenta from "../pages/Cuenta/Cuenta";
@@ -90,8 +92,27 @@ function PrivateRoutes({ auth }) {
         component={Vehiculos}
         auth={auth}
       />
+      <PrivateRoute
+        path={`/Vehiculos/Detalles/:id`}
+        exact
+        component={VehiculosDetails}
+        auth={auth}
+      />
       <PrivateRoute path={`/Usuarios`} exact component={Usuarios} auth={auth} />
+      <PrivateRoute path="/Usuarios/Detalles/:id" exact component={Cuenta} auth={auth} />
+      <PrivateRoute
+        path="/Usuarios/Editar/:id"
+        exact
+        component={CuentaEdit}
+        auth={auth}
+      />
       <PrivateRoute path={`/Pagos`} exact component={Pagos} auth={auth} />
+      <PrivateRoute
+        path={`/Pagos/Detalles/:id`}
+        exact
+        component={PagosDetails}
+        auth={auth}
+      />
     </>
   );
 }

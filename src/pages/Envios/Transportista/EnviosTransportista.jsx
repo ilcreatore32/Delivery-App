@@ -20,27 +20,44 @@ import RightSideComponent from "../../../components/RightSideComponent/RightSide
 import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideComponent";
 /* Context */
 import { FilterContext } from "../../../context/FilterContext";
+import { UserContext } from "../../../context/UserContextT";
 
 function EnviosTransportista(permissions) {
+  const { view_type, token } = useContext(UserContext);
   const { shippmentFilter, setShippmentFilter } = useContext(FilterContext);
   const [shippments, setShippments] = useState(null);
   const [loading, setLoading] = useState(false);
   const FilterMenuContext = useContext(filterMenuContext);
 
-  const fetchShippments = async (view_option, params) => {
+  const fetchShippments = async (view, params) => {
+    if (view ==="T" || view ==="C" || view ==="A") return
     await setLoading(true);
-    const response = await GetShippments(view_option, params);
+    const response = await GetShippments(view, params); 
     await setShippments(response);
     await setLoading(false);
   };
 
   useEffect(() => {
-    fetchShippments("admin");
-  }, []);
+    if (!view_type || !token) return;
+    setShippments([])
+    switch (view_type) {
+      case "A":
+        fetchShippments("admin", shippmentFilter);
+        break;
+      case "T":
+        fetchShippments("carrier_available", shippmentFilter);
+        break;
+      case "C":
+        fetchShippments("client", shippmentFilter);
+        break;
+      default:
+        break;
+    }
+  }, [view_type, token]);
 
   useEffect(() => {
-    if (!shippmentFilter) return
-    fetchShippments("admin",shippmentFilter);
+    if (!shippmentFilter || !view_type) return
+    fetchShippments(view_type,shippmentFilter);
   }, [shippmentFilter]);
 
   return (
@@ -79,7 +96,9 @@ function EnviosTransportista(permissions) {
                 rowId="SE_Id"
                 Columns={EnviosColumns}
                 Data={shippments}
-              />
+              >
+                <Add />
+              </RightSideComponent>
             )}
           </Grid>
         </Grid>

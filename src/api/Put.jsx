@@ -13,14 +13,27 @@ export async function PutEnvio(id, shippmentDetails) {
   return shippmentsResult;
 }
 
-export function PutOneEnvio(id) {
-  Api.put(`/Envios/${id}`)
+export async function PutEnvioStatus(id, status) {
+  const shippmentsResult = await Api.put(`/shippment/status/${id}`, status)
     .then((result) => {
-      console.log(result);
+      return result;
     })
     .catch((error) => {
-      console.log(error);
+      return error
     });
+  return shippmentsResult;
+}
+
+export async function PutOfertaStatus(id, status) {
+  if (!id || !status || !status.status || !status.serviceId) return
+  const shippmentsResult = await Api.put(`/shippment/serviceStatus/${id}`, status)
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      return error
+    });
+  return shippmentsResult;
 }
 
 /* Servicios */

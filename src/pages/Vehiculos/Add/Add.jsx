@@ -268,8 +268,8 @@ function Add() {
         </Collapse>
         <DialogTitle>
           {openEditVehicle && vehicleToEdit
-            ? "Edición del Servicio"
-            : "Creación de Servicio"}
+            ? "Edición del Vehículo"
+            : "Creación de Vehículo"}
         </DialogTitle>
 
         {loading ? (

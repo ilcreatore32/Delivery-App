@@ -76,7 +76,7 @@ export const getOneUser = async function (req, res) {
 
   /* extract the query params */
   let queryUserDetails = `
-    SELECT Persona_Id, Persona_Nombre, Persona_Apellido, 
+    SELECT Persona_Id, Persona_Nombre, Persona_Apellido, Persona_Archivo,
     Usuario_Correo, Usuario_Status, TS_Nombre , Suscripcion_Id, Suscripcion_Monto, Suscripcion_Status,
     Suscripcion_FechaI,Suscripcion_FechaV
     FROM personas
@@ -84,14 +84,14 @@ export const getOneUser = async function (req, res) {
     LEFT JOIN suscripcion ON Persona_Id = Suscripcion_PersonaId
     LEFT JOIN tipo_suscripcion ON Suscripcion_TSId = TS_Id
 
-    WHERE Persona_Id = ? ORDER BY Suscripcion_FechaV DESC
+    WHERE Persona_Id = ? ORDER BY Suscripcion_Id DESC
   `;
   let queryContact = `
     SELECT Contacto_Tipo, Contacto_Info FROM contacto
     WHERE Contacto_PersonaId = ?
   `;
   let queryPayments = `
-    SELECT PS_Metodo, PS_Fecha, PS_Status 
+    SELECT PS_Id, PS_Metodo, PS_Fecha, PS_Status 
     FROM pago_suscripcion
     WHERE PS_SuscripcionId = ?
   `;
@@ -101,10 +101,12 @@ export const getOneUser = async function (req, res) {
     /* Get all data */
     let transactionResult = await withTransaction(connection, res, async () => {
       const [user, fields] = await connection.query(queryUserDetails, id);
+      if (user[0].Persona_Archivo) user[0].Persona_Archivo = user[0].Persona_Archivo.toString("base64");
       const [contact, fields2] = await connection.query(queryContact, id);
-      const [payments, fields3] = await connection.query(
+      const [payments, fields3] = 
+      await connection.query(
         queryPayments,
-        user[0].Suscripcion_Id
+        user[0]?.Suscripcion_Id || ""
       );
       return { user: user[0], contact: contact, payments: payments };
     });
@@ -146,7 +148,7 @@ export const editUser = async function (req, res) {
       LEFT JOIN suscripcion ON Persona_Id = Suscripcion_PersonaId
       LEFT JOIN tipo_suscripcion ON Suscripcion_TSId = TS_Id
   
-      WHERE Persona_Id = ? ORDER BY Suscripcion_FechaV DESC
+      WHERE Persona_Id = ? ORDER BY Suscripcion_Id DESC
     `;
   let queryContact = `
       SELECT Contacto_Info, Contacto_Tipo FROM contacto
@@ -255,7 +257,8 @@ export const updateUser = async function (req, res) {
         Usuario_Status,
         Persona_Id,
       ]);
-      if (!Suscripcion_Id && TS_Id) {
+      if (!Suscripcion_Id && TS_Id && TS_Id !== "null") {
+        console.log(typeof TS_Id)
         /* New Suscription */
         const [amountNewSuscription] = await connection.query(
           queryAmountNewSuscription,

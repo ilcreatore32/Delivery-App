@@ -1,7 +1,14 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 /* React-Router */
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+  Redirect,
+} from "react-router-dom";
 
 /* Hooks */
 import { useLocalStorage } from "./hooks/useLocalStorage";
@@ -61,13 +68,8 @@ import { UserContext as UserContextT } from "./context/UserContextT";
 import FilterProvider from "./context/FilterContext";
 
 function App() {
-  const {
-    token,
-    view_type,
-    setToken,
-    setView_type,
-    setLogged_user,
-  } = useContext(UserContextT);
+  const { token, view_type, setToken, setView_type, setLogged_user } =
+    useContext(UserContextT);
   const [anchorEl, setAnchorEl] = useState(null);
   const [mode, setMode] = useState(true);
   const [theme, setTheme] = useState(Light);
@@ -281,7 +283,7 @@ function App() {
                 </appMenuContext.Provider>
               </DeleteProvider>
             </OpenEditProvider>
-            </FilterProvider>
+          </FilterProvider>
         </LocalizationProvider>
       </ThemeProvider>
     </>

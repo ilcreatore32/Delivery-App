@@ -7,7 +7,9 @@ import {
   deleteShippment,
   saveShippment,
   updateStatusShippment,
-  updateServicesAsociatedStatus
+  updateServicesAsociatedStatus,
+  asociateNewService,
+  deleteAsociateService
 } from '../controllers/shippmentController'
 
 // api/shippment
@@ -15,6 +17,8 @@ import {
 const router = Router();
 router.get('/', getShippments)
 router.post('/', saveShippment)
+router.post('/asociateService', asociateNewService)
+router.delete('/deleteAsociateService/:id', deleteAsociateService)
 router.get('/:id', getOneShippment)
 router.delete('/:id', deleteShippment)
 router.get('/edit/:id', editShippment) 

@@ -113,7 +113,7 @@ export const getShippments = async (req, res) => {
       }
       /* Query to get all shippments */
       queryShippment = `
-          SELECT DISTINCT SE_Id, SE_Fecha, SE_ValorTotal, SE_PesoTotal, SE_Fecha,
+          SELECT DISTINCT SE_Id, SE_Fecha, SE_ValorTotal, SE_PesoTotal,
           GROUP_CONCAT('x', ProductoSE_Cantidad, ' ', Producto_Nombre, ' ', 
           Producto_Peso, 'kg ' SEPARATOR ', ') AS Productos_Envio, 
           EF_Nombre, Municipio_Nombre
@@ -284,7 +284,7 @@ export const getShippments = async (req, res) => {
           JOIN personas
             ON SE_PersonaId = Persona_Id
           
-          WHERE SE_Status='P
+          WHERE SE_Status='P'
           ${
             parish
               ? `AND SE_ParroquiaId = ${parish}`
@@ -395,7 +395,7 @@ export const getOneShippment = async function (req, res) {
   let query_detail_service = `
   SELECT ST_Id, ST_HorarioIni, ST_HorarioFin, MT_Nombre, ST_Precio,
   GROUP_CONCAT(Contacto_Info ORDER BY Contacto_Tipo SEPARATOR ';') Contacto_Persona, 
-  Persona_Nombre, Persona_Apellido,
+  Persona_Nombre, Persona_Apellido, ST_PersonaId,
   CONCAT (Vehiculo_Marca, ' ',Vehiculo_Modelo) AS DatosMedio
 
   FROM serviciotransporte
@@ -414,7 +414,7 @@ export const getOneShippment = async function (req, res) {
   `;
   /* Query to get all shippment's unasociated services */
   let query_services = `
-  SELECT ST_Id, ST_HorarioIni, ST_HorarioFin, MT_Nombre, ST_Precio,
+  SELECT ST_Id, ST_HorarioIni, ST_HorarioFin, MT_Nombre, ST_Precio, ST_PersonaId, SEST_Status,
 
   CONCAT(Vehiculo_Marca, ' ',Vehiculo_Modelo) AS DatosMedio
 
@@ -873,7 +873,7 @@ export const updateServicesAsociatedStatus = async function (req, res) {
   let queryUpdateStatus = `
     UPDATE se_has_st
     SET SEST_Status = ?
-    WHERE SEST_SEId = ? AND SEST_STId;
+    WHERE SEST_SEId = ? AND SEST_STId = ?;
   `;
 
   try {
@@ -899,3 +899,56 @@ export const updateServicesAsociatedStatus = async function (req, res) {
     res.status(500).send("Error en el servidor");
   }
 };
+
+export const asociateNewService = async function (req, res) {
+  const {
+    SEST_SEId,
+    SEST_STId,
+    SEST_Status = 'P'
+  } = req.body;
+  /* Query to update the status of the shippment */
+  let queryInsertService = `
+    INSERT INTO se_has_st (SEST_SEId, SEST_STId, SEST_Status) VALUES (?, ?, ?);
+  `;
+  try {
+    await pool.query(queryInsertService, [SEST_SEId, SEST_STId, SEST_Status], function (errShippment, shippmentResult) {
+      /* if error in the query */
+      if (errShippment)
+        return res
+          .status(400)
+          .json({ error: "Error al consultar en la base de datos" });
+      /* Send the response */
+      res.status(200).json({ message: "Oferta de servicio asociada" });
+    }
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error en el servidor");
+  }
+    
+}
+
+export const deleteAsociateService = async function (req, res) {
+  const {id} = req.params;
+
+  let queryDelete = `DELETE FROM se_has_st WHERE SEST_STId = ?`
+
+  if (!id) {
+    return res.status(400).json({
+      error: "Faltan parámetros"
+    })
+  }
+  try {
+    //query to delete
+    await pool.query(queryDelete, [id], function (error, result)  {
+      /* if error in the query */
+      if (error) return res.status(400).json(error)
+      /* Send the response */
+      res.status(200).json( {message: "Operación Exitosa"} )
+    });
+  } catch (err) {
+    /* error in the server */
+    console.log(err);
+    res.status(500).send('Error en el servidor') 
+  }
+}

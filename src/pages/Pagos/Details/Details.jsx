@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 
 /* API */
-import { GetOneService } from "../../../api/Get";
+import { GetOnePayment, GetOneService, GetOneVehicle } from "../../../api/Get";
 
 /* Material UI */
 import {
@@ -20,6 +20,7 @@ import {
   Collapse,
   TableHead,
   Button,
+  CardMedia,
 } from "@mui/material";
 
 /* Material UI Icons */
@@ -35,18 +36,14 @@ import { format, parse } from "date-fns";
 function Details() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [service, setService] = useState({});
-  const [areas, setAreas] = useState([]);
-  const [shippments, setShippments] = useState([]);
+  const [payment, setPayment] = useState({});
   const { id } = useParams();
 
-  const fetchService = useCallback(async () => {
+  const fetchPayments = useCallback(async () => {
     await setLoading(true);
     try {
-      const response = await GetOneService(id);
-      await setService(response.serviceDetails);
-      await setAreas(response.areas);
-      setShippments(response.shippments);
+      const response = await GetOnePayment(id);
+      await setPayment(response);
     } catch (error) {
       console.log(error);
     }
@@ -54,8 +51,8 @@ function Details() {
   }, [id]);
 
   useEffect(() => {
-    fetchService();
-  }, [fetchService]);
+    fetchPayments();
+  }, [fetchPayments]);
 
   return (
     <>
@@ -68,7 +65,7 @@ function Details() {
         }}
       >
         <Typography align="center" variant="h4" component="h2">
-          Detalles de Servicio
+          Detalles de Pago
         </Typography>
         <TableContainer
           component={Paper}
@@ -77,195 +74,75 @@ function Details() {
         >
           <Table>
             <TableBody>
-              <TableRow>
-                <TableCell component="th">Horario</TableCell>
-                <TableCell align="center">
-                  {`${
-                    service?.ST_HorarioIni &&
-                    format(
-                      parse(service?.ST_HorarioIni, "HH:mm:ss", new Date()),
-                      "hh:mm aaaaa'm'"
-                    )
-                  } a ${
-                    service?.ST_HorarioFin &&
-                    format(
-                      parse(service?.ST_HorarioFin, "HH:mm:ss", new Date()),
-                      "hh:mm aaaaa'm'"
-                    )
-                  }`}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell component="th">Disponibilidad</TableCell>
-                <TableCell align="center">
-                  {service?.ST_Status === "D" ? "Disponible" : "No Disponible"}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell component="th">Precio</TableCell>
-                <TableCell align="center">{service?.ST_Precio}$</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell component="th">Medio de Transporte</TableCell>
-                <TableCell align="center">{service?.MT_Nombre}</TableCell>
-              </TableRow>
-              {service?.Vehiculo_Marca && (
+              {payment?.PS_Status && (
                 <TableRow>
-                  <TableCell component="th">Marca</TableCell>
-                  <TableCell align="center">
-                    {service?.Vehiculo_Marca}
-                  </TableCell>
+                  <TableCell component="th">Estado</TableCell>
+                  {payment?.PS_Status === "P" && (
+                    <TableCell align="center">Pendiente</TableCell>
+                  )}
+                  {payment?.PS_Status === "A" && (
+                    <TableCell align="center">Aprobado</TableCell>
+                  )}
+                  {payment?.PS_Status === "R" && (
+                    <TableCell align="center">Rechazado</TableCell>
+                  )}
                 </TableRow>
               )}
-              {service?.Vehiculo_Modelo && (
+              <TableRow>
+                <TableCell component="th">Método</TableCell>
+                {payment?.PS_Metodo === "T" && (
+                  <TableCell align="center">Transferencia</TableCell>
+                )}
+                {payment?.PS_Metodo === "E" && (
+                  <TableCell align="center">Efectivo</TableCell>
+                )}
+                {payment?.PS_Metodo === "P" && (
+                  <TableCell align="center">Pago Móvil</TableCell>
+                )}
+              </TableRow>
+              {payment?.PS_Fecha && (
                 <TableRow>
-                  <TableCell component="th">Modelo</TableCell>
-                  <TableCell align="center">
-                    {service?.Vehiculo_Modelo}
-                  </TableCell>
+                  <TableCell component="th">Fecha</TableCell>
+                  <TableCell align="center">{payment?.PS_Fecha.split("T")[0]}</TableCell>
                 </TableRow>
               )}
-              {service?.Vehiculo_Anio && (
+              {payment?.PS_Monto && (
                 <TableRow>
-                  <TableCell component="th">Año</TableCell>
-                  <TableCell align="center">{service?.Vehiculo_Anio}</TableCell>
+                  <TableCell component="th">Monto</TableCell>
+                  <TableCell align="center">{payment?.PS_Monto}</TableCell>
                 </TableRow>
               )}
-              {service?.Vehiculo_Pasajeros && (
+              {payment?.PS_Referencia && (
                 <TableRow>
-                  <TableCell component="th">Capacidad de Pasajeros</TableCell>
-                  <TableCell align="center">
-                    {service?.Vehiculo_Pasajeros}
-                  </TableCell>
+                  <TableCell component="th">Referencia</TableCell>
+                  <TableCell align="center">{payment?.PS_Referencia}</TableCell>
                 </TableRow>
               )}
-              {service?.Vehiculo_CapacidadCarga && (
+              {payment?.PS_ArchivoReferencia && (
                 <TableRow>
-                  <TableCell component="th">Capacidad de Carga</TableCell>
+                  <TableCell component="th">Archivo de referencia</TableCell>
                   <TableCell align="center">
-                    {service?.Vehiculo_CapacidadCarga}Kg
+                    <CardMedia
+                      component="img"
+                      height="140"
+                      width="140"
+                      {...(payment["PS_ArchivoReferencia"]?.name
+                        ? {
+                            image: URL.createObjectURL(
+                              payment["PS_ArchivoReferencia"]
+                            ),
+                          }
+                        : {
+                            src: `data:image/jpeg;base64,${payment.PS_ArchivoReferencia}`,
+                          })}
+                      title="material"
+                    />
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </TableContainer>
-        <Box
-          sx={{
-            padding: ".5rem",
-          }}
-        >
-          <Typography variant="subtitle1" component="h2">
-            Descripción del Servicio:
-          </Typography>
-          <Paper
-            variant="outlined"
-            sx={{
-              padding: "1rem",
-            }}
-          >
-            <Typography variant="body1" component="p">
-              {service?.ST_Descripcion}
-            </Typography>
-          </Paper>
-        </Box>
-        <Box
-          sx={{
-            padding: "1rem",
-          }}
-        >
-          <Typography align="center" variant="h6" component="h3">
-            Áreas de Operaciones
-          </Typography>
-          <TableContainer component={Paper} variant="outlined">
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">Entidad Federal</TableCell>
-                  <TableCell align="center">Municipio</TableCell>
-                  <TableCell align="center">Parroquia</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {areas.map((area) => (
-                  <TableRow
-                    sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                    }}
-                  >
-                    <TableCell align="center">{area?.EF_Nombre}</TableCell>
-                    <TableCell align="center">
-                      {area?.Municipio_Nombre}
-                    </TableCell>
-                    <TableCell align="center">
-                      {area?.Parroquia_Nombre}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-        </Box>
-          {shippments.length > 0 && (
-            <Box
-            sx={{
-              padding: "1rem",
-            }}
-          >
-            <Typography align="center" variant="h6" component="h3">
-              Envíos Asumidos
-            </Typography>
-            <TableContainer component={Paper} variant="outlined">
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">Ubicación</TableCell>
-                    <TableCell align="center">Productos</TableCell>
-                    <TableCell align="center">Valor Total</TableCell>
-                    <TableCell align="center">Peso Total</TableCell>
-                    <TableCell align="center">Fecha del Pedido</TableCell>
-                    <TableCell align="center">Status</TableCell>
-                    <TableCell align="center">Acción</TableCell>
-                  </TableRow>
-                </TableHead>
-                
-                <TableBody>
-                  {shippments.map((s) => (
-                    <TableRow
-                      sx={{
-                        "&:last-child td, &:last-child th": { border: 0 },
-                      }}
-                    >
-                      <TableCell align="center">{`${s?.EF_Nombre}, ${s?.Municipio_Nombre}, ${s?.Parroquia_Nombre}`}</TableCell>
-                      <TableCell align="center">
-                        {s?.Productos_Envio}
-                      </TableCell>
-                      <TableCell align="center">
-                        {s?.SE_ValorTotal}
-                      </TableCell>
-                      <TableCell align="center">
-                        {s?.SE_PesoTotal}
-                      </TableCell>
-                      <TableCell align="center">
-                        {s?.SE_Fecha.split("T")[0]}
-                      </TableCell>
-                      <TableCell align="center">
-                        {s?.SE_Status}
-                      </TableCell>
-                      <TableCell align="center">
-                        <Button component={Link} to={`/Envios/Detalles/${s?.SE_Id}`}>
-                          Ver Detalles
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-  
-          </Box>
-          )}
       </Paper>
     </>
   );

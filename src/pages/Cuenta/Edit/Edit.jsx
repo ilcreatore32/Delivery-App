@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 /* React-Router */
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 /* Material UI */
 import {
@@ -95,9 +95,15 @@ const TextMaskCustom = (props) => {
     />
   );
 };
+function useQuery() {
+  const { search } = useLocation();
+
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
 
 function Edit() {
   const { id } = useParams();
+  const query = useQuery()
   const [open, setOpen] = useState(false);
   const [add, setAdd] = useState(false);
 
@@ -244,8 +250,12 @@ function Edit() {
   useEffect(() => {
     if (!id) return;
     (async () => {
+      setLoading(true);
       let data = await GetUserEdit(id);
-      if (!data) return;
+      if (!data) {
+      setLoading(false);
+      return;
+      }
       setUser(data.user);
       setContacts(data.contact);
       data?.user?.TS_Id && setOldTSId(data.user.TS_Id);
@@ -254,7 +264,8 @@ function Edit() {
           `No se encuentra suscripto a un plan, seleccione uno en la opción "Cambiar Suscripcion"`
         );
         setSeverity("error");
-        return;
+      setLoading(false);
+      return;
       }
       if (data?.user?.Suscripcion_FechaV) {
         let dateV = new Date(data.user.Suscripcion_FechaV);
@@ -266,6 +277,7 @@ function Edit() {
           setSeverity("warning");
         }
       }
+      setLoading(false);
     })();
   }, [id]);
 
@@ -327,16 +339,12 @@ function Edit() {
             form.append(key, dataToSend[key]);
           }
         });
-        /* // Display the key/value pairs
-        for (var pair of form.entries()) {
-          console.debug(pair[0] + ", " + pair[1]);
-        } */
         const response = await PutUser(id, form);
         if (response.status === 200) {
           setSuccessMessage("Usuario editado correctamente");
           setTimeout(() => {
             setSuccessMessage("");
-            window.location.href = "/Cuenta";
+            window.location.href = query.get("adminView") ? "/Usuarios" : "/Cuenta";
           }, 2000);
           setSending(false);
         } else {
@@ -349,7 +357,6 @@ function Edit() {
       } catch (e) {
         if (e) {
           setErrorMessage("Hubo un error al enviar los datos");
-          console.debug(e);
           setTimeout(() => {
             setErrorMessage("");
           }, 2000);
@@ -359,39 +366,6 @@ function Edit() {
     })();
   }, [sending]);
 
-  /* DO NOT SEND SUSCRIPTION ID */
-  /* {
-    "user": {
-        "Persona_Id": 28044244,
-        "Persona_Nombre": "Jesus",
-        "Persona_Apellido": "Rivas",
-        "Usuario_Correo": "jesuscarrera25@gmail.com",
-        "Usuario_Status": "A",
-        "TS_Nombre": "avanzado",
-        "Suscripcion_Id": 17,
-        "Suscripcion_Monto": "50.00",
-        "Suscripcion_Status": "V",
-        "Suscripcion_FechaI": "2021-12-06T04:00:00.000Z",
-        "Suscripcion_FechaV": "2021-12-07T04:00:00.000Z"
-    },
-    "contact": [
-        {
-            "Contacto_Tipo": "T",
-            "Contacto_Info": "4242843235"
-        },
-        {
-            "Contacto_Tipo": "C",
-            "Contacto_Info": "jesusemail@email.net"
-        }
-    ],
-    "payments": [
-        {
-            "PS_Metodo": "T",
-            "PS_Fecha": "2022-01-17T04:00:00.000Z",
-            "PS_Status": "P"
-        },
-    ]
-} */
 
   return (
     <>
@@ -846,7 +820,7 @@ function Edit() {
                     margin: "1rem 2rem",
                   }}
                 >
-                  <Button variant="outlined" component={Link} to="/Cuenta">
+                  <Button variant="outlined" component={Link} to={query.get("adminView") ? "/Usuarios" : "/Cuenta"}>
                     Cancel
                   </Button>
                   <Button variant="outlined" onClick={handleSubmitUser}>
