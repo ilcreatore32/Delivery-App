@@ -365,7 +365,8 @@ function Add() {
                     label="Año del Vehiculo"
                     fullWidth
                     views={["year"]}
-                    minDate={new Date("1901-01-01")}
+                    minDate={new Date("1951-01-01")}
+                    maxDate={new Date()}
                     inputFormat="yyyy"
                     value={
                       (vehicle &&

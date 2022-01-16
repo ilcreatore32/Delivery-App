@@ -61,7 +61,7 @@ export const getShippments = async (req, res) => {
           JOIN entidadesfederales
             ON Municipio_EFId = EF_Id
           
-          WHERE SE_PersonaId = ${req.user.id}
+          WHERE SE_Status <> 'E' AND SE_PersonaId = ${req.user.id}
           ${
             parish
               ? `AND SE_ParroquiaId = ${parish}`
@@ -219,7 +219,7 @@ export const getShippments = async (req, res) => {
           }) ST
             ON SEST_STId = ST.ST_id
           
-          WHERE 1=1
+          WHERE SE_Status <> 'E'
           ${
             parish
               ? `AND SE_ParroquiaId = ${parish}`
@@ -805,7 +805,7 @@ export const deleteShippment = async function (req, res) {
   /* Query to delete the shippment */
   let queryUpdateStatus = `
     UPDATE solicitudesenvio
-    SET SE_Status = E
+    SET SE_Status = 'E'
     WHERE SE_Id = ${id};
   `;
 

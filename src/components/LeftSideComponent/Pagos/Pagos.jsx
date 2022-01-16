@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 /* Font-Awesome */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,12 +13,43 @@ import {
   Divider,
   Paper,
   Typography,
+  MenuItem,
+  Stack,
+  Button,
 } from "@mui/material";
+
+/* Material UI Icons */
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 /* React-Bootstrap */
 import Form from "react-bootstrap/Form";
+import { FilterContext } from "../../../context/FilterContext";
 
 function Pagos() {
+  const { paymentFilter, setPaymentFilter } = useContext(FilterContext);
+
+  const paymentMethods = [
+    {
+      value: "T",
+      label: "Transferencia",
+    },
+    {
+      value: "E",
+      label: "Efectivo",
+    },
+    {
+      value: "P",
+      label: "Pago Móvil",
+    },
+  ];
+
+  const handleChange = (e) => {
+    setPaymentFilter({
+      ...paymentFilter,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
     <>
       <Form>
@@ -39,9 +70,29 @@ function Pagos() {
                 display: "grid",
               }}
             >
-              <TextField label="Método" variant="filled" color="secondary" />
+              <TextField
+                id="method"
+                name="method"
+                select
+                label="Método"
+                value={paymentFilter?.method || ""}
+                onChange={handleChange}
+                variant="filled"
+                color="secondary"
+              >
+                {paymentMethods.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Box>
           </Paper>
+          {/* 
+      view_option, // E.g 'admin', 'carrier'
+      person_id='', // E.g '123456789'
+      person_name='', // E.g 'John'
+      person_lastname='', // E.g 'Doe' */}
           <Divider variant="middle" />
           <Paper variant="outlined" sx={{ padding: "1rem" }}>
             <Typography variant="h6" component="span">
@@ -54,8 +105,46 @@ function Pagos() {
                 gridTemplateColumns: "repeat(2, 1fr)",
               }}
             >
-              <TextField label="Desde" variant="filled" color="secondary" />
-              <TextField label="Hasta" variant="filled" color="secondary" />
+              <TextField
+                id="min_date"
+                name="min_date"
+                label="Mínima"
+                type="date"
+                variant="filled"
+                color="secondary"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={handleChange}
+                value={
+                  (paymentFilter &&
+                    paymentFilter.min_date &&
+                    paymentFilter.min_date.split("T")[0]) ||
+                  ""
+                }
+                size="small"
+                fullWidth
+              />
+              <TextField
+                id="max_date"
+                name="max_date"
+                label="Máxima"
+                type="date"
+                variant="filled"
+                color="secondary"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={handleChange}
+                value={
+                  (paymentFilter &&
+                    paymentFilter.max_date &&
+                    paymentFilter.max_date.split("T")[0]) ||
+                  ""
+                }
+                size="small"
+                fullWidth
+              />
             </Box>
           </Paper>
           <Divider variant="middle" />
@@ -71,6 +160,8 @@ function Pagos() {
               }}
             >
               <TextField
+                id="min_amount"
+                name="min_amount"
                 label="Mínimo"
                 type="number"
                 InputLabelProps={{
@@ -79,15 +170,19 @@ function Pagos() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <FontAwesomeIcon icon={faAngleDown} />
+                      <AttachMoneyIcon />
                     </InputAdornment>
                   ),
                 }}
                 variant="filled"
                 color="secondary"
+                onChange={handleChange}
+                value={(paymentFilter && paymentFilter.min_amount) || ""}
               />
               <TextField
-                label="Maximo"
+                id="max_amount"
+                name="max_amount"
+                label="Máximo"
                 type="number"
                 InputLabelProps={{
                   shrink: true,
@@ -95,12 +190,14 @@ function Pagos() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <FontAwesomeIcon icon={faAngleUp} />
+                      <AttachMoneyIcon />
                     </InputAdornment>
                   ),
                 }}
                 variant="filled"
                 color="secondary"
+                onChange={handleChange}
+                value={(paymentFilter && paymentFilter.max_amount) || ""}
               />
             </Box>
           </Paper>
@@ -114,7 +211,26 @@ function Pagos() {
                 display: "grid",
               }}
             >
-              <TextField type="text" variant="filled" color="secondary" />
+              <TextField
+                id="status"
+                name="status"
+                select
+                label="Estatus"
+                value={paymentFilter?.status || ""}
+                onChange={handleChange}
+                variant="filled"
+                fullWidth
+              >
+                {[
+                  { value: "P", name: "Pendiente" },
+                  { value: "A", name: "Aprobado" },
+                  { value: "R", name: "Rechazado" },
+                ].map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Box>
           </Paper>
           <Divider variant="middle" />
@@ -127,7 +243,21 @@ function Pagos() {
                 display: "grid",
               }}
             >
-              <TextField variant="filled" color="secondary" />
+              <TextField
+                id="reference"
+                name="reference"
+                label="Referencia"
+                variant="filled"
+                color="secondary"
+                onChange={handleChange}
+                value={(paymentFilter && paymentFilter.reference) || ""}
+                {...(paymentFilter &&
+                  paymentFilter.reference && {
+                    InputLabelProps: {
+                      shrink: true,
+                    },
+                  })}
+              />
             </Box>
           </Paper>
 
@@ -139,30 +269,76 @@ function Pagos() {
             <Box
               sx={{
                 display: "grid",
-                gap: 2,
-                gridTemplateRows: "repeat(3, 1fr)",
+                gap: 1,
+                gridTemplateColumns: "repeat(3, 1fr)",
               }}
             >
               <TextField
-                id=""
+                id="person_name"
+                name="person_name"
                 label="Nombres"
                 variant="filled"
                 color="secondary"
+                onChange={handleChange}
+                value={(paymentFilter && paymentFilter.person_name) || ""}
+                {...(paymentFilter &&
+                  paymentFilter.person_name && {
+                    InputLabelProps: {
+                      shrink: true,
+                    },
+                  })}
               />
               <TextField
-                id=""
+                id="person_lastname"
+                name="person_lastname"
                 label="Apellidos"
                 variant="filled"
                 color="secondary"
+                onChange={handleChange}
+                value={(paymentFilter && paymentFilter.person_lastname) || ""}
+                {...(paymentFilter &&
+                  paymentFilter.person_lastname && {
+                    InputLabelProps: {
+                      shrink: true,
+                    },
+                  })}
               />
               <TextField
-                id=""
+                id="person_id"
+                name="person_id"
                 label="Cedula"
                 variant="filled"
                 color="secondary"
+                type="number"
+                value={(paymentFilter && paymentFilter.person_id) || ""}
+                onChange={handleChange}
+                {...(paymentFilter &&
+                  paymentFilter.person_id && {
+                    InputLabelProps: {
+                      shrink: true,
+                    },
+                  })}
               />
             </Box>
           </Paper>
+          {paymentFilter && Object.keys(paymentFilter).length !== 0 && (
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              sx={{
+                paddingTop: 3,
+              }}
+            >
+              <Button
+                variant="filled"
+                color="info"
+                onClick={() => setPaymentFilter({})}
+              >
+                Limpiar
+              </Button>
+            </Stack>
+          )}
         </Box>
       </Form>
     </>

@@ -28,16 +28,6 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { FilterContext } from "../../../context/FilterContext";
 import Spinner from "../../Spinner/Spinner";
 
-const options = [
-  { value: "E", label: "Eliminado" },
-  { value: "P", label: "Pendiente de servicio transporte" },
-  { value: "S", label: "Servicio de transporte activo" },
-  { value: "T", label: "Producto entregado al transportista" },
-  { value: "C", label: "Producto entregado al cliente" },
-  { value: "F", label: "Transporte finalizado con exito" },
-  { value: "X", label: "Problemas con el transporte" },
-];
-
 function Envios({ asumidos, admin }) {
   const { shippmentFilter, setShippmentFilter } = useContext(FilterContext);
 
@@ -49,6 +39,26 @@ function Envios({ asumidos, admin }) {
 
   const [parishes, setParishes] = useState([]);
   const [loadingParishes, setLoadingParishes] = useState(false);
+
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    let optionStatus = [
+      { value: "E", label: "Eliminado" },
+      { value: "P", label: "Pendiente de servicio transporte" },
+      { value: "S", label: "Servicio de transporte activo" },
+      { value: "T", label: "Producto entregado al transportista" },
+      { value: "C", label: "Producto entregado al cliente" },
+      { value: "F", label: "Transporte finalizado con exito" },
+      { value: "X", label: "Problemas con el transporte" },
+    ];
+    if (admin !== "A") {
+      delete optionStatus[0];
+      setOptions(optionStatus);
+    } else {
+      setOptions(optionStatus);
+    }
+  }, [asumidos,admin]);
 
   const getFederalEntities = () => {
     setLoadingFederalEntities(true);
@@ -302,7 +312,7 @@ function Envios({ asumidos, admin }) {
               <TextField
                 id="min_value"
                 name="min_value"
-                label="Mínima"
+                label="Mínimo"
                 type="number"
                 InputLabelProps={{
                   shrink: true,
@@ -322,7 +332,7 @@ function Envios({ asumidos, admin }) {
               <TextField
                 id="max_value"
                 name="max_value"
-                label="Maxima"
+                label="Máximo"
                 type="number"
                 InputLabelProps={{
                   shrink: true,
@@ -474,8 +484,11 @@ function Envios({ asumidos, admin }) {
                     variant="filled"
                     color="secondary"
                     onChange={handleChange}
-                    value={(shippmentFilter && shippmentFilter.person_name) || ""}
-                    {...(shippmentFilter && shippmentFilter.person_name && {
+                    value={
+                      (shippmentFilter && shippmentFilter.person_name) || ""
+                    }
+                    {...(shippmentFilter &&
+                      shippmentFilter.person_name && {
                         InputLabelProps: {
                           shrink: true,
                         },
@@ -488,12 +501,15 @@ function Envios({ asumidos, admin }) {
                     variant="filled"
                     color="secondary"
                     onChange={handleChange}
-                    value={(shippmentFilter && shippmentFilter.person_lastname) || ""}
-                    {...(shippmentFilter && shippmentFilter.person_lastname && {
-                      InputLabelProps: {
-                        shrink: true,
-                      },
-                    })}
+                    value={
+                      (shippmentFilter && shippmentFilter.person_lastname) || ""
+                    }
+                    {...(shippmentFilter &&
+                      shippmentFilter.person_lastname && {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      })}
                   />
                   <TextField
                     id="person_id"
@@ -504,34 +520,35 @@ function Envios({ asumidos, admin }) {
                     type="number"
                     value={(shippmentFilter && shippmentFilter.person_id) || ""}
                     onChange={handleChange}
-                    {...(shippmentFilter && shippmentFilter.person_id && {
-                      InputLabelProps: {
-                        shrink: true,
-                      },
-                    })}
+                    {...(shippmentFilter &&
+                      shippmentFilter.person_id && {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      })}
                   />
                 </Box>
               </Paper>
-              {shippmentFilter && Object.keys(shippmentFilter).length !== 0 && (
-                <Stack
-                  direction="row"
-                  justifyContent="center"
-                  alignItems="center"
-                  sx={{
-                    paddingTop: 3,
-                  }}
-                >
-                  <Button
-                    variant="filled"
-                    color="info"
-                    onClick={() => setShippmentFilter({})}
-                  >
-                    Limpiar
-                  </Button>
-                </Stack>
-              )}
             </>
           ) : null}
+          {shippmentFilter && Object.keys(shippmentFilter).length !== 0 && (
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              sx={{
+                paddingTop: 3,
+              }}
+            >
+              <Button
+                variant="filled"
+                color="info"
+                onClick={() => setShippmentFilter({})}
+              >
+                Limpiar
+              </Button>
+            </Stack>
+          )}
         </Box>
       </form>
     </>

@@ -43,6 +43,8 @@ import { areaCodes } from "../../../areaCodes";
 import { PostEnvio } from "../../../api/Post";
 import { OpenEditContext } from "../../../context/openEditContext";
 import { PutEnvio } from "../../../api/Put";
+import { DeleteContext } from "../../../context/deleteContext";
+import { DeleteOneEnvio } from "../../../api/Delete";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -92,13 +94,13 @@ const TextMaskCustom = (props) => {
   );
 };
 
-function Add() {
+function Delete() {
   const {
-    openEditShippment,
-    setOpenEditShippment,
-    shippmentToEdit,
-    setShippmentToEdit,
-  } = useContext(OpenEditContext);
+    openDeleteShippment,
+    setOpenDeleteShippment,
+    shippmentToDelete,
+    setShippmentToDelete,
+  } = useContext(DeleteContext);
 
   const [open, setOpen] = useState(false);
   const [openFile, setOpenFile] = useState(false);
@@ -199,7 +201,7 @@ function Add() {
 
   const handleClose = () => {
     setOpen(false);
-    setOpenEditShippment(false);
+    setOpenDeleteShippment(false);
   };
 
   const handleClickOpenFile = () => {
@@ -350,201 +352,53 @@ function Add() {
     });
   };
 
-  const handleSubmitShippment = (e) => {
+  const handleDeleteShippment = (e) => {
     e.preventDefault();
     setSending(true);
-    if (products.length === 0) {
-      setErrorMessage("Debe seleccionar al menos un producto");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (contactList.length === 0) {
-      setErrorMessage("Debe ingresar al menos una información de contacto");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!shippmentDetails["Persona_TipoId"]) {
-      setErrorMessage("Debe ingresar el tipo de cédula");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!shippmentDetails["Persona_Id"]) {
-      setErrorMessage("Debe ingresar la cédula");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!shippmentDetails["Persona_Nombre"]) {
-      setErrorMessage("Debe ingresar el nombre");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!shippmentDetails["Persona_Apellido"]) {
-      setErrorMessage("Debe ingresar el apellido");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!shippmentDetails["SE_Id"]) {
-      setErrorMessage("Debe ingresar el número del envío");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!shippmentDetails["SE_Fecha"]) {
-      setErrorMessage("Debe ingresar la fecha del envío");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!shippmentDetails["SE_Status"]) {
-      setErrorMessage("Debe ingresar el estado del envío");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!shippmentDetails["SE_ParroquiaId"]) {
-      setErrorMessage("Debe ingresar la parroquia del envío");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-
-    let productsList = [];
-
-    products.forEach((product) => {
-      productsList.push([
-        product.Producto_Id,
-        shippmentDetails["SE_Id"],
-        product.ProductoSE_Cantidad,
-      ]);
-    });
-
-    let ContactInformation = [];
-
-    contactList.forEach((contact) => {
-      ContactInformation.push([
-        contact.contactInfo,
-        contact.contact_type,
-        shippmentDetails["Persona_Id"],
-      ]);
-    });
-
-    setShippmentDetails({
-      ...shippmentDetails,
-      productsList,
-      ContactInformation,
-    });
   };
 
   useEffect(() => {
-    if (!sending) return;
-    let { productsList, ContactInformation } = shippmentDetails;
-    if (
-      !productsList ||
-      !ContactInformation ||
-      productsList.length === 0 ||
-      ContactInformation.length === 0
-    ) {
-      setSending(false);
-      return;
-    }
-    if (openEditShippment && shippmentToEdit) {
+    if (!sending || !shippmentToDelete || !openDeleteShippment) return;
+    if (openDeleteShippment && shippmentToDelete) {
       (async function () {
         try {
-          const response = await PutEnvio(shippmentToEdit, shippmentDetails);
+          const response = await DeleteOneEnvio(shippmentToDelete);
+          console.debug(response);
           if (response.status === 200) {
-            setSuccessMessage("Envío editado correctamente");
+            setSuccessMessage("Envío eliminado correctamente");
+            setSending(false);
             setTimeout(() => {
               setSuccessMessage("");
-              window.location.href = "/Envios"
+              window.location.href = "/Envios";
             }, 2000);
-            setSending(false);
           } else {
             setErrorMessage(
-              "Error al editar el envío, puede que el ID ya exista"
+              "Error al eliminar el envío"
             );
+            setSending(false);
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
-            setSending(false);
           }
         } catch (e) {
           if (e) {
-            setErrorMessage(
-              "Hubo un error al enviar los datos"
-            );
+            setErrorMessage("Hubo un error al enviar los datos");
+            setSending(false);
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
-            setSending(false);
           }
         }
       })();
-    } else {
-      (async function () {
-        try {
-          const response = await PostEnvio(shippmentDetails);
-          if (response.status === 200) {
-            setSuccessMessage("Envío creado correctamente");
-            setTimeout(() => {
-              setSuccessMessage("");
-              window.location.href = "/Envios"
-            }, 2000);
-            setSending(false);
-          } else {
-            setErrorMessage(
-              "Error al crear el envío, puede que el ID ya exista"
-            );
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 2000);
-            setSending(false);
-          }
-        } catch (e) {
-          if (e) {
-            setErrorMessage(
-              "Hubo un error al enviar los datos"
-            );
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 2000);
-            setSending(false);
-          }
-        }
-      })();
-    }
-  }, [shippmentDetails]);
+    } 
+    setSending(false);
+  }, [shippmentToDelete,sending, openDeleteShippment]);
 
   useEffect(async () => {
-    if (!shippmentToEdit || !openEditShippment) return;
+    if (!shippmentToDelete || !openDeleteShippment) return;
     try {
       setLoading(true);
-      let shippmentDetails = await GetOneShippmentToEdit(shippmentToEdit);
+      let shippmentDetails = await GetOneShippmentToEdit(shippmentToDelete);
       await setShippmentDetails(shippmentDetails);
       await getFederalEntities(shippmentDetails.EF_Id);
       await setFederalEntity(() => {
@@ -572,33 +426,17 @@ function Add() {
       setErrorMessage("Hubo un error al obtener los datos del envío");
       setTimeout(() => {
         setErrorMessage("");
-        setOpenEditShippment(false);
+        setOpenDeleteShippment(false);
         setLoading(false);
       }, 3000);
     }
-  }, [shippmentToEdit, openEditShippment]);
+  }, [shippmentToDelete, openDeleteShippment]);
 
-  useEffect(() => {
-    if (shippmentToEdit && open) {
-      setShippmentDetails({
-        Persona_TipoId: "V",
-      });
-      setShippmentToEdit("");
-      setFederalEntity("");
-      setMunicipality("");
-      setParish("");
-      setProducts([]);
-      setContactList([]);
-    }
-  }, [shippmentToEdit, open]);
 
   return (
     <>
-      <IconButton onClick={handleClickOpen}>
-        <AddCircleTwoToneIcon color="primary" />
-      </IconButton>
       <Dialog
-        open={open || openEditShippment}
+        open={openDeleteShippment}
         TransitionComponent={Transition}
         keepMounted
         maxWidth="sm"
@@ -616,11 +454,10 @@ function Add() {
           </Alert>
         </Collapse>
         <DialogTitle>
-          {openEditShippment && shippmentToEdit
-            ? "Edición del Envío"
-            : "Creación de Envío"}
+          {openDeleteShippment && shippmentToDelete
+            && "¿Deseas eliminar el siguiente Envío?"}
         </DialogTitle>
-        {loading ? (
+        {(loading || sending) ? (
           <Box
             sx={{
               width: "auto",
@@ -649,19 +486,8 @@ function Add() {
                   component="h2"
                   sx={{ flexGrow: 1 }}
                 >
-                  Por favor, ingrese los datos del envío.
+                  Datos del envío a eliminar
                 </Typography>
-                <Divider orientation="vertical" flexItem />
-                <Tooltip
-                  title="Proximamente estara disponible la opcion de archivo"
-                  arrow
-                >
-                  <span>
-                    <IconButton disabled onClick={handleClickOpenFile}>
-                      <UploadFileTwoToneIcon size="large" />
-                    </IconButton>
-                  </span>
-                </Tooltip>
               </DialogContentText>
 
               <CustomStack>
@@ -673,6 +499,9 @@ function Add() {
                   value={shippmentDetails && shippmentDetails.Persona_TipoId}
                   onChange={handleShippmentChange}
                   variant="filled"
+                  InputProps={{
+                    disabled: true,
+                  }}
                 >
                   {["V", "E", "J"].map((tipo) => (
                     <MenuItem key={tipo} value={tipo}>
@@ -696,6 +525,9 @@ function Add() {
                         shrink: true,
                       },
                     })}
+                  InputProps={{
+                    disabled: true,
+                  }}
                 />
               </CustomStack>
               <CustomStack>
@@ -714,6 +546,9 @@ function Add() {
                         shrink: true,
                       },
                     })}
+                  InputProps={{
+                    disabled: true,
+                  }}
                 />
                 <TextField
                   id="Persona_Apellido"
@@ -731,84 +566,12 @@ function Add() {
                         shrink: true,
                       },
                     })}
+                  InputProps={{
+                    disabled: true,
+                  }}
                 />
               </CustomStack>
               {/* Contact Information */}
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={{ xs: 1, sm: 2, md: 2 }}
-                sx={{ padding: "1rem 0" }}
-              >
-                <TextField
-                  id="contact_type"
-                  name="contact_type"
-                  select
-                  label="Tipo de contacto"
-                  value={contact_type && contact_type}
-                  onChange={handleContactTypeChange}
-                  variant="filled"
-                  sx={{ minWidth: 170 }}
-                >
-                  {[
-                    { letter: "C", name: "Correo" },
-                    { letter: "T", name: "Teléfono" },
-                  ].map((tipo) => (
-                    <MenuItem key={tipo.letter} value={tipo.letter}>
-                      {tipo.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                {contact_type === "C" && (
-                  <TextField
-                    label="Correo Electrónico"
-                    variant="filled"
-                    type="email"
-                    id="contactInfo"
-                    name="contactInfo"
-                    onChange={handleContactInfoChange}
-                    {...(contactInfo &&
-                      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-                        contactInfo
-                      ) && {
-                        error: true,
-                        helperText: "Correo electrónico inválido",
-                      })}
-                    fullWidth
-                  />
-                )}
-                {contact_type === "T" && (
-                  <TextField
-                    id="contactInfo"
-                    name="contactInfo"
-                    label="Número de teléfono"
-                    margin="normal"
-                    variant="filled"
-                    InputProps={{
-                      inputComponent: TextMaskCustom,
-                      onChange: handleContactInfoChange,
-                    }}
-                    {...((contactInfo &&
-                      !areaCodes.includes(
-                        parseInt(contactInfo.split(/[()]/)[1], 10)
-                      ) && {
-                        error: true,
-                        helperText: "Código de área inválido",
-                      }) ||
-                      (contactInfo &&
-                        contactInfo.includes("_") && {
-                          error: true,
-                          helperText: "Número de teléfono inválido",
-                        }))}
-                  />
-                )}
-                <IconButton>
-                  <AddCircleTwoToneIcon
-                    size="large"
-                    onClick={handleAddContact}
-                    color="primary"
-                  />
-                </IconButton>
-              </Stack>
               <Box
                 sx={{
                   gap: "1rem",
@@ -833,10 +596,6 @@ function Add() {
                     color="primary"
                   />
                 </Box>
-                <Chip
-                  label="Vaciar contactos"
-                  onClick={handleDeleteAllContacts}
-                />
               </Box>
               <Grid
                 sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
@@ -848,9 +607,7 @@ function Add() {
                       <Chip
                         label={`${contact.contactInfo}`}
                         key={`${index}`}
-                        deleteIcon={<DeleteTwoToneIcon />}
                         variant="outlined"
-                        onDelete={() => handleDeleteContact(index)}
                       />
                     );
                   })}
@@ -872,6 +629,9 @@ function Add() {
                         shrink: true,
                       },
                     })}
+                  InputProps={{
+                    disabled: true,
+                  }}
                 />
               </CustomStack>
               <CustomStack>
@@ -884,6 +644,9 @@ function Add() {
                   color="primary"
                   InputLabelProps={{
                     shrink: true,
+                  }}
+                  InputProps={{
+                    disabled: true,
                   }}
                   onChange={handleShippmentChange}
                   value={
@@ -903,6 +666,9 @@ function Add() {
                   onChange={handleShippmentChange}
                   variant="filled"
                   fullWidth
+                  InputProps={{
+                    disabled: true,
+                  }}
                 >
                   {shippmentStatusList.map((status) => (
                     <MenuItem key={status.letter} value={status.letter}>
@@ -921,6 +687,9 @@ function Add() {
                   variant="filled"
                   SelectProps={{
                     onOpen: getFederalEntities,
+                  }}
+                  InputProps={{
+                    disabled: true,
                   }}
                   fullWidth
                 >
@@ -951,6 +720,9 @@ function Add() {
                   SelectProps={{
                     onOpen: () => getMunicipities(federalEntity),
                   }}
+                  InputProps={{
+                    disabled: true,
+                  }}
                   fullWidth
                   {...(federalEntity
                     ? {
@@ -980,9 +752,14 @@ function Add() {
                   select
                   label="Parroquia"
                   name="SE_ParroquiaId"
-                  value={(shippmentDetails && shippmentDetails.SE_ParroquiaId) || ""}
+                  value={
+                    (shippmentDetails && shippmentDetails.SE_ParroquiaId) || ""
+                  }
                   onChange={handleParishChange}
                   variant="filled"
+                  InputProps={{
+                    disabled: true,
+                  }}
                   SelectProps={{
                     onOpen: () => getParishes(municipality),
                   }}
@@ -1055,113 +832,6 @@ function Add() {
                   })}
                 ></TextField>
               </CustomStack>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={{ xs: 1, sm: 2, md: 2 }}
-                sx={{ padding: "1rem 0" }}
-              >
-                <Autocomplete
-                  value={productType}
-                  inputValue={productTypeInput}
-                  options={productsTypes && productsTypes}
-                  openOnFocus={true}
-                  onOpen={() => {
-                    getProductsTypes();
-                  }}
-                  isOptionEqualToValue={(option, value) =>
-                    option.Producto_Tipo === value.Producto_Tipo
-                  }
-                  onChange={(event, newValue) => {
-                    setProductSelected("");
-                    setProductsList([]);
-                    if (newValue === undefined || newValue === null)
-                      return setProductType("");
-                    if (Object.keys(newValue).length === 0)
-                      return setProductType("");
-                    setProductType(newValue);
-                  }}
-                  onInputChange={(event, newInputValue) => {
-                    setProductTypeInput(newInputValue);
-                  }}
-                  getOptionLabel={(option) => option.Producto_Tipo || ""}
-                  loading={loadingProductsTypes}
-                  loadingText={
-                    <Box sx={{ textAlign: "center" }}>
-                      <Spinner loading={loadingProductsTypes} />
-                    </Box>
-                  }
-                  sx={{ width: "100%" }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Tipo de Producto"
-                      variant="filled"
-                      type="text"
-                      id="product_type"
-                      name="product_type"
-                    />
-                  )}
-                />
-                <Autocomplete
-                  value={productSelected}
-                  inputValue={productSelectedInput}
-                  options={productsList && productsList}
-                  openOnFocus={true}
-                  onOpen={() => {
-                    getProductsList(productType.Producto_Tipo);
-                  }}
-                  onChange={(event, newValue) => {
-                    if (newValue === undefined || newValue === null)
-                      return setProductSelected("");
-                    if (Object.keys(newValue).length === 0)
-                      return setProductSelected("");
-                    setProductSelected(newValue);
-                  }}
-                  onInputChange={(event, newInputValue) => {
-                    setProductSelectedInput(newInputValue);
-                  }}
-                  getOptionLabel={(option) => option.Producto_Nombre || ""}
-                  loading={loadingProductsList}
-                  loadingText={
-                    <Box sx={{ textAlign: "center" }}>
-                      <Spinner loading={loadingProductsList} />
-                    </Box>
-                  }
-                  {...(productType
-                    ? {
-                        disabled: false,
-                      }
-                    : { disabled: true })}
-                  sx={{ width: "100%" }}
-                  renderOption={(props, option) => (
-                    <li {...props}>{option.Producto_Nombre}</li>
-                  )}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Producto"
-                      variant="filled"
-                      type="text"
-                      id="productToSave"
-                      name="productToSave"
-                    />
-                  )}
-                />
-                <TextField
-                  label="Cantidad"
-                  variant="filled"
-                  type="number"
-                  id="ProductoSE_Cantidad"
-                  name="ProductoSE_Cantidad"
-                />
-                <IconButton>
-                  <AddCircleTwoToneIcon
-                    size="large"
-                    onClick={handleAddProduct}
-                    color="primary"
-                  />
-                </IconButton>
-              </Stack>
               <Box
                 sx={{
                   gap: "1rem",
@@ -1183,7 +853,6 @@ function Add() {
                   </Typography>
                   <Badge badgeContent={products.length} color="primary" />
                 </Box>
-                <Chip label="Vaciar Envío" onClick={handleDeleteAllProducts} />
               </Box>
               <Grid
                 sx={{ margin: "1rem auto", flexWrap: "wrap", gap: ".3rem" }}
@@ -1198,9 +867,7 @@ function Add() {
                     >
                       <Chip
                         label={`${product.Producto_Nombre}`}
-                        deleteIcon={<DeleteTwoToneIcon />}
                         variant="outlined"
-                        onDelete={() => handleDeleteProduct(index)}
                       />
                     </Tooltip>
                   );
@@ -1222,68 +889,16 @@ function Add() {
               <LoadingButton
                 loading={sending}
                 variant="outlined"
-                onClick={handleSubmitShippment}
+                onClick={handleDeleteShippment}
               >
-                Guardar
+                Confirmar
               </LoadingButton>
             </Box>
           </>
         )}
       </Dialog>
-      {/* File Upload */}
-      <Dialog
-        open={openFile}
-        TransitionComponent={Transition}
-        keepMounted
-        maxWidth="xs"
-        onClose={handleCloseFile}
-      >
-        <DialogTitle>{"¿ Desea Agregar un Envío ?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Por favor, seleccione un Archivo con los datos de los envios que
-            desea agregar.
-          </DialogContentText>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignContent: "center",
-            }}
-          >
-            <label htmlFor="icon-button-file">
-              <Input
-                accept="image/*"
-                id="icon-button-file"
-                type="file"
-                sx={{ display: "none" }}
-              />
-              <IconButton
-                color="primary"
-                aria-label="upload picture"
-                component="span"
-              >
-                <UploadFileTwoToneIcon size="large" />
-              </IconButton>
-            </label>
-          </Box>
-        </DialogContent>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-around",
-            alignContent: "center",
-            margin: "1rem 0",
-          }}
-        >
-          <Button onClick={handleCloseFile} variant="text">
-            Cancelar
-          </Button>
-          <Button variant="text">Guardar</Button>
-        </Box>
-      </Dialog>
     </>
   );
 }
 
-export default Add;
+export default Delete;

@@ -18,22 +18,31 @@ import Spinner from "../../components/Spinner/Spinner";
 import AppTabs from "../../components/AppTabs/AppTabs";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
+import { FilterContext } from "../../context/FilterContext";
+import { UserContext } from "../../context/UserContextT";
+import Delete from "./Delete/Delete";
 
 function Pagos() {
+  const { view_type, token } = useContext(UserContext);
+  const { paymentFilter, setPaymentFilter } = useContext(FilterContext);
   const [payments, setPayments] = useState(null);
   const [loading, setLoading] = useState(false);
   const FilterMenuContext = useContext(filterMenuContext);
 
-  const fetchPayments = async () => {
+  const fetchPayments = async (view, params) => {
+    if (view ==="T" || view ==="C" || view ==="A") return
     await setLoading(true);
-    const response = await GetPayments();
+    const response = await GetPayments(view, params); 
     await setPayments(response);
     await setLoading(false);
   };
 
   useEffect(() => {
-    fetchPayments();
-  }, []);
+    if (!view_type || !token ) return;
+    if (view_type !== "A") return;
+    setPayments([]);
+    fetchPayments("admin", paymentFilter);
+  }, [view_type, token, paymentFilter]);
 
   return (
     <>
@@ -73,6 +82,7 @@ function Pagos() {
                 Data={payments}
               >
                 <Add AddButton={true}/>
+                <Delete />
               </RightSideComponent>
             )}
           </Grid>

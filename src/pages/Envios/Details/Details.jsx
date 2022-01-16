@@ -437,7 +437,13 @@ function Details() {
                     <TableRow>
                       <TableCell component="th">Estado</TableCell>
                       <TableCell align="center">
-                        {shippmentDetails.SE_Status}
+                      {shippmentDetails.SE_Status === "E" && "Eliminado"}
+                      {shippmentDetails.SE_Status === "P" && "Pendiente de servicio transporte"}
+                      {shippmentDetails.SE_Status === "S" && "Servicio de transporte activo"}
+                      {shippmentDetails.SE_Status === "T" && "Producto entregado al transportista"}
+                      {shippmentDetails.SE_Status === "C" && "Producto entregado al cliente"}
+                      {shippmentDetails.SE_Status === "F" && "Transporte finalizado con exito"}
+                      {shippmentDetails.SE_Status === "X" && "Problemas con el transporte"}
                       </TableCell>
                     </TableRow>
                     <TableRow>

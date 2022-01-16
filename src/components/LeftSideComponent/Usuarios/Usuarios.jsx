@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 
 /* Material UI */
 import {
@@ -9,6 +9,8 @@ import {
   Divider,
   Paper,
   Typography,
+  Stack,
+  Button,
 } from "@mui/material";
 
 /* Material UI Icons */
@@ -16,38 +18,47 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 /* React-Bootstrap */
 import Form from "react-bootstrap/Form";
+import { FilterContext } from "../../../context/FilterContext";
+import { GetSuscriptions } from "../../../api/Get";
 
 function Usuarios({ admin }) {
-  const [Disponibility, setDisponibility] = useState("");
-  const [Medium, setMedium] = useState("");
-  const mediums = [
+  const { userFilter, setUserFilter } = useContext(FilterContext);
+  const [suscriptionTypesList, setSuscriptionTypesList] = useState([]);
+
+  const status = [
     {
-      value: "1",
-      label: "Carro",
+      value: "S",
+      label: "Solvente",
     },
     {
-      value: "2",
-      label: "Moto",
+      value: "C",
+      label: "Cancelada",
+    },
+    {
+      value: "P",
+      label: "Pago pendiente",
+    },
+    {
+      value: "V",
+      label: "Vencida",
     },
   ];
 
-  const disponibilities = [
-    {
-      value: "1",
-      label: "Inmediata",
-    },
-    {
-      value: "2",
-      label: "No Disponible",
-    },
-  ];
-  const handleMediumChange = (e) => {
-    setMedium(e.target.value);
+  const handleChange = (e) => {
+    setUserFilter({
+      ...userFilter,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleDisponibilityChange = (e) => {
-    setDisponibility(e.target.value);
-  };
+  useEffect(() => {
+    (async () => {
+      let data = await GetSuscriptions();
+      if (!data) return;
+      setSuscriptionTypesList(data);
+    })();
+  }, []);
+
   return (
     <>
       <Form>
@@ -59,179 +70,8 @@ function Usuarios({ admin }) {
             padding: "1rem 0",
           }}
         >
-          <Paper variant="outlined" sx={{ padding: "1rem" }}>
-            <Typography variant="h6" component="span">
-              Ubicación
-            </Typography>
-            <Box
-              sx={{
-                display: "grid",
-                gap: 1,
-                gridTemplateColumns: "repeat(3, 1fr)",
-              }}
-            >
-              <TextField
-                id=""
-                label="Estado"
-                variant="filled"
-                color="secondary"
-              />
-              <TextField
-                id=""
-                label="Municipio"
-                variant="filled"
-                color="secondary"
-              />
-              <TextField
-                id=""
-                label="Parroquia"
-                variant="filled"
-                color="secondary"
-              />
-            </Box>
-          </Paper>
-          <Divider variant="middle" />
-          <Paper variant="outlined" sx={{ padding: "1rem" }}>
-            <Typography variant="h6" component="span">
-              Horario
-            </Typography>
-            <Box
-              sx={{
-                display: "grid",
-                gap: 1,
-                gridTemplateColumns: "repeat(2, 1fr)",
-              }}
-            >
-              <TextField
-                id=""
-                label="Inicio"
-                type="time"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="filled"
-                color="secondary"
-              />
-              <TextField
-                id=""
-                label="Cierre"
-                type="time"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="filled"
-                color="secondary"
-              />
-            </Box>
-          </Paper>
-
-          <Divider variant="middle" />
-          <Paper variant="outlined" sx={{ padding: "1rem" }}>
-            <Typography variant="h6" component="span">
-              Precio
-            </Typography>
-            <Box
-              sx={{
-                display: "grid",
-                gap: 1,
-                gridTemplateColumns: "repeat(2, 1fr)",
-              }}
-            >
-              <TextField
-                id=""
-                label="Mínimo"
-                type="number"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AttachMoneyIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                variant="filled"
-                color="secondary"
-              />
-              <TextField
-                id=""
-                label="Maximo"
-                type="number"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AttachMoneyIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                variant="filled"
-                color="secondary"
-              />
-            </Box>
-          </Paper>
-
-          <Divider variant="middle" />
-          <Paper variant="outlined" sx={{ padding: "1rem" }}>
-            <Typography variant="h6" component="span">
-              Medio
-            </Typography>
-            <Box
-              sx={{
-                display: "grid",
-              }}
-            >
-              <TextField
-                id=""
-                select
-                label="Medio"
-                value={Medium}
-                onChange={handleMediumChange}
-                variant="filled"
-                color="secondary"
-              >
-                {mediums.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Box>
-          </Paper>
-
-          <Divider variant="middle" />
-          <Paper variant="outlined" sx={{ padding: "1rem" }}>
-            <Typography variant="h6" component="span">
-              Disponibilidad
-            </Typography>
-            <Box
-              sx={{
-                display: "grid",
-              }}
-            >
-              <TextField
-                id=""
-                select
-                label="Disponibilidad"
-                value={Disponibility}
-                onChange={handleDisponibilityChange}
-                variant="filled"
-                color="secondary"
-              >
-                {disponibilities.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Box>
-          </Paper>
           {admin === "A" ? (
             <>
-              <Divider variant="middle" />
               <Paper variant="outlined" sx={{ padding: "1rem" }}>
                 <Typography variant="h6" component="span">
                   Usuario
@@ -239,30 +79,157 @@ function Usuarios({ admin }) {
                 <Box
                   sx={{
                     display: "grid",
-                    gap: 1,
-                    gridTemplateColumns: "repeat(3, 1fr)",
+                    marginTop: 4,
                   }}
                 >
                   <TextField
-                    id=""
+                    fullWidth
+                    id="email"
+                    name="email"
+                    label="Correo"
+                    variant="filled"
+                    color="secondary"
+                    onChange={handleChange}
+                    value={(userFilter && userFilter.email) || ""}
+                    {...(userFilter &&
+                      userFilter.email && {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      })}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "grid",
+                    marginTop: 4,
+                  }}
+                >
+                  <TextField
+                    fullWidth
+                    variant="filled"
+                    select
+                    id="suscription_type"
+                    name="suscription_type"
+                    value={(userFilter && userFilter.suscription_type) || ""}
+                    label="Tipo de suscripción"
+                    onChange={handleChange}
+                    fullWidth
+                  >
+                    {suscriptionTypesList[0] ? (
+                      suscriptionTypesList.map((s, i) => (
+                        <MenuItem key={`${i}`} value={s.TS_Id}>
+                          {`${s.TS_Nombre} - ${s.TS_Monto}`}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem>
+                        No se pudieron obtener las suscripciones
+                      </MenuItem>
+                    )}
+                  </TextField>
+                </Box>
+                <Box
+                  sx={{
+                    display: "grid",
+                    marginTop: 4,
+                  }}
+                >
+                  <TextField
+                    fullWidth
+                    id="suscription_status"
+                    name="suscription_status"
+                    select
+                    label="Estatus de la suscripción"
+                    value={userFilter?.suscription_status || ""}
+                    onChange={handleChange}
+                    variant="filled"
+                    color="secondary"
+                  >
+                    {status.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gap: 1,
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    marginTop: 4,
+                  }}
+                >
+                  <TextField
+                    fullWidth
+                    id="person_name"
+                    name="person_name"
                     label="Nombres"
                     variant="filled"
                     color="secondary"
+                    onChange={handleChange}
+                    value={(userFilter && userFilter.person_name) || ""}
+                    {...(userFilter &&
+                      userFilter.person_name && {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      })}
                   />
                   <TextField
-                    id=""
+                    fullWidth
+                    id="person_lastname"
+                    name="person_lastname"
                     label="Apellidos"
                     variant="filled"
                     color="secondary"
+                    onChange={handleChange}
+                    value={(userFilter && userFilter.person_lastname) || ""}
+                    {...(userFilter &&
+                      userFilter.person_lastname && {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      })}
                   />
                   <TextField
-                    id=""
+                    fullWidth
+                    id="person_id"
+                    name="person_id"
                     label="Cedula"
                     variant="filled"
                     color="secondary"
+                    type="number"
+                    value={(userFilter && userFilter.person_id) || ""}
+                    onChange={handleChange}
+                    {...(userFilter &&
+                      userFilter.person_id && {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      })}
                   />
                 </Box>
               </Paper>
+              {userFilter && Object.keys(userFilter).length !== 0 && (
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  sx={{
+                    paddingTop: 3,
+                  }}
+                >
+                  <Button
+                    variant="filled"
+                    color="info"
+                    onClick={() => setUserFilter({})}
+                  >
+                    Limpiar
+                  </Button>
+                </Stack>
+              )}
             </>
           ) : null}
         </Box>

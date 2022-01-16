@@ -21,6 +21,7 @@ import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideCom
 /* Context */
 import { FilterContext } from "../../../context/FilterContext";
 import { UserContext } from "../../../context/UserContextT";
+import Delete from "../Delete/Delete";
 
 function EnviosTransportista(permissions) {
   const { view_type, token } = useContext(UserContext);
@@ -38,9 +39,10 @@ function EnviosTransportista(permissions) {
   };
 
   useEffect(() => {
-    if (!view_type || !token) return;
+    if (!view_type || !token ) return;
     setShippments([])
-    switch (view_type) {
+    if (shippmentFilter) {
+    switch (view_type) { 
       case "A":
         fetchShippments("admin", shippmentFilter);
         break;
@@ -52,13 +54,22 @@ function EnviosTransportista(permissions) {
         break;
       default:
         break;
+    }} else {
+      switch (view_type) {
+        case "A":
+          fetchShippments("admin");
+          break;
+        case "T":
+          fetchShippments("carrier_available");
+          break;
+        case "C":
+          fetchShippments("client");
+          break;
+        default:
+          break;
+      }
     }
-  }, [view_type, token]);
-
-  useEffect(() => {
-    if (!shippmentFilter || !view_type) return
-    fetchShippments(view_type,shippmentFilter);
-  }, [shippmentFilter]);
+  }, [view_type, token, shippmentFilter]);
 
   return (
     <>
@@ -98,6 +109,7 @@ function EnviosTransportista(permissions) {
                 Data={shippments}
               >
                 <Add />
+                <Delete />
               </RightSideComponent>
             )}
           </Grid>

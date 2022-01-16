@@ -33,6 +33,8 @@ import { PutPago } from "../../../api/Put";
 import { LoadingButton } from "@mui/lab";
 
 import { UserContext } from "../../../context/UserContextT";
+import { DeleteContext } from "../../../context/deleteContext";
+import { DeleteOnePago } from "../../../api/Delete";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -52,14 +54,14 @@ const CustomStack = (props) => {
 };
 /* PS_Status
  */
-function Add({AddButton, openAccount, setOpenAccount, redirect}) {
+function Delete({AddButton, openAccount, setOpenAccount, redirect}) {
   const [open, setOpen] = useState(false);
   const {
-    paymentToEdit,
-    openEditPayment,
-    setPaymentToEdit,
-    setOpenEditPayment,
-  } = useContext(OpenEditContext);
+    paymentToDelete,
+    openDeletePayment,
+    setPaymentToDelete,
+    setOpenDeletePayment,
+  } = useContext(DeleteContext);
   const { view_type, logged_user } = useContext(UserContext);
 
   const [payment, setPayment] = useState({});
@@ -96,140 +98,59 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
   const handleClose = () => {
     setOpen(false);
     if(setOpenAccount) setOpenAccount(false);
-    setPaymentToEdit("")
-    setOpenEditPayment(false)
+    setPaymentToDelete("")
+    setOpenDeletePayment(false)
     setPayment({});
   };
-
-  const handleSubmitPayment = async (e) => {
-    e.preventDefault();
-    if (!payment["PS_ArchivoReferencia"] && !payment["PS_Referencia"]) {
-      setErrorMessage("Debe ingresar una referencia o imagen de prueba");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!payment["PS_Metodo"]) {
-      setErrorMessage("Debe ingresar el método");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!payment["PS_Fecha"]) {
-      setErrorMessage("Debe ingresar la fecha del pago");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!payment["PS_Monto"]) {
-      setErrorMessage("Debe ingresar el monto pagado");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-
-    setSending(true);
-  };
-
+  
   useEffect(() =>{
     setOpen(openAccount)
   }, [openAccount])
 
+  const handleDeletePayment = (e) => {
+    e.preventDefault();
+    setSending(true);
+  };
+
   useEffect(() => {
-    if (!sending) return;
-    if (openEditPayment && paymentToEdit) {
+    if (!sending || !paymentToDelete || !openDeletePayment) return;
+    if (openDeletePayment && paymentToDelete) {
       (async function () {
         try {
-          let form = new FormData();
-          Object.keys(payment).forEach((key) => {
-            if (key === "PS_ArchivoReferencia" && payment[key]?.name) {
-              form.append("PS_ArchivoReferencia", payment[key], payment[key].name);
-            } else {
-              form.append(key, payment[key]);
-            }
-          });
-          const response = await PutPago(paymentToEdit, form,{
-            "Content-Type": "multipart/form-data",
-          });
+          const response = await DeleteOnePago(paymentToDelete);
+          console.debug(response);
           if (response.status === 200) {
-            setSuccessMessage("Pago editado correctamente");
+            setSuccessMessage("Pago eliminado correctamente");
+            setSending(false);
             setTimeout(() => {
               setSuccessMessage("");
               window.location.href = redirect || "/Pagos";
             }, 2000);
-            setSending(false);
           } else {
-            setErrorMessage("Error al editar el Pago");
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 2000);
-            setSending(false);
-          }
-        } catch (e) {
-          console.debug(e);
-          if (e) {
             setErrorMessage(
-              "Hubo un error al enviar los datos"
+              "Error al eliminar el Pago"
             );
+            setSending(false);
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
-            setSending(false);
-          }
-        }
-      })(); 
-    } else {
-      (async function () {
-        try {
-          let form = new FormData();
-          Object.keys(payment).forEach((key) => {
-            if (key === "PS_ArchivoReferencia" && payment[key]?.name) {
-              form.append(key, payment[key], payment[key].name);
-            } else {
-              form.append(key, payment[key]);
-            }
-          });
-          const response = await PostPago(form, {
-            "Content-Type": "multipart/form-data",
-          });
-          if (response.status === 200) {
-            setSuccessMessage("Pago envíado correctamente");
-            setTimeout(() => {
-              setSuccessMessage("");
-              window.location.href = redirect || "/Pagos";
-            }, 2000);
-            setSending(false);
-          } else {
-            setErrorMessage("Error al crear el Pago");
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 2000);
-            setSending(false);
           }
         } catch (e) {
-          console.debug(e);
           if (e) {
             setErrorMessage("Hubo un error al enviar los datos");
+            setSending(false);
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
-            setSending(false);
           }
         }
       })();
-    }
-  }, [sending]);
+    } 
+    setSending(false);
+  }, [paymentToDelete,sending, openDeletePayment]);
   
   useEffect(() => {
-    if (paymentToEdit || openEditPayment || Object.keys(payment).length > 0) return;
+    if (paymentToDelete || openDeletePayment || Object.keys(payment).length > 0) return;
     setPayment({
       ...payment,
       PS_SuscripcionId: logged_user?.Suscripcion_Id,
@@ -237,10 +158,10 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
   }, [logged_user, payment]);
 
   useEffect(async () => {
-    if (!paymentToEdit || !openEditPayment) return;
+    if (!paymentToDelete || !openDeletePayment) return;
     try {
       setLoading(true);
-      let paymentDetails = await GetOnePayment(paymentToEdit);
+      let paymentDetails = await GetOnePayment(paymentToDelete);
       await setPayment(() => paymentDetails);
       setTimeout(() => {
         setLoading(false);
@@ -249,20 +170,17 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
       setErrorMessage("Hubo un error al obtener los datos del pago");
       setTimeout(() => {
         setErrorMessage("");
-        setOpenEditPayment(false);
-        setPaymentToEdit("")
+        setOpenDeletePayment(false);
+        setPaymentToDelete("")
         setLoading(false);
       }, 3000);
     }
-  }, [paymentToEdit, openEditPayment]);
+  }, [paymentToDelete, openDeletePayment]);
 
   return (
     <>
-      {AddButton && (<IconButton onClick={handleClickOpen}>
-        <AddCircleTwoToneIcon color="primary" />
-      </IconButton>)}
       <Dialog
-        open={open || openEditPayment}
+        open={openDeletePayment}
         TransitionComponent={Transition}
         keepMounted
         maxWidth="md"
@@ -281,9 +199,7 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
           </Alert>
         </Collapse>
         <DialogTitle>
-          {openEditPayment && paymentToEdit
-            ? "Edición del Pago"
-            : "Creación de Pago"}
+          {openDeletePayment && paymentToDelete && "¿Deseas eliminar el siguiente Pago?"}
         </DialogTitle>
         {loading || sending ? (
           <Box
@@ -314,7 +230,7 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                   component="h2"
                   sx={{ flexGrow: 1 }}
                 >
-                  Por favor, ingrese los datos del Pago.
+                  Datos del pago a eliminar.
                 </Typography>
               </DialogContentText>
               <Grid>
@@ -323,6 +239,9 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                     id="PS_Metodo"
                     name="PS_Metodo"
                     select
+                    InputProps={{
+                      disabled:true
+                    }}
                     label="Método de Pago"
                     variant="filled"
                     fullWidth
@@ -343,6 +262,9 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                     id="PS_Fecha"
                     name="PS_Fecha"
                     type="date"
+                    InputProps={{
+                      disabled:true
+                    }}
                     label="Fecha del Pago"
                     variant="filled"
                     fullWidth
@@ -358,6 +280,9 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                     id="PS_Monto"
                     name="PS_Monto"
                     type="number"
+                    InputProps={{
+                      disabled:true
+                    }}
                     label="Monto"
                     variant="filled"
                     fullWidth
@@ -370,6 +295,9 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                     id="PS_Referencia"
                     name="PS_Referencia"
                     label="Referencia"
+                    InputProps={{
+                      disabled:true
+                    }}
                     variant="filled"
                     onChange={handlePaymentChange}
                     value={payment.PS_Referencia || ""}
@@ -380,6 +308,9 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                     id="PS_Status"
                     name="PS_Status"
                     select
+                    InputProps={{
+                      disabled:true
+                    }}
                     label="Estatus"
                     value={payment.PS_Status || ""}
                     onChange={handlePaymentChange}
@@ -401,6 +332,9 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                     value={payment.PS_SuscripcionId || ""}
                     disabled={true && true}
                     label="Suscripción"
+                    InputProps={{
+                      disabled:true
+                    }}
                     variant="filled"
                     fullWidth
                   />
@@ -423,35 +357,6 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                   )}
                 </CustomStack>
               </Grid>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignContent: "center",
-                }}
-              >
-                <Typography variant="h5">
-                  Da clic para ingresar una imagen:
-                </Typography>
-                <label htmlFor="icon-button-file">
-                  <Input
-                    id="icon-button-file"
-                    type="file"
-                    sx={{ display: "none" }}
-                    onChange={onFileChange}
-                    inputProps={{
-                      accept: "image/*",
-                    }}
-                  />
-                  <IconButton
-                    color="primary"
-                    aria-label="upload picture"
-                    component="span"
-                  >
-                    <UploadFileTwoToneIcon size="large" />
-                  </IconButton>
-                </label>
-              </Box>
             </DialogContent>
             <Box
               sx={{
@@ -465,8 +370,8 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
               <Button variant="outlined" onClick={handleClose}>
                 Cancelar
               </Button>
-              <LoadingButton loading={sending} variant="outlined" onClick={handleSubmitPayment}>
-                Guardar
+              <LoadingButton loading={sending} variant="outlined" onClick={handleDeletePayment}>
+                Confirmar
               </LoadingButton>
             </Box>
           </>
@@ -476,4 +381,4 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
   );
 }
 
-export default Add;
+export default Delete;

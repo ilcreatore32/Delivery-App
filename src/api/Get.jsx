@@ -46,10 +46,11 @@ export async function GetOneShippmentToEdit(id) {
 }
 
 /* Servicios */
-export async function GetServices() {
+export async function GetServices(view_option, params) {
   const service = await Api.get("/service", {
     params: {
-      view_option: "admin",
+      view_option: view_option,
+      ...params,
     },
   })
     .then((result) => {
@@ -92,10 +93,11 @@ export async function GetOneServiceToEdit(id) {
 }
 
 /* Vehiculos */
-export async function GetVehicles() {
+export async function GetVehicles(view_option, params) {
   const vehicles = await Api.get("/vehicle", {
     params: {
-      view_option: "admin",
+      view_option: view_option,
+      ...params,
     },
   })
     .then((result) => {
@@ -124,10 +126,11 @@ export async function GetOneVehicle(id) {
 }
 
 /* Pagos */
-export async function GetPayments() {
+export async function GetPayments(view_option, params) {
   const payments = await Api.get("/payment", {
     params: {
-      view_option: "admin",
+      view_option: view_option,
+      ...params,
     },
   })
     .then((result) => {
@@ -155,8 +158,11 @@ export async function GetOnePayment(id) {
 }
 
 /* Usuarios */
-export async function GetUsers() {
-  const users = await Api.get(`/user`)
+export async function GetUsers(params) {
+  const users = await Api.get(`/user`, {
+    params: {
+      ...params,
+  }})
     .then((result) => {
       return result.data;
     })

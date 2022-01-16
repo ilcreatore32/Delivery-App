@@ -15,8 +15,10 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+import { UserContext } from "../context/UserContextT";
 
 export function CustomOptionsButtons({ thisRow, page }) {
+  const { view_type } = useContext(UserContext);
   const {
     setOpenEditShippment,
     setShippmentToEdit,
@@ -27,7 +29,19 @@ export function CustomOptionsButtons({ thisRow, page }) {
     setOpenEditPayment,
     setPaymentToEdit
   } = useContext(OpenEditContext);
+  const {
+    setOpenDeleteShippment,
+    setShippmentToDelete,
+    setServiceToDelete,
+    setOpenDeleteService,
+    setVehicleToDelete,
+    setOpenDeleteVehicle,
+    setOpenDeletePayment,
+    setPaymentToDelete
+  } = useContext(DeleteContext);
   const [details, setDetails] = useState("")
+  const [displayEdit, setDisplayEdit] = useState(false)
+  const [displayDelete, setDisplayDelete] = useState(false)
   const editFunction = () => {
     switch (page) {
       case "shippment":
@@ -50,20 +64,58 @@ export function CustomOptionsButtons({ thisRow, page }) {
         break;
     }
   };
+  const deleteFunction = () => {
+    switch (page) {
+      case "shippment":
+        setOpenDeleteShippment(true);
+        setShippmentToDelete(thisRow.row.SE_Id);
+        return;
+      case "service":
+        setOpenDeleteService(true);
+        setServiceToDelete(thisRow.row.ST_Id);
+        return;
+      case "vehicle":
+        setOpenDeleteVehicle(true);
+        setVehicleToDelete(thisRow.row.Vehiculo_Id);
+        return;
+      case "payment":
+        setOpenDeletePayment(true);
+        setPaymentToDelete(thisRow.row.PS_Id);
+        return;
+      default:
+        break;
+    }
+  };
   useEffect(() => {
     if (!page) return
     switch (page) {
       case "shippment":
         setDetails(`/Envios/Detalles/${thisRow.row.SE_Id}`);
+        if (view_type === "A") {
+          setDisplayEdit(true)
+          setDisplayDelete(true)
+        }
         return;
       case "service":
         setDetails(`/Servicios/Detalles/${thisRow.row.ST_Id}`);
+        if (view_type === "A" || view_type === "T") {
+          setDisplayEdit(true)
+          setDisplayDelete(true)
+        }
         return;
        case "vehicle":
         setDetails(`/Vehiculos/Detalles/${thisRow.row.Vehiculo_Id}`);
+        if (view_type === "A" || view_type === "T") {
+          setDisplayEdit(true)
+          setDisplayDelete(true)
+        }
         return;
       case "payment":
         setDetails(`/Pagos/Detalles/${thisRow.row.PS_Id}`);
+        if (view_type === "A") {
+          setDisplayEdit(true)
+          setDisplayDelete(true)
+        }
         return;
       default:
         break;
@@ -74,12 +126,12 @@ export function CustomOptionsButtons({ thisRow, page }) {
       <IconButton component={Link} to={details}>
         <VisibilityTwoToneIcon />
       </IconButton>
-      <IconButton onClick={editFunction}>
+      {displayEdit && <IconButton onClick={editFunction}>
         <EditTwoToneIcon color="info" />
-      </IconButton>
-      <IconButton component={Link} to={`/Envios/Eliminar/${thisRow.row.SE_Id}`}>
+      </IconButton>}
+     {displayDelete && <IconButton onClick={deleteFunction}>
         <DeleteTwoToneIcon color="error" />
-      </IconButton>
+      </IconButton>}
     </>
   );
 }

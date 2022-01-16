@@ -223,6 +223,9 @@ export const VehiculosColumns = [
     align: "center",
     width: 215,
     sortable: true,
+    renderCell: (thisRow) => {
+      return `${thisRow.row.Vehiculo_CapacidadCarga} Kg`;
+    },
   },
   {
     field: "actions",
@@ -443,5 +446,32 @@ export const AreasColumns = [
     renderCell: (thisRow) => {
       return <CustomDeleteArea thisRow={thisRow} />;
     },
+  },
+];
+/* Areas Columns Disabled */
+export const AreasDisabled = [
+  {
+    headerName: "Entidad Federal",
+    field: "EF_Nombre",
+    headerAlign: "center",
+    align: "center",
+    flex: 1,
+    sortable: true,
+  },
+  {
+    headerName: "Municipio",
+    field: "Municipio_Nombre",
+    headerAlign: "center",
+    align: "center",
+    flex: 1,
+    sortable: true,
+  },
+  {
+    headerName: "Parroquía",
+    field: "Parroquia_Nombre",
+    headerAlign: "center",
+    align: "center",
+    flex: 1,
+    sortable: true,
   },
 ];

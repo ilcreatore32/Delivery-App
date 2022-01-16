@@ -18,22 +18,29 @@ import AppTabs from "../../components/AppTabs/AppTabs";
 import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
+import { FilterContext } from "../../context/FilterContext";
+import { UserContext } from "../../context/UserContextT";
 
 function Usuarios() {
+  const { view_type, token } = useContext(UserContext);
+  const { userFilter, setUserFilter } = useContext(FilterContext);
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(false);
   const FilterMenuContext = useContext(filterMenuContext);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (params) => {
     await setLoading(true);
-    const response = await GetUsers();
+    const response = await GetUsers(params); 
     await setUsers(response);
     await setLoading(false);
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (!view_type || !token ) return;
+    if (view_type !== "A") return;
+    setUsers([]);
+    fetchUsers(userFilter);
+  }, [view_type, token, userFilter]);
 
   return (
     <>

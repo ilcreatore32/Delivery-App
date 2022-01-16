@@ -15,7 +15,7 @@ export const getVehicles = async (req, res) => {
       min_weight='', // 10.00
       max_weight='', // 50.00
       plate='', // ABC123
-      person_id='', // 20000000
+      person_id=req.user.id || '', // 20000000
       person_name='', // John
       person_lastname='', // Doe
     } = req.query;
@@ -180,7 +180,10 @@ export const getVehicles = async (req, res) => {
       /* Get all data */
       await pool.query(queryVehicles, function (error, results) {
         /* if error in the query */
-        if (error) return res.status(400).json({error: "Error al consultar en la base de datos"})
+        if (error) {
+          console.log(error);
+          return res.status(400).json({error: "Error al consultar en la base de datos"})
+        }
         /* if there is no data */
         if (results.length === 0 || results[0].Vehiculo_Id === null) return res.status(404).json({error: "No posee vehiculos"})
         /* send results */

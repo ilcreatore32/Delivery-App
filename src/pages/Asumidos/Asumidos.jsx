@@ -17,22 +17,26 @@ import AppTabs from "../../components/AppTabs/AppTabs";
 import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
+import { FilterContext } from "../../context/FilterContext";
+import { UserContext } from "../../context/UserContextT";
 
 function Asumidos() {
+  const { view_type, token } = useContext(UserContext);
+  const { shippmentFilter, setShippmentFilter } = useContext(FilterContext);
   const [shippments, setShippments] = useState(null);
   const [loading, setLoading] = useState(false);
   const FilterMenuContext = useContext(filterMenuContext);
 
-  const fetchShippments = async () => {
+  const fetchShippments = async (shippmentFilter) => {
     await setLoading(true);
-    const response = await GetShippments("carrier_taken");
+    const response = await GetShippments("carrier_taken", shippmentFilter);
     await setShippments(response);
     await setLoading(false);
   };
 
   useEffect(() => {
-    fetchShippments();
-  }, []);
+    fetchShippments(shippmentFilter);
+  }, [view_type, token, shippmentFilter]);
 
   return (
     <>

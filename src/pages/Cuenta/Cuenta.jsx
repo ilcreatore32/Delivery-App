@@ -40,6 +40,8 @@ import Api, { tokerAuth } from "../../config/axiosClient";
 import { GetOneUser } from "../../api/Get";
 import Add from "../Pagos/Add/Add";
 import { OpenEditContext } from "../../context/openEditContext";
+import Delete from "../Pagos/Delete/Delete";
+import { DeleteContext } from "../../context/deleteContext";
 
 function Cuenta() {
   const { id } = useParams();
@@ -52,11 +54,20 @@ function Cuenta() {
   const { view_type, logged_user } = useContext(UserContextT);
   const { setOpenEditPayment, setPaymentToEdit } = useContext(OpenEditContext);
   const [openNewPayment, setOpenNewPayment] = useState(false);
+  const {
+    setPaymentToDelete,
+    setOpenDeletePayment,
+  } = useContext(DeleteContext);
 
   const editFunction = (idEdit) => {
     if (!idEdit) return;
     setOpenEditPayment(true);
     setPaymentToEdit(idEdit);
+  };
+  const deleteFunction = (idEdit) => {
+    if (!idEdit) return;
+    setOpenDeletePayment(true);
+    setPaymentToDelete(idEdit);
   };
 
   const fetchUser = async (idUser) => {
@@ -243,7 +254,7 @@ function Cuenta() {
               )}
             </TableContainer>
           </Box>
-          <Box sx={{ margin: ".5rem 0" }}>
+          {!id && (<Box sx={{ margin: ".5rem 0" }}>
             <Typography align="center" variant="h4" component="h2">
               Pagos de Mensualidad
             </Typography>
@@ -308,7 +319,8 @@ function Cuenta() {
                         <TableCell>
                           {((p.PS_Status !== "R" && p.PS_Status !== "A") ||
                             view_type === "A") && (
-                            <IconButton size="large">
+                            <IconButton size="large"
+                            onClick={() => deleteFunction(p?.PS_Id)}>
                               <DeleteTwoToneIcon color="error" />
                             </IconButton>
                           )}
@@ -319,12 +331,13 @@ function Cuenta() {
                 </Table>
               )}
             </TableContainer>
-          </Box>
+          </Box>)}
           <Add
             openAccount={openNewPayment}
             setOpenAccount={setOpenNewPayment}
             redirect={"/Cuenta"}
           />
+          <Delete redirect={"/Cuenta"}/>
           <Box
             sx={{
               display: "flex",

@@ -20,15 +20,24 @@ export const getUsers = async (req, res) => {
     suscription_type, // Example: "1"
     suscription_status, // Example: "S"
   } = req.query;
-  /* build the query */
+  /* SELECT Persona_Nombre, Persona_Apellido, Persona_Id, Usuario_Correo, Suscripcion_Id, 
+  Suscripcion_Status, TS_Id, TS_Nombre
+  FROM personas
+  RIGHT JOIN usuarios ON Persona_Id = Usuario_Id
+  LEFT JOIN (SELECT Suscripcion_Id, Suscripcion_Status,Suscripcion_TSId, Suscripcion_PersonaId FROM suscripcion 
+    GROUP BY Suscripcion_PersonaId ORDER BY Suscripcion_Id DESC) SP ON SP.Suscripcion_PersonaId = Persona_Id 
+    LEFT JOIN tipo_suscripcion ON Suscripcion_TSId = TS_Id
+    WHERE 1=1  */
+    /* build the query */
   let queryUsers = `
-        SELECT Persona_Nombre, Persona_Apellido, Persona_Id, Usuario_Correo, Suscripcion_Id, 
-        Suscripcion_Status, TS_Id, TS_Nombre
-        FROM personas
-            RIGHT JOIN usuarios ON Persona_Id = Usuario_Id
-            LEFT JOIN suscripcion ON Persona_Id = Suscripcion_PersonaId
-            LEFT JOIN tipo_suscripcion ON Suscripcion_TSId = TS_Id
-        WHERE 1=1
+  SELECT Persona_Nombre, Persona_Apellido, Persona_Id, Usuario_Correo, Suscripcion_Id, 
+  Suscripcion_Status, TS_Id, TS_Nombre
+  FROM personas
+  RIGHT JOIN usuarios ON Persona_Id = Usuario_Id
+  LEFT JOIN (SELECT Suscripcion_Id, Suscripcion_Status,Suscripcion_TSId, Suscripcion_PersonaId FROM suscripcion 
+    ORDER BY Suscripcion_Id DESC LIMIT 1) SP ON SP.Suscripcion_PersonaId = Persona_Id 
+    LEFT JOIN tipo_suscripcion ON Suscripcion_TSId = TS_Id
+    WHERE 1=1 
         ${person_id ? `AND Persona_Id = ${person_id}` : ""}
           ${
             person_name

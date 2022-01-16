@@ -18,11 +18,16 @@ import AppTabs from "../../components/AppTabs/AppTabs";
 import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
+import { UserContext } from "../../context/UserContextT";
+import { FilterContext } from "../../context/FilterContext";
+import Delete from "./Delete/Delete";
 
 function Servicios({ admin }) {
-  const [services, setServices] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { view_type, token } = useContext(UserContext);
   const FilterMenuContext = useContext(filterMenuContext);
+  const { serviceFilter, setServiceFilter } = useContext(FilterContext);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchService = async () => {
     await setLoading(true);
@@ -31,10 +36,40 @@ function Servicios({ admin }) {
     await setLoading(false);
   };
 
+  const fetchServices = async (view, params) => {
+    if (view ==="T" || view ==="C" || view ==="A") return
+    await setLoading(true);
+    const response = await GetServices(view, params); 
+    await setServices(response);
+    await setLoading(false);
+  };
   useEffect(() => {
-    fetchService();
-  }, []);
-
+    if (!view_type || !token ) return;
+    setServices([])
+    if (serviceFilter) {
+      switch (view_type) { 
+        case "A":
+          fetchServices("admin", serviceFilter);
+          break;
+        case "T":
+          fetchServices("carrier", serviceFilter);
+          break;
+        default:
+          break;
+      }} else {
+        switch (view_type) {
+          case "A":
+            fetchServices("admin");
+            break;
+          case "T":
+            fetchServices("carrier");
+            break;
+          default:
+            break;
+        }
+      }
+  }, [view_type, token, serviceFilter]);
+  
   return (
     <>
       <AppTabs />
@@ -73,6 +108,7 @@ function Servicios({ admin }) {
                 Data={services}
               >
                 <Add />
+                <Delete />
               </RightSideComponent>
             )}
           </Grid>

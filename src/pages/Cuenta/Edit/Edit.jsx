@@ -50,6 +50,7 @@ import Spinner from "../../../components/Spinner/Spinner";
 import addDate from "date-fns/add";
 import format from "date-fns/format";
 import { PutUser } from "../../../api/Put";
+import AppTabs from "../../../components/AppTabs/AppTabs";
 
 const CustomStack = (props) => {
   return (
@@ -369,6 +370,7 @@ function Edit() {
 
   return (
     <>
+      <AppTabs />
       <Grid className="account-page">
         <Grid align="center">
           <Box sx={{ margin: ".5rem 0" }}>

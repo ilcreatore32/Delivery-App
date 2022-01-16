@@ -40,13 +40,14 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 /* Components */
 import Spinner from "../../../components/Spinner/Spinner";
-import { AreasColumns } from "../../../models/DataTableColums";
+import { AreasColumns, AreasDisabled } from "../../../models/DataTableColums";
 import { DataGrid } from "@mui/x-data-grid";
 import { DeleteContext } from "../../../context/deleteContext";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { PostServicio } from "../../../api/Post";
 import { OpenEditContext } from "../../../context/openEditContext";
 import { PutServicio } from "../../../api/Put";
+import { DeleteOneServicio } from "../../../api/Delete";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -65,14 +66,15 @@ const CustomStack = (props) => {
   );
 };
 
-function Add() {
-  const { removeAreaService, setRemoveAreaService } = useContext(DeleteContext);
-  const {
-    serviceToEdit,
-    openEditService,
-    setServiceToEdit,
-    setOpenEditService,
-  } = useContext(OpenEditContext);
+function Delete() {
+  const { 
+    removeAreaService, 
+    setRemoveAreaService,
+    serviceToDelete,
+    openDeleteService,
+    setServiceToDelete,
+    setOpenDeleteService
+  } = useContext(DeleteContext);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -145,7 +147,7 @@ function Add() {
 
   const getVehicles = () => {
     if (!service.ST_MTId || service.ST_MT === 1) return;
-    if (serviceToEdit && openEditService && service.ST_PersonaId) {
+    if (serviceToDelete && openDeleteService && service.ST_PersonaId) {
       setLoadingVehicles(true);
       console.log(service.ST_PersonaId);
       GetVehiclesOption(service.ST_MTId, service.ST_PersonaId).then((res) => {
@@ -225,8 +227,8 @@ function Add() {
 
   const handleClose = () => {
     setOpen(false);
-    setOpenEditService(false);
-    setServiceToEdit("");
+    setOpenDeleteService(false);
+    setServiceToDelete("");
     setService({});
     setFederalEntities([]);
     setMunicipalities([]);
@@ -303,152 +305,47 @@ function Add() {
     });
   };
 
-  const handleSubmitService = (e) => {
+  const handleDeleteService = (e) => {
     e.preventDefault();
-    if (areas.length === 0) {
-      setErrorMessage("Debe ingresar al menos un area de operaciones");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!service["ST_Horarioini"]) {
-      setErrorMessage("Debe ingresar un horario de comienzo");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!service["ST_Horariofin"]) {
-      setErrorMessage("Debe ingresar un horario de finalizacion");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!service["ST_Status"]) {
-      setErrorMessage("Debe ingresar un estado del envío");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!service["ST_MTId"]) {
-      setErrorMessage("Debe ingresar un tipo de medio de transporte");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!service["ST_VehiculoId"] && service["ST_MTId"] !== 1) {
-      setErrorMessage("Debe ingresar un vehiculo");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!service["ST_Precio"]) {
-      setErrorMessage("Debe ingresar un precio");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    if (!service["ST_Descripcion"]) {
-      setErrorMessage("Debe ingresar una descripción");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 1500);
-      setSending(false);
-      return;
-    }
-    let areasList = [];
-
-    areas.forEach((Area) => {
-      areasList.push([Area.EF_Id, Area.Municipio_Id, Area.Parroquia_Id]);
-    });
-
-    setService({
-      ...service,
-      areasList,
-    });
-
     setSending(true);
   };
 
   useEffect(() => {
-    if (!sending) return;
-    let { areasList } = service;
-    if (areasList.length === 0) {
-      setSending(false);
-      return;
-    }
-    let serviceDetails = { ...service };
-    if (openEditService && serviceToEdit) {
+    if (!sending || !serviceToDelete || !openDeleteService) return;
+    if (openDeleteService && serviceToDelete) {
       (async function () {
         try {
-          const response = await PutServicio(serviceToEdit, serviceDetails);
+          const response = await DeleteOneServicio(serviceToDelete);
+          console.debug(response);
           if (response.status === 200) {
-            setSuccessMessage("Servicio editado correctamente");
+            setSuccessMessage("Servicio eliminado correctamente");
+            setSending(false);
             setTimeout(() => {
               setSuccessMessage("");
               window.location.href = "/Servicios";
             }, 2000);
-            setSending(false);
           } else {
-            setErrorMessage("Error al editar el servicio");
+            setErrorMessage(
+              "Error al eliminar el Servicio"
+            );
+            setSending(false);
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
-            setSending(false);
           }
         } catch (e) {
           if (e) {
             setErrorMessage("Hubo un error al enviar los datos");
+            setSending(false);
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
-            setSending(false);
           }
         }
       })();
-    } else {
-      (async function () {
-        try {
-          const response = await PostServicio(serviceDetails);
-          if (response.status === 200) {
-            setSuccessMessage("Servicio creado correctamente");
-            setTimeout(() => {
-              setSuccessMessage("");
-              window.location.href = "/Servicios";
-            }, 2000);
-            setSending(false);
-          } else {
-            setErrorMessage("Error al crear el servicio");
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 2000);
-            setSending(false);
-          }
-        } catch (e) {
-          if (e) {
-            setErrorMessage("Hubo un error al enviar los datos");
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 2000);
-            setSending(false);
-          }
-        }
-      })();
-    }
-  }, [service, sending]);
+    } 
+    setSending(false);
+  }, [serviceToDelete,sending, openDeleteService]);
 
   useEffect(() => {
     if (removeAreaService && removeAreaService.EF_Id) {
@@ -467,10 +364,10 @@ function Add() {
   }, [removeAreaService]);
 
   useEffect(async () => {
-    if (!serviceToEdit || !openEditService) return;
+    if (!serviceToDelete || !openDeleteService) return;
     try {
       setLoading(true);
-      let serviceDetails = await (() => GetOneServiceToEdit(serviceToEdit))();
+      let serviceDetails = await (() => GetOneServiceToEdit(serviceToDelete))();
       await setService(() => serviceDetails);
       await getConveyanceTypes();
       await setAreas(serviceDetails.areasList);
@@ -482,21 +379,21 @@ function Add() {
       setErrorMessage("Hubo un error al obtener los datos del envío");
       setTimeout(() => {
         setErrorMessage("");
-        setOpenEditService(false);
+        setOpenDeleteService(false);
         setLoading(false);
       }, 3000);
     }
-  }, [serviceToEdit, openEditService]);
+  }, [serviceToDelete, openDeleteService]);
 
   useEffect(() => {
-    if (serviceToEdit && open) {
+    if (serviceToDelete && open) {
       setService({});
       setAreas([]);
     }
-  }, [serviceToEdit, open]);
+  }, [serviceToDelete, open]);
 
   useEffect(() => {
-    if (!service?.ST_PersonaId || !service?.ST_MTId) return;
+    if (!service.ST_PersonaId || !service.ST_MTId) return;
     if (service.ST_MTId === 1 && service.ST_VehiculoId) {
       let serviceCheck = { ...service };
       delete serviceCheck.ST_VehiculoId;
@@ -509,11 +406,8 @@ function Add() {
 
   return (
     <>
-      <IconButton onClick={handleClickOpen}>
-        <AddCircleTwoToneIcon color="primary" />
-      </IconButton>
       <Dialog
-        open={open || openEditService}
+        open={openDeleteService}
         TransitionComponent={Transition}
         keepMounted
         maxWidth="md"
@@ -532,9 +426,7 @@ function Add() {
           </Alert>
         </Collapse>
         <DialogTitle>
-          {openEditService && serviceToEdit
-            ? "Edición del Servicio"
-            : "Creación de Servicio"}
+          {openDeleteService && serviceToDelete && "¿Deseas eliminar el siguiente Servicio?"}
         </DialogTitle>
         {loading ? (
           <Box
@@ -565,7 +457,7 @@ function Add() {
                   component="h2"
                   sx={{ flexGrow: 1 }}
                 >
-                  Por favor, ingrese los datos del Servicio.
+                  Datos del servicio a eliminar
                 </Typography>
               </DialogContentText>
               <Grid>
@@ -583,6 +475,10 @@ function Add() {
                     }
                     onChange={handleServiceChange}
                     variant="filled"
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                     SelectProps={{
                       onOpen: getConveyanceTypes,
                     }}
@@ -613,6 +509,10 @@ function Add() {
                     value={service && service.ST_VehiculoId}
                     onChange={handleServiceChange}
                     variant="filled"
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                     SelectProps={{
                       onOpen: getVehicles,
                     }}
@@ -653,6 +553,10 @@ function Add() {
                     onChange={handleServiceChange}
                     variant="filled"
                     sx={{ display: "flex", flex: 0.4 }}
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                   >
                     {[
                       { value: "D", name: "Disponible" },
@@ -677,6 +581,10 @@ function Add() {
                     variant="filled"
                     color="primary"
                     sx={{ display: "flex", flex: 0.4 }}
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                   />
                   <TextField
                     id="ST_Horariofin"
@@ -691,6 +599,10 @@ function Add() {
                     variant="filled"
                     color="primary"
                     sx={{ display: "flex", flex: 0.4 }}
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                   />
                   <TextField
                     id="ST_Precio"
@@ -712,6 +624,10 @@ function Add() {
                     variant="filled"
                     color="primary"
                     sx={{ display: "flex", flex: 1 }}
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                   />
                 </CustomStack>
                 <CustomStack>
@@ -725,122 +641,17 @@ function Add() {
                     rows={4}
                     fullWidth
                     variant="filled"
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                   />
-                </CustomStack>
-                <CustomStack>
-                  <TextField
-                    id="EF_Id"
-                    name="EF_Id"
-                    select
-                    label="Entidad Federal"
-                    value={area.EF_Id || ""}
-                    onChange={(e) => handleAreaChange(e, "EF_Id")}
-                    variant="filled"
-                    SelectProps={{
-                      onOpen: getFederalEntities,
-                    }}
-                    fullWidth
-                  >
-                    {federalEntities ? (
-                      federalEntities.map((federalEntity) => (
-                        <MenuItem
-                          key={federalEntity.EF_Id}
-                          value={federalEntity.EF_Id}
-                        >
-                          {federalEntity.EF_Nombre}
-                        </MenuItem>
-                      ))
-                    ) : loadingFederalEntities ? (
-                      <MenuItem>
-                        <Spinner loading={loadingFederalEntities} />
-                      </MenuItem>
-                    ) : (
-                      <MenuItem value={0}>Hubo un error</MenuItem>
-                    )}
-                  </TextField>
-                  <TextField
-                    id="Municipio_Id"
-                    name="Municipio_Id"
-                    select
-                    label="Municipio"
-                    value={area.Municipio_Id || ""}
-                    onChange={(e) => handleAreaChange(e, "Municipio_Id")}
-                    variant="filled"
-                    SelectProps={{
-                      onOpen: () => getMunicipities(area.EF_Id),
-                    }}
-                    fullWidth
-                    {...(area.EF_Id
-                      ? {
-                          disabled: false,
-                        }
-                      : { disabled: true })}
-                  >
-                    {municipalities ? (
-                      municipalities.map((municipality) => (
-                        <MenuItem
-                          key={municipality.Municipio_Id}
-                          value={municipality.Municipio_Id}
-                        >
-                          {municipality.Municipio_Nombre}
-                        </MenuItem>
-                      ))
-                    ) : loadingMunicipalities ? (
-                      <MenuItem>
-                        <Spinner loading={loadingMunicipalities} />
-                      </MenuItem>
-                    ) : (
-                      <MenuItem value={0}>Hubo un error</MenuItem>
-                    )}
-                  </TextField>
-                  <TextField
-                    id="Parroquia_Id"
-                    name="Parroquia_Id"
-                    select
-                    label="Parroquia"
-                    value={area.Parroquia_Id || ""}
-                    onChange={(e) => handleAreaChange(e, "Parroquia_Id")}
-                    variant="filled"
-                    SelectProps={{
-                      onOpen: () => getParishes(area.Municipio_Id),
-                    }}
-                    fullWidth
-                    {...(area.Municipio_Id
-                      ? {
-                          disabled: false,
-                        }
-                      : { disabled: true })}
-                  >
-                    {parishes ? (
-                      parishes.map((parish) => (
-                        <MenuItem
-                          key={parish.Parroquia_Id}
-                          value={parish.Parroquia_Id}
-                        >
-                          {parish.Parroquia_Nombre}
-                        </MenuItem>
-                      ))
-                    ) : loadingParishes ? (
-                      <MenuItem>
-                        <Spinner loading={loadingParishes} />
-                      </MenuItem>
-                    ) : (
-                      <MenuItem value={0}>Hubo un error</MenuItem>
-                    )}
-                  </TextField>
-                  <IconButton>
-                    <AddCircleTwoToneIcon
-                      size="large"
-                      onClick={handleAddArea}
-                      color="primary"
-                    />
-                  </IconButton>
                 </CustomStack>
                 <CustomStack>
                   <Box sx={{ display: "flex", flex: 1, height: 600 }}>
                     <DataGrid
                       rows={areas && areas}
-                      columns={AreasColumns && AreasColumns}
+                      columns={AreasDisabled && AreasDisabled}
                       pageSize={10}
                       rowsPerPageOptions={[10]}
                       autoWidth
@@ -867,9 +678,9 @@ function Add() {
               <LoadingButton
                 loading={sending}
                 variant="outlined"
-                onClick={handleSubmitService}
+                onClick={handleDeleteService}
               >
-                Guardar
+                Confirmar
               </LoadingButton>
             </Box>
           </>
@@ -879,4 +690,4 @@ function Add() {
   );
 }
 
-export default Add;
+export default Delete;

@@ -38,8 +38,12 @@ import RightSideComponent from "../../components/RightSideComponent/RightSideCom
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
 
 import TestCardImage from "../../assets/images/test-card-image.jpg";
+import { FilterContext } from "../../context/FilterContext";
+import { UserContext } from "../../context/UserContextT";
 
 function Vehiculos({ admin }) {
+  const { view_type, token } = useContext(UserContext);
+  const { vehicleFilter, setVehicleFilter } = useContext(FilterContext);
   const [vehicles, setVehicles] = useState(null);
   const [loading, setLoading] = useState(false);
   const FilterMenuContext = useContext(filterMenuContext);
@@ -53,16 +57,40 @@ function Vehiculos({ admin }) {
     }
   };
 
-  const fetchVehicles = async () => {
+  const fetchVehicles = async (view, params) => {
+    if (view ==="T" || view ==="C" || view ==="A") return
     await setLoading(true);
-    const response = await GetVehicles();
+    const response = await GetVehicles(view, params); 
     await setVehicles(response);
     await setLoading(false);
   };
 
   useEffect(() => {
-    fetchVehicles();
-  }, []);
+    if (!view_type || !token ) return;
+    setVehicles([])
+    if (vehicleFilter) {
+      switch (view_type) { 
+        case "A":
+          fetchVehicles("admin", vehicleFilter);
+          break;
+        case "T":
+          fetchVehicles("carrier", vehicleFilter);
+          break;
+        default:
+          break;
+      }} else {
+        switch (view_type) {
+          case "A":
+            fetchVehicles("admin");
+            break;
+          case "T":
+            fetchVehicles("carrier");
+            break;
+          default:
+            break;
+        }
+      }
+  }, [view_type, token, vehicleFilter]);
 
   return (
     <>

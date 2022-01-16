@@ -18,8 +18,26 @@ export const getServices = async (req, res) => {
       person_name='', // E.g. 'Jesus'
       person_lastname='', // E.g. 'Rivas'
     } = req.query;
-    let queryServices = "";
+    try {
+      if (federal_entity) {
+        federal_entity = await pool.query('SELECT EF_Nombre FROM entidadesfederales WHERE EF_Id = ?', [federal_entity]);
+        federal_entity = federal_entity[0].EF_Nombre;
+      }
+      if (municipality) {
+        municipality = await pool.query('SELECT Municipio_Nombre FROM municipios WHERE Municipio_Id = ?', [municipality]);
+        municipality = municipality[0].Municipio_Nombre;
+      }
+      if (parish) {
+        parish = await pool.query('SELECT Parroquia_Nombre FROM parroquias WHERE Parroquia_Id = ?', [parish]);
+        parish = parish[0].Parroquia_Nombre;
+      }
+    } catch (err) {
+      /* error in the server */
+      console.log(err);
+      res.status(500).send('Error en el servidor') 
+    }
     
+    let queryServices = "";
     /* Depending of the view option, the query will be different */
     
     switch (view_option) {
@@ -57,7 +75,7 @@ export const getServices = async (req, res) => {
                     ON AO_ParroquiaId = Parroquia_Id) AS areasoperaciones
             ON ST_Id = AO_STId
           
-          WHERE ST_Status <> 'E'
+          WHERE 1=1
           ${
             min_value 
             ? max_value 
@@ -346,7 +364,7 @@ export const editService = async function (req, res) {
   LEFT JOIN vehiculos
     ON Vehiculo_Id = ST_VehiculoId
 
-  WHERE ST_Id = ${id} AND ST_Status <> 'E'
+  WHERE ST_Id = ${id} 
   `;
   /* Query to get all service's areas */
   let query_areas = `
