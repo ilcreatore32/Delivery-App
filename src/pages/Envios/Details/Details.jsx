@@ -140,6 +140,18 @@ function Details() {
   const [changingStatusOffer, setChangingStatusOffer] = useState(false);
 
   const handleOffer = () => {
+    if (!logged_user) {
+      setErrorMessage("No se pudo obtener información del usuario")
+      return;
+    }
+    if (logged_user?.Usuario_Status !== "A") {
+      setErrorMessage("El usuario no esta activo")
+      return;
+    }
+    if (logged_user?.Suscripcion_Status !== "S") {
+      setErrorMessage("El usuario no tiene suscripcion activa")
+      return;
+    }
     setOffer(true);
   };
 

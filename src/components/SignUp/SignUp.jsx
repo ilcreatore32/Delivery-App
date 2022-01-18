@@ -429,7 +429,7 @@ function SignUp() {
                 justifyContent: "space-between",
               }}
             >
-              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose}>Cancelar</Button>
               <LoadingButton loading={sending} type="submit">
                 Guardar
               </LoadingButton>

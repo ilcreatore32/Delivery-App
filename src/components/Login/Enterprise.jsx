@@ -209,7 +209,7 @@ function Login({ shop }) {
                       }}
                     >
                       <Button color="error" onClick={handleClose}>
-                        Cancel
+                        Cancelar
                       </Button>
                       <Button color="success" type="submit">
                         Acceder

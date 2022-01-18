@@ -381,6 +381,20 @@ export const UsuariosColumns = [
     align: "center",
     width: 130,
     sortable: true,
+    renderCell: (thisRow) => {
+      switch (thisRow.row.Suscripcion_Status) {
+        case "S":
+          return "Solvente";
+        case "P":
+          return "Pendiente de pago";
+        case "V":
+          return "Vencida";
+        case "C":
+          return "Cancelada";
+        default:
+          break;
+      }
+    },
   },
   {
     headerName: "Estatus Cuenta",
@@ -389,6 +403,18 @@ export const UsuariosColumns = [
     align: "center",
     width: 130,
     sortable: true,
+    renderCell: (thisRow) => {
+      switch (thisRow.row.Usuario_Status) {
+        case "A":
+          return "Activa";
+        case "P":
+          return "Pendiente de Activación";
+        case "S":
+          return "Suspendida";
+        default:
+          break;
+      }
+    },
   },
   {
     field: "actions",

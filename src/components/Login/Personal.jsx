@@ -233,7 +233,7 @@ function Login({ shop }) {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClose}>Cancelar</Button>
                     <Button type="submit">Acceder</Button>
                   </Box>
                 </Grid>

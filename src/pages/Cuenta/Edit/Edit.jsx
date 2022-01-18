@@ -859,7 +859,7 @@ function Edit() {
                     component={Link}
                     to={query.get("adminView") ? "/Usuarios" : "/Cuenta"}
                   >
-                    Cancel
+                    Cancelar
                   </Button>
                   <Button variant="outlined" onClick={handleSubmitUser}>
                     Guardar
