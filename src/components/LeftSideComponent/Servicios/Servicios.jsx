@@ -24,14 +24,6 @@ import { GetConveyances, GetUbication } from "../../../api/Get";
 import Spinner from "../../Spinner/Spinner";
 
 function Servicios({ admin }) {
-  /* view_option, // E.g. 'admin', 'carrier'.
-      min_value='', // E.g. '0'.
-      max_value='', // E.g. '30'
-      conveyance='', // E.g. '1' (type of transport)
-      availability='', // E.g. 'D'
-      person_id='', // E.g. '28044244'
-      person_name='', // E.g. 'Jesus'
-      person_lastname='', // E.g. 'Rivas' */
   const { serviceFilter, setServiceFilter } = useContext(FilterContext);
 
   const [federalEntities, setFederalEntities] = useState([]);

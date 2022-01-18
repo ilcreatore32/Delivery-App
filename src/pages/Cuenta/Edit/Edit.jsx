@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 
 /* React-Router */
 import { Link, useLocation, useParams } from "react-router-dom";
@@ -49,6 +49,7 @@ import addDate from "date-fns/add";
 import format from "date-fns/format";
 import { PutUser } from "../../../api/Put";
 import AppTabs from "../../../components/AppTabs/AppTabs";
+import { UserContext } from "../../../context/UserContextT";
 
 const CustomStack = (props) => {
   return (
@@ -99,10 +100,24 @@ function useQuery() {
 
   return useMemo(() => new URLSearchParams(search), [search]);
 }
-
+const statusOptions = [
+  {
+    value: "P",
+    label: "Pendiente de Comprobación",
+  },
+  {
+    value: "A",
+    label: "Activa",
+  },
+  {
+    value: "S",
+    label: "Suspendido",
+  },
+];
 function Edit() {
   const { id } = useParams();
   const query = useQuery();
+  const { view_type } = useContext(UserContext);
   const [open, setOpen] = useState(false);
   const [add, setAdd] = useState(false);
 
@@ -405,453 +420,451 @@ function Edit() {
                     {successMessage}
                   </Alert>
                 </Snackbar>
-                <Paper
-                  variant="outlined"
+                <Typography variant="h4" component="h1">
+                  Editar Cuenta
+                </Typography>
+                <Box component="form" sx={{ margin: "1rem 0" }}>
+                  <TableContainer
+                    component={Paper}
+                    variant="outlined"
+                    sx={{ margin: "2rem 0" }}
+                  >
+                    <Table>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell component="th">Cédula</TableCell>
+                          <TableCell>
+                            <TextField
+                              id="Persona_TipoId"
+                              name="Persona_TipoId"
+                              select
+                              label="Tipo"
+                              value={user && user.Persona_TipoId}
+                              onChange={handleUserChange}
+                              variant="filled"
+                              sx={{ marginRight: 1 }}
+                            >
+                              {["V", "E", "J"].map((tipo) => (
+                                <MenuItem key={tipo} value={tipo}>
+                                  {tipo}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                            <TextField
+                              label="Editar Cédula"
+                              variant="filled"
+                              type="text"
+                              name="Persona_Id"
+                              value={user.Persona_Id || ""}
+                              onChange={handleUserChange}
+                            />
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell component="th">Nombres</TableCell>
+                          <TableCell>
+                            <TextField
+                              label="Editar Nombre"
+                              variant="filled"
+                              type="text"
+                              name="Persona_Nombre"
+                              value={user.Persona_Nombre || ""}
+                              onChange={handleUserChange}
+                            />
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell component="th">Apellidos</TableCell>
+                          <TableCell>
+                            <TextField
+                              label="Editar Apellido"
+                              variant="filled"
+                              type="text"
+                              name="Persona_Apellido"
+                              value={user.Persona_Apellido || ""}
+                              onChange={handleUserChange}
+                            />
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell component="th">
+                            Correo Electronico
+                          </TableCell>
+                          <TableCell>
+                            <TextField
+                              label="Editar Correo"
+                              variant="filled"
+                              type="email"
+                              name="Usuario_Correo"
+                              value={user.Usuario_Correo || ""}
+                            />
+                          </TableCell>
+                        </TableRow>
+                        {view_type === "A" && (
+                          <TableRow>
+                            <TableCell>Estatus de la cuenta</TableCell>
+                            <TableCell>
+                              <TextField
+                                id="Usuario_Status"
+                                name="Usuario_Status"
+                                select
+                                label="Tipo"
+                                value={user && user.Usuario_Status}
+                                onChange={handleUserChange}
+                                variant="filled"
+                                sx={{ marginRight: 1 }}
+                              >
+                                {statusOptions.map(({ value, label }) => (
+                                  <MenuItem key={value} value={value}>
+                                    {label}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                        <TableRow>
+                          <TableCell component="th">
+                            Comprobante Documento de Identidad
+                          </TableCell>
+                          <TableCell>
+                            {user["Persona_Archivo"] && (
+                              <CardMedia
+                                component="img"
+                                height="140"
+                                width="140"
+                                {...(user["Persona_Archivo"].name
+                                  ? {
+                                      image: URL.createObjectURL(
+                                        user["Persona_Archivo"]
+                                      ),
+                                    }
+                                  : {
+                                      src: `data:image/jpeg;base64,${user.Persona_Archivo}`,
+                                    })}
+                                title="material"
+                              />
+                            )}
+                            <label htmlFor="icon-button-file">
+                              <Input
+                                id="icon-button-file"
+                                type="file"
+                                sx={{ display: "none" }}
+                                onChange={onFileChange}
+                                inputProps={{
+                                  accept: "image/*",
+                                }}
+                              />
+                              <IconButton
+                                color="primary"
+                                aria-label="upload picture"
+                                component="span"
+                              >
+                                <UploadFileTwoToneIcon size="large" />
+                              </IconButton>
+                            </label>
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell component="th">
+                            Información de contacto
+                          </TableCell>
+                          <TableCell>
+                            {add ? (
+                              <TableRow>
+                                <TableCell
+                                  sx={{ display: "flex", gap: "1rem" }}
+                                >
+                                  <CustomStack>
+                                    <TextField
+                                      select
+                                      label="Tipo de contacto"
+                                      value={contact_type && contact_type}
+                                      onChange={handleContactTypeChange}
+                                      variant="filled"
+                                      sx={{ minWidth: 170 }}
+                                    >
+                                      {[
+                                        { letter: "C", name: "Correo" },
+                                        { letter: "T", name: "Teléfono" },
+                                      ].map((tipo) => (
+                                        <MenuItem
+                                          key={tipo.letter}
+                                          value={tipo.letter}
+                                        >
+                                          {tipo.name}
+                                        </MenuItem>
+                                      ))}
+                                    </TextField>
+                                    {contact_type === "C" && (
+                                      <TextField
+                                        label="Correo Electrónico"
+                                        variant="filled"
+                                        type="email"
+                                        onChange={handleContactValueChange}
+                                        {...(contact_value &&
+                                          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+                                            contact_value
+                                          ) && {
+                                            error: true,
+                                            helperText:
+                                              "Correo electrónico inválido",
+                                          })}
+                                        fullWidth
+                                      />
+                                    )}
+                                    {contact_type === "T" && (
+                                      <TextField
+                                        label="Número de teléfono"
+                                        margin="normal"
+                                        variant="filled"
+                                        InputProps={{
+                                          inputComponent: TextMaskCustom,
+                                          onChange: handleContactValueChange,
+                                        }}
+                                        {...((contact_value &&
+                                          !areaCodes.includes(
+                                            parseInt(
+                                              contact_value.split(/[()]/)[1],
+                                              10
+                                            )
+                                          ) && {
+                                            error: true,
+                                            helperText:
+                                              "Código de área inválido",
+                                          }) ||
+                                          (contact_value &&
+                                            contact_value.includes("_") && {
+                                              error: true,
+                                              helperText:
+                                                "Número de teléfono inválido",
+                                            }))}
+                                      />
+                                    )}
+                                    <IconButton>
+                                      <AddCircleTwoToneIcon
+                                        size="large"
+                                        onClick={handleAddContact}
+                                        color="primary"
+                                      />
+                                    </IconButton>
+                                  </CustomStack>
+                                </TableCell>
+                              </TableRow>
+                            ) : null}
+                            <Collapse in={open} timeout="auto" unmountOnExit>
+                              <Table size="small" aria-label="purchases">
+                                <TableBody>
+                                  {contacts &&
+                                    contacts.map((c, i) => {
+                                      return (
+                                        <TableRow>
+                                          <TableCell>
+                                            <Chip
+                                              label={`${c.Contacto_Info}`}
+                                              key={`${i}`}
+                                              deleteIcon={<DeleteTwoToneIcon />}
+                                              variant="outlined"
+                                              onDelete={() =>
+                                                handleDeleteContact(i)
+                                              }
+                                            />
+                                          </TableCell>
+                                        </TableRow>
+                                      );
+                                    })}
+                                </TableBody>
+                              </Table>
+                            </Collapse>
+                            <IconButton
+                              size="small"
+                              onClick={() => setOpen(!open)}
+                            >
+                              {open ? (
+                                <KeyboardArrowUpIcon />
+                              ) : (
+                                <KeyboardArrowDownIcon />
+                              )}
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              onClick={() => setAdd(!add)}
+                            >
+                              {add ? (
+                                <CloseTwoToneIcon />
+                              ) : (
+                                <AddCircleTwoToneIcon />
+                              )}
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <Box sx={{ maxWidth: 400 }}>
+                    {loadingSuscription ? (
+                      <Box
+                        sx={{
+                          width: "auto",
+                          height: "auto",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Spinner loading={loadingSuscription} />
+                      </Box>
+                    ) : (
+                      <>
+                        <Typography
+                          variant="subtitle1"
+                          component="h2"
+                          align="center"
+                          gutterBottom
+                        >
+                          Suscripción
+                        </Typography>
+                        <TableContainer>
+                          {updateSuscriptionMessage && (
+                            <Alert severity={severity}>
+                              {updateSuscriptionMessage}
+                            </Alert>
+                          )}
+                          {user?.TS_Nombre && (
+                            <TableRow>
+                              <TableCell component="th">
+                                Tipo de Suscripción:
+                              </TableCell>
+                              <TableCell>{user.TS_Nombre}</TableCell>
+                            </TableRow>
+                          )}
+                          {user?.Suscripcion_Monto && (
+                            <TableRow>
+                              <TableCell component="th">Monto:</TableCell>
+                              <TableCell>{user.Suscripcion_Monto}</TableCell>
+                            </TableRow>
+                          )}
+                          {user?.Suscripcion_FechaI && (
+                            <TableRow>
+                              <TableCell component="th">
+                                Fecha de inicio:
+                              </TableCell>
+                              <TableCell>
+                                {user.Suscripcion_FechaI.split("T")[0]}
+                              </TableCell>
+                            </TableRow>
+                          )}
+                          {user?.Suscripcion_FechaV && (
+                            <TableRow>
+                              <TableCell component="th">
+                                Fecha de vencimiento:
+                              </TableCell>
+                              <TableCell>
+                                {user.Suscripcion_FechaV.split("T")[0]}
+                              </TableCell>
+                            </TableRow>
+                          )}
+                          {user?.Suscripcion_Status && (
+                            <TableRow>
+                              <TableCell component="th">Estatus:</TableCell>
+                              <TableCell>
+                                {user.Suscripcion_Status &&
+                                  (() => {
+                                    switch (user.Suscripcion_Status) {
+                                      case "S":
+                                        return "Solvente";
+                                      case "C":
+                                        return "Cancelada";
+                                      case "P":
+                                        return "Pago pendiente";
+                                      case "V":
+                                        return "Vencida";
+                                      default:
+                                        return "";
+                                    }
+                                  })()}
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableContainer>
+                        <Box
+                          mt={2}
+                          sx={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <Button
+                            sx={{ marginRight: 1 }}
+                            variant="outlined"
+                            onClick={renewSuscription}
+                          >
+                            Renovar Suscripción
+                          </Button>
+                          <Button
+                            sx={{ marginLeft: 1 }}
+                            variant="outlined"
+                            onClick={() =>
+                              setopenSuscriptionTypeList(
+                                !openSuscriptionTypeList
+                              )
+                            }
+                          >
+                            Cambiar Suscripción
+                          </Button>
+                        </Box>
+                        {openSuscriptionTypeList && (
+                          <CustomStack>
+                            <FormControl sx={{ m: 1, width: 300 }}>
+                              <TextField
+                                variant="filled"
+                                select
+                                id="suscriptionSelect"
+                                value={selectedTSId}
+                                label="Suscripción"
+                                onChange={handleSuscriptionChange}
+                                fullWidth
+                              >
+                                {suscriptionTypesList[0] ? (
+                                  suscriptionTypesList.map((s, i) => (
+                                    <MenuItem key={`${i}`} value={s.TS_Id}>
+                                      {`${s.TS_Nombre} - ${s.TS_Monto}`}
+                                    </MenuItem>
+                                  ))
+                                ) : (
+                                  <MenuItem>
+                                    No se pudieron obtener las suscripciones
+                                  </MenuItem>
+                                )}
+                              </TextField>
+                            </FormControl>
+                            <IconButton>
+                              <AddCircleTwoToneIcon
+                                size="large"
+                                onClick={() => setChangePlan(true)}
+                                color="primary"
+                              />
+                            </IconButton>
+                          </CustomStack>
+                        )}
+                      </>
+                    )}
+                  </Box>
+                </Box>
+                <Box
                   sx={{
                     margin: "1rem 3rem",
                     padding: "1rem",
                   }}
                 >
-                  <Typography variant="h4" component="h1">
-                    Editar Cuenta
-                  </Typography>
-                  <Box component="form" sx={{ margin: "1rem 0" }}>
-                    <TableContainer
-                      component={Paper}
-                      variant="outlined"
-                      sx={{ margin: "2rem 0" }}
-                    >
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell component="th">Cédula</TableCell>
-                            <TableCell>
-                              <TextField
-                                id="Persona_TipoId"
-                                name="Persona_TipoId"
-                                select
-                                label="Tipo"
-                                value={user && user.Persona_TipoId}
-                                onChange={handleUserChange}
-                                variant="filled"
-                                sx={{ marginRight: 1 }}
-                              >
-                                {["V", "E", "J"].map((tipo) => (
-                                  <MenuItem key={tipo} value={tipo}>
-                                    {tipo}
-                                  </MenuItem>
-                                ))}
-                              </TextField>
-                              <TextField
-                                label="Editar Cédula"
-                                variant="filled"
-                                type="text"
-                                name="Persona_Id"
-                                value={user.Persona_Id || ""}
-                                onChange={handleUserChange}
-                              />
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell component="th">Nombres</TableCell>
-                            <TableCell>
-                              <TextField
-                                label="Editar Nombre"
-                                variant="filled"
-                                type="text"
-                                name="Persona_Nombre"
-                                value={user.Persona_Nombre || ""}
-                                onChange={handleUserChange}
-                              />
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell component="th">Apellidos</TableCell>
-                            <TableCell>
-                              <TextField
-                                label="Editar Apellido"
-                                variant="filled"
-                                type="text"
-                                name="Persona_Apellido"
-                                value={user.Persona_Apellido || ""}
-                                onChange={handleUserChange}
-                              />
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell component="th">
-                              Correo Electronico
-                            </TableCell>
-                            <TableCell>
-                              <TextField
-                                label="Editar Correo"
-                                variant="filled"
-                                type="email"
-                                name="Usuario_Correo"
-                                value={user.Usuario_Correo || ""}
-                              />
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell component="th">
-                              Comprobante Documento de Identidad
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                gap: ".5rem",
-                              }}
-                            >
-                              {user["Persona_Archivo"] && (
-                                <CardMedia
-                                  component="img"
-                                  height="140"
-                                  width="140"
-                                  {...(user["Persona_Archivo"].name
-                                    ? {
-                                        image: URL.createObjectURL(
-                                          user["Persona_Archivo"]
-                                        ),
-                                      }
-                                    : {
-                                        src: `data:image/jpeg;base64,${user.Persona_Archivo}`,
-                                      })}
-                                  title="material"
-                                />
-                              )}
-                              <label htmlFor="icon-button-file">
-                                <Input
-                                  id="icon-button-file"
-                                  type="file"
-                                  sx={{ display: "none" }}
-                                  onChange={onFileChange}
-                                  inputProps={{
-                                    accept: "image/*",
-                                  }}
-                                />
-                                <IconButton
-                                  color="primary"
-                                  aria-label="upload picture"
-                                  component="span"
-                                >
-                                  <UploadFileTwoToneIcon size="large" />
-                                </IconButton>
-                              </label>
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell component="th">
-                              Información de contacto
-                            </TableCell>
-                            <TableCell sx={{ textAlign: "center" }}>
-                              {add ? (
-                                <TableRow>
-                                  <TableCell
-                                    sx={{ display: "flex", gap: "1rem" }}
-                                  >
-                                    <CustomStack>
-                                      <TextField
-                                        select
-                                        label="Tipo de contacto"
-                                        value={contact_type && contact_type}
-                                        onChange={handleContactTypeChange}
-                                        variant="filled"
-                                        sx={{ minWidth: 170 }}
-                                      >
-                                        {[
-                                          { letter: "C", name: "Correo" },
-                                          { letter: "T", name: "Teléfono" },
-                                        ].map((tipo) => (
-                                          <MenuItem
-                                            key={tipo.letter}
-                                            value={tipo.letter}
-                                          >
-                                            {tipo.name}
-                                          </MenuItem>
-                                        ))}
-                                      </TextField>
-                                      {contact_type === "C" && (
-                                        <TextField
-                                          label="Correo Electrónico"
-                                          variant="filled"
-                                          type="email"
-                                          onChange={handleContactValueChange}
-                                          {...(contact_value &&
-                                            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-                                              contact_value
-                                            ) && {
-                                              error: true,
-                                              helperText:
-                                                "Correo electrónico inválido",
-                                            })}
-                                          fullWidth
-                                        />
-                                      )}
-                                      {contact_type === "T" && (
-                                        <TextField
-                                          label="Número de teléfono"
-                                          margin="normal"
-                                          variant="filled"
-                                          InputProps={{
-                                            inputComponent: TextMaskCustom,
-                                            onChange: handleContactValueChange,
-                                          }}
-                                          {...((contact_value &&
-                                            !areaCodes.includes(
-                                              parseInt(
-                                                contact_value.split(/[()]/)[1],
-                                                10
-                                              )
-                                            ) && {
-                                              error: true,
-                                              helperText:
-                                                "Código de área inválido",
-                                            }) ||
-                                            (contact_value &&
-                                              contact_value.includes("_") && {
-                                                error: true,
-                                                helperText:
-                                                  "Número de teléfono inválido",
-                                              }))}
-                                        />
-                                      )}
-                                      <IconButton>
-                                        <AddCircleTwoToneIcon
-                                          size="large"
-                                          onClick={handleAddContact}
-                                          color="primary"
-                                        />
-                                      </IconButton>
-                                    </CustomStack>
-                                  </TableCell>
-                                </TableRow>
-                              ) : null}
-                              <Collapse in={open} timeout="auto" unmountOnExit>
-                                <Table size="small" aria-label="purchases">
-                                  <TableBody>
-                                    {contacts &&
-                                      contacts.map((c, i) => {
-                                        return (
-                                          <TableRow>
-                                            <TableCell>
-                                              <Chip
-                                                label={`${c.Contacto_Info}`}
-                                                key={`${i}`}
-                                                deleteIcon={
-                                                  <DeleteTwoToneIcon />
-                                                }
-                                                variant="outlined"
-                                                onDelete={() =>
-                                                  handleDeleteContact(i)
-                                                }
-                                              />
-                                            </TableCell>
-                                          </TableRow>
-                                        );
-                                      })}
-                                  </TableBody>
-                                </Table>
-                              </Collapse>
-                              <IconButton
-                                size="small"
-                                onClick={() => setOpen(!open)}
-                              >
-                                {open ? (
-                                  <KeyboardArrowUpIcon />
-                                ) : (
-                                  <KeyboardArrowDownIcon />
-                                )}
-                              </IconButton>
-                              <IconButton
-                                size="small"
-                                onClick={() => setAdd(!add)}
-                              >
-                                {add ? (
-                                  <CloseTwoToneIcon />
-                                ) : (
-                                  <AddCircleTwoToneIcon />
-                                )}
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                    <Box sx={{ maxWidth: 400 }}>
-                      {loadingSuscription ? (
-                        <Box
-                          sx={{
-                            width: "auto",
-                            height: "auto",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Spinner loading={loadingSuscription} />
-                        </Box>
-                      ) : (
-                        <>
-                          <Paper variant="outlined">
-                            <Typography
-                              variant="subtitle1"
-                              component="h2"
-                              align="center"
-                              gutterBottom
-                            >
-                              Suscripción
-                            </Typography>
-                            <TableContainer
-                              component={Paper}
-                              variant="outlined"
-                            >
-                              {updateSuscriptionMessage && (
-                                <Alert severity={severity}>
-                                  {updateSuscriptionMessage}
-                                </Alert>
-                              )}
-                              {user?.TS_Nombre && (
-                                <TableRow>
-                                  <TableCell component="th">
-                                    Tipo de Suscripción:
-                                  </TableCell>
-                                  <TableCell>{user.TS_Nombre}</TableCell>
-                                </TableRow>
-                              )}
-                              {user?.Suscripcion_Monto && (
-                                <TableRow>
-                                  <TableCell component="th">Monto:</TableCell>
-                                  <TableCell>
-                                    {user.Suscripcion_Monto}
-                                  </TableCell>
-                                </TableRow>
-                              )}
-                              {user?.Suscripcion_FechaI && (
-                                <TableRow>
-                                  <TableCell component="th">
-                                    Fecha de inicio:
-                                  </TableCell>
-                                  <TableCell>
-                                    {user.Suscripcion_FechaI.split("T")[0]}
-                                  </TableCell>
-                                </TableRow>
-                              )}
-                              {user?.Suscripcion_FechaV && (
-                                <TableRow>
-                                  <TableCell component="th">
-                                    Fecha de vencimiento:
-                                  </TableCell>
-                                  <TableCell>
-                                    {user.Suscripcion_FechaV.split("T")[0]}
-                                  </TableCell>
-                                </TableRow>
-                              )}
-                              {user?.Suscripcion_Status && (
-                                <TableRow>
-                                  <TableCell component="th">Estatus:</TableCell>
-                                  <TableCell>
-                                    {user.Suscripcion_Status &&
-                                      (() => {
-                                        switch (user.Suscripcion_Status) {
-                                          case "S":
-                                            return "Solvente";
-                                          case "C":
-                                            return "Cancelada";
-                                          case "P":
-                                            return "Pago pendiente";
-                                          case "V":
-                                            return "Vencida";
-                                          default:
-                                            return "";
-                                        }
-                                      })()}
-                                  </TableCell>
-                                </TableRow>
-                              )}
-                            </TableContainer>
-                            <Box
-                              mt={2}
-                              sx={{ display: "flex", justifyContent: "center" }}
-                            >
-                              <Button
-                                sx={{ marginRight: 1 }}
-                                variant="outlined"
-                                onClick={renewSuscription}
-                              >
-                                Renovar Suscripción
-                              </Button>
-                              <Button
-                                sx={{ marginLeft: 1 }}
-                                variant="outlined"
-                                onClick={() =>
-                                  setopenSuscriptionTypeList(
-                                    !openSuscriptionTypeList
-                                  )
-                                }
-                              >
-                                Cambiar Suscripción
-                              </Button>
-                            </Box>
-                            {openSuscriptionTypeList && (
-                              <CustomStack>
-                                <FormControl sx={{ m: 1, width: 300 }}>
-                                  <TextField
-                                    variant="filled"
-                                    select
-                                    id="suscriptionSelect"
-                                    value={selectedTSId}
-                                    label="Suscripción"
-                                    onChange={handleSuscriptionChange}
-                                    fullWidth
-                                  >
-                                    {suscriptionTypesList[0] ? (
-                                      suscriptionTypesList.map((s, i) => (
-                                        <MenuItem key={`${i}`} value={s.TS_Id}>
-                                          {`${s.TS_Nombre} - ${s.TS_Monto}`}
-                                        </MenuItem>
-                                      ))
-                                    ) : (
-                                      <MenuItem>
-                                        No se pudieron obtener las suscripciones
-                                      </MenuItem>
-                                    )}
-                                  </TextField>
-                                </FormControl>
-                                <IconButton>
-                                  <AddCircleTwoToneIcon
-                                    size="large"
-                                    onClick={() => setChangePlan(true)}
-                                    color="primary"
-                                  />
-                                </IconButton>
-                              </CustomStack>
-                            )}
-                          </Paper>
-                        </>
-                      )}
-                    </Box>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      margin: "1rem 2rem",
-                    }}
+                  <Button
+                    variant="outlined"
+                    component={Link}
+                    to={query.get("adminView") ? "/Usuarios" : "/Cuenta"}
                   >
-                    <Button
-                      variant="outlined"
-                      component={Link}
-                      to={query.get("adminView") ? "/Usuarios" : "/Cuenta"}
-                    >
-                      Cancel
-                    </Button>
-                    <Button variant="outlined" onClick={handleSubmitUser}>
-                      Guardar
-                    </Button>
-                  </Box>
-                </Paper>
+                    Cancel
+                  </Button>
+                  <Button variant="outlined" onClick={handleSubmitUser}>
+                    Guardar
+                  </Button>
+                </Box>
               </>
             )}
           </Box>

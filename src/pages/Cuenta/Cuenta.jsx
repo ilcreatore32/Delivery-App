@@ -146,6 +146,12 @@ function Cuenta() {
                     <TableCell align="center">{user.Usuario_Correo}</TableCell>
                   </TableRow>
                   <TableRow>
+                    <TableCell component="th">Estatus de la cuenta</TableCell>
+                    {user.Usuario_Status ==="P" && (<TableCell align="center">Pendiente de Comprobación</TableCell>)}
+                    {user.Usuario_Status ==="A" && (<TableCell align="center">Activa</TableCell>)}
+                    {user.Usuario_Status ==="S" && (<TableCell align="center">Suspendida</TableCell>)}
+                  </TableRow>
+                  <TableRow>
                     <TableCell component="th">
                       Comprobante Documento de Identidad
                     </TableCell>
