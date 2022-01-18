@@ -9,7 +9,7 @@ import UserProvider from "./context/UserContextT";
 ReactDOM.render(
   <React.StrictMode>
     <UserProvider>
-    <CssBaseline />
+    <CssBaseline enableColorScheme  />
     <App />
     </UserProvider>
   </React.StrictMode>,

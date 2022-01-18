@@ -1,7 +1,3 @@
-import React, { useContext } from "react";
-
-import { OpenEditContext } from "../context/openEditContext";
-
 /* React-Router */
 import { Link } from "react-router-dom";
 
@@ -12,11 +8,14 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+
+/* Components */
 import {
   CustomDeleteArea,
   CustomOptionsButtons,
 } from "./CustomOptionsButtons.jsx";
-import CustomProductsCell from "./CustomProductsCell.jsx";
+import CustomProductsCell from "./CustomProductsCell";
+import CustomAreasCell from "./CustomAreasCell";
 
 /* Envios Columns */
 export const EnviosColumns = [
@@ -143,7 +142,7 @@ export const ServiciosColumns = [
         default:
           break;
       }
-    }
+    },
   },
   {
     headerName: "Áreas de Operaciones",
@@ -152,6 +151,13 @@ export const ServiciosColumns = [
     align: "center",
     width: 220,
     sortable: true,
+    renderCell: (thisRow) => {
+      return (
+        <>
+          <CustomAreasCell thisRow={thisRow} />
+        </>
+      );
+    },
   },
   {
     field: "actions",
@@ -268,7 +274,7 @@ export const PagosColumns = [
         default:
           break;
       }
-    }
+    },
   },
   {
     headerName: "Fecha",
@@ -448,6 +454,7 @@ export const AreasColumns = [
     },
   },
 ];
+
 /* Areas Columns Disabled */
 export const AreasDisabled = [
   {

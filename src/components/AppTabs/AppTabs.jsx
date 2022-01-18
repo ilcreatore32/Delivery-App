@@ -2,7 +2,7 @@ import { useContext } from "react";
 
 /* Context */
 import { appMenuContext } from "../../context/appMenuContext";
-import { userContext } from "../../context/userContext";
+import { UserContext } from "../../context/UserContextT";
 
 /* React-Router */
 import { Link, useRouteMatch } from "react-router-dom";
@@ -17,9 +17,10 @@ import WorkTwoToneIcon from "@mui/icons-material/WorkTwoTone";
 import CommuteIcon from "@mui/icons-material/Commute";
 import GroupTwoToneIcon from "@mui/icons-material/GroupTwoTone";
 import PaymentsTwoToneIcon from "@mui/icons-material/PaymentsTwoTone";
-import { UserContext } from "../../context/UserContextT";
 
 function AppTabs() {
+  const AppMenuContext = useContext(appMenuContext);
+  const { view_type } = useContext(UserContext);
   const routeMatch = useRouteMatch([
     `/Envios`,
     `/Servicios`,
@@ -29,21 +30,17 @@ function AppTabs() {
     `/Usuarios`,
   ]);
   const currentTab = routeMatch?.path;
-  const AppMenuContext = useContext(appMenuContext);
-/*   const UserContext = useContext(userContext);
-  const permissions = UserContext?.user?.Usuario_Permisos; */
-  const { view_type } = useContext(UserContext);
 
   return (
     <>
-      <Collapse in={AppMenuContext.appMenu}>
+      <Collapse in={AppMenuContext.appMenu} sx={{marginBottom: ".7rem"}}>
         <Box
           component={Paper}
           elevation={0}
           square
           sx={{
             flexGrow: 1,
-            marginBottom: ".7rem",
+            marginBottom: "1rem",
             backgroundColor: "theme.palette.primary",
           }}
         >
@@ -70,16 +67,17 @@ function AppTabs() {
                   component={Link}
                 />
               ) : null}
-              
-              { (view_type === "T" || view_type === "A") ? (
-              <Tab
-                label="Servicios"
-                value={`/Servicios`}
-                to={`/Servicios`}
-                icon={<WorkTwoToneIcon />}
-                component={Link}
-              />) : null}
-              {(view_type === "T" || view_type === "A") ? (
+
+              {view_type === "T" || view_type === "A" ? (
+                <Tab
+                  label="Servicios"
+                  value={`/Servicios`}
+                  to={`/Servicios`}
+                  icon={<WorkTwoToneIcon />}
+                  component={Link}
+                />
+              ) : null}
+              {view_type === "T" || view_type === "A" ? (
                 <Tab
                   label="Vehiculos"
                   value={`/Vehiculos`}
@@ -89,13 +87,13 @@ function AppTabs() {
                 />
               ) : null}
               {view_type === "A" ? (
-              <Tab
-                label="Pagos"
-                value={`/Pagos`}
-                to={`/Pagos`}
-                icon={<PaymentsTwoToneIcon />}
-                component={Link}
-              />
+                <Tab
+                  label="Pagos"
+                  value={`/Pagos`}
+                  to={`/Pagos`}
+                  icon={<PaymentsTwoToneIcon />}
+                  component={Link}
+                />
               ) : null}
               {view_type === "A" ? (
                 <Tab

@@ -1,25 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 
 /* React-Router */
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-  Redirect,
-} from "react-router-dom";
-
-/* Hooks */
-import { useLocalStorage } from "./hooks/useLocalStorage";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 /* Context */
-import { authContext } from "./context/authContext";
-import { userContext } from "./context/userContext";
 import { appMenuContext } from "./context/appMenuContext";
 import { filterMenuContext } from "./context/filterMenuContext";
 import OpenEditProvider from "./context/openEditContext";
 import DeleteProvider from "./context/deleteContext";
+import { UserContext as UserContextT } from "./context/UserContextT";
+import FilterProvider from "./context/FilterContext";
 
 /* Routes */
 import Routes from "./routes/Routes";
@@ -40,7 +30,6 @@ import {
   MenuItem,
   Menu,
   Button,
-  Badge,
   Tooltip,
 } from "@mui/material";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
@@ -49,7 +38,6 @@ import DateAdapter from "@mui/lab/AdapterDateFns";
 /* Material Icons */
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import NotificationsIcon from "@mui/icons-material/NotificationsActiveTwoTone";
 import AccountCircle from "@mui/icons-material/AccountCircleTwoTone";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
@@ -64,8 +52,8 @@ import { Light, Dark } from "./themes/theme";
 import "./styles/App.css";
 import "./styles/Responsive.css";
 
-import { UserContext as UserContextT } from "./context/UserContextT";
-import FilterProvider from "./context/FilterContext";
+/* Logo */
+import logo from "./assets/logo.png";
 
 function App() {
   const { token, view_type, setToken, setView_type, setLogged_user } =
@@ -103,176 +91,224 @@ function App() {
                     <Router>
                       <Box sx={{ flexGrow: 1 }}>
                         <AppBar position="static" enableColorOnDark>
-                          <Toolbar>
-                            {token ? (
-                              <>
-                                <IconButton
-                                  edge="start"
-                                  color="primary"
-                                  aria-label="Menu"
-                                  sx={{ mr: 2 }}
-                                  onClick={() => setAppMenu(!appMenu)}
-                                >
-                                  {appMenu ? <CloseIcon /> : <MenuIcon />}
-                                </IconButton>
-                              </>
-                            ) : null}
-                            <Typography
-                              variant="h6"
-                              component="div"
-                              color="text.primary"
-                              sx={{ flexGrow: 1 }}
+                          <Toolbar sx={{ justifyContent: "space-between" }}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                alignContent: "center",
+                              }}
                             >
-                              Delivery App
-                            </Typography>
-                            {token ? (
-                              <>
-                                <Box sx={{ display: "flex", gap: "1rem" }}>
-                                  <Button
-                                    component={Link}
-                                    size="small"
-                                    variant="text"
+                              {token ? (
+                                <>
+                                  <IconButton
+                                    edge="start"
                                     color="primary"
-                                    to="/Envios"
-                                    sx={{ padding: ".2rem" }}
+                                    aria-label="Menu"
+                                    sx={{ mr: 2 }}
+                                    onClick={() => setAppMenu(!appMenu)}
                                   >
-                                    Dashboard
-                                  </Button>
-                                  <Tooltip
-                                    title={`Cambiar a ${
-                                      mode ? "Oscuro" : "Claro"
-                                    }`}
-                                    arrow
-                                  >
-                                    <IconButton
-                                      onClick={handleModeToggle}
-                                      color="inherit"
-                                    >
-                                      {mode ? (
-                                        <Brightness7Icon color="primary" />
-                                      ) : (
-                                        <Brightness4Icon color="primary" />
-                                      )}
-                                    </IconButton>
-                                  </Tooltip>
-                                  <IconButton>
-                                    <Badge
-                                      size="sm"
-                                      color="secondary"
-                                      showZero
-                                      badgeContent={0}
-                                    >
-                                      <NotificationsIcon color="primary" />
-                                    </Badge>
+                                    {appMenu ? <CloseIcon /> : <MenuIcon />}
                                   </IconButton>
-                                </Box>
-                              </>
-                            ) : (
-                              <>
-                                <Box sx={{ display: "flex", gap: ".3rem" }}>
-                                  <Tooltip
-                                    title={`Cambiar a ${
-                                      mode ? "Oscuro" : "Claro"
-                                    }`}
-                                    arrow
-                                  >
-                                    <IconButton
-                                      onClick={handleModeToggle}
-                                      color="inherit"
-                                    >
-                                      {mode ? (
-                                        <Brightness7Icon color="primary" />
-                                      ) : (
-                                        <Brightness4Icon color="primary" />
-                                      )}
-                                    </IconButton>
-                                  </Tooltip>
-                                  <Login />
-                                  <Login shop={true} />
-                                  <SignUp />
-                                </Box>
-                              </>
-                            )}
+                                </>
+                              ) : null}
 
-                            {token && (
-                              <div>
-                                <IconButton
-                                  aria-label="Cuenta"
-                                  aria-controls="menu-appbar"
-                                  aria-haspopup="true"
-                                  onClick={handleMenu}
-                                  color="primary"
-                                >
-                                  <AccountCircle />
-                                </IconButton>
-                                <Menu
-                                  id="menu-appbar"
-                                  anchorEl={anchorEl}
-                                  keepMounted
-                                  open={Boolean(anchorEl)}
-                                  onClose={handleClose}
-                                  transformOrigin={{
-                                    horizontal: "right",
-                                    vertical: "top",
-                                  }}
-                                  anchorOrigin={{
-                                    horizontal: "right",
-                                    vertical: "bottom",
-                                  }}
-                                  MenuListProps={{
-                                    "aria-labelledby": "basic-button",
-                                  }}
-                                  sx={{
-                                    backgroundColor: "rgba(0, 0, 0, 0.20)",
-                                  }}
-                                >
-                                  {view_type === "C" ? (
-                                    <MenuItem
-                                      onClick={() => setView_type("T")}
+                              <IconButton
+                                edge="start"
+                                color="primary"
+                                aria-label="Menu"
+                                sx={{ mr: 2, marginLeft: ".5rem" }}
+                                component={Link}
+                                to="/"
+                              >
+                                <img src={logo} alt="logo" width="30" />
+                              </IconButton>
+                              <Typography
+                                variant="h6"
+                                component="div"
+                                color="text.primary"
+                              >
+                                Delivery App
+                              </Typography>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                alignContent: "center",
+                              }}
+                            >
+                              {token ? (
+                                <>
+                                  <Box sx={{ display: "flex", gap: "1rem" }}>
+                                    <Button
+                                      component={Link}
+                                      size="small"
+                                      variant="text"
                                       color="primary"
+                                      to="/Envios"
+                                      sx={{ padding: ".5rem" }}
                                     >
-                                      Cambiar a Transportista
-                                    </MenuItem>
-                                  ) : null}
-                                  {view_type === "T" ? (
-                                    <MenuItem
-                                      onClick={() => setView_type("C")}
-                                      color="primary"
+                                      Dashboard
+                                    </Button>
+                                    <Tooltip
+                                      title={`Cambiar a ${
+                                        mode ? "Oscuro" : "Claro"
+                                      }`}
+                                      arrow
                                     >
-                                      Cambiar a Cliente
-                                    </MenuItem>
-                                  ) : null}
-                                  {view_type === "A" ? (
-                                    <MenuItem color="primary">
-                                      Usted es Administrador
-                                    </MenuItem>
-                                  ) : null}
-                                  <MenuItem
-                                    component={Link}
-                                    to="/Cuenta"
-                                    onClick={handleClose}
+                                      <IconButton
+                                        onClick={handleModeToggle}
+                                        color="primary"
+                                      >
+                                        {mode ? (
+                                          <Brightness7Icon color="primary" />
+                                        ) : (
+                                          <Brightness4Icon color="primary" />
+                                        )}
+                                      </IconButton>
+                                    </Tooltip>
+                                  </Box>
+                                </>
+                              ) : (
+                                <>
+                                  <Box sx={{ display: "flex", gap: ".3rem" }}>
+                                    <Tooltip
+                                      title={`Cambiar a ${
+                                        mode ? "Oscuro" : "Claro"
+                                      }`}
+                                      arrow
+                                    >
+                                      <IconButton
+                                        onClick={handleModeToggle}
+                                        color="primary"
+                                      >
+                                        {mode ? (
+                                          <Brightness7Icon color="primary" />
+                                        ) : (
+                                          <Brightness4Icon color="primary" />
+                                        )}
+                                      </IconButton>
+                                    </Tooltip>
+                                    <Login />
+                                    <Login shop={true} />
+                                    <SignUp />
+                                  </Box>
+                                </>
+                              )}
+                              {token && (
+                                <div>
+                                  <IconButton
+                                    aria-label="Cuenta"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleMenu}
                                     color="primary"
                                   >
-                                    Su Cuenta
-                                  </MenuItem>
-                                  <MenuItem
-                                    onClick={() => {
-                                      setLogged_user({});
-                                      setToken("");
-                                      setView_type("C");
-                                      handleClose();
+                                    <AccountCircle />
+                                  </IconButton>
+                                  <Menu
+                                    id="menu-appbar"
+                                    anchorEl={anchorEl}
+                                    keepMounted
+                                    open={Boolean(anchorEl)}
+                                    onClose={handleClose}
+                                    PaperProps={{
+                                      elevation: 0,
+                                      sx: {
+                                        overflow: "visible",
+                                        filter:
+                                          "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                                        mt: 1.5,
+                                        "& .MuiAvatar-root": {
+                                          width: 32,
+                                          height: 32,
+                                          ml: -0.5,
+                                          mr: 1,
+                                        },
+                                        "&:before": {
+                                          content: '""',
+                                          display: "block",
+                                          position: "absolute",
+                                          top: 0,
+                                          right: 14,
+                                          width: 10,
+                                          height: 10,
+                                          bgcolor: "background.paper",
+                                          transform:
+                                            "translateY(-50%) rotate(45deg)",
+                                          zIndex: 0,
+                                        },
+                                      },
                                     }}
-                                    color="primary"
+                                    transformOrigin={{
+                                      horizontal: "right",
+                                      vertical: "top",
+                                    }}
+                                    anchorOrigin={{
+                                      horizontal: "right",
+                                      vertical: "bottom",
+                                    }}
                                   >
-                                    Salir
-                                  </MenuItem>
-                                </Menu>
-                              </div>
-                            )}
+                                    {view_type === "C" ? (
+                                      <MenuItem
+                                        onClick={() => setView_type("T")}
+                                        color="primary"
+                                      >
+                                        Cambiar a Transportista
+                                      </MenuItem>
+                                    ) : null}
+                                    {view_type === "T" ? (
+                                      <MenuItem
+                                        onClick={() => setView_type("C")}
+                                        color="primary"
+                                      >
+                                        Cambiar a Cliente
+                                      </MenuItem>
+                                    ) : null}
+                                    {view_type === "A" ? (
+                                      <MenuItem color="primary">
+                                        Usted es Administrador
+                                      </MenuItem>
+                                    ) : null}
+                                    <MenuItem
+                                      component={Link}
+                                      to="/Cuenta"
+                                      onClick={handleClose}
+                                      color="primary"
+                                    >
+                                      Su Cuenta
+                                    </MenuItem>
+                                    <MenuItem
+                                      onClick={() => {
+                                        setLogged_user({});
+                                        setToken("");
+                                        setView_type("C");
+                                        handleClose();
+                                      }}
+                                      color="primary"
+                                    >
+                                      Salir
+                                    </MenuItem>
+                                  </Menu>
+                                </div>
+                              )}
+                            </Box>
                           </Toolbar>
                         </AppBar>
                       </Box>
-                      <Paper square elevation={0}>
+                      <Paper
+                        square
+                        elevation={0}
+                        sx={{
+                          flexGrow: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          paddingBottom: "2rem",
+                        }}
+                      >
                         <Switch>
                           <Routes auth={token} />
                           <Route path="*" component={NoMatch} />

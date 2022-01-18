@@ -24,7 +24,6 @@ import {
 /* Material UI Icons */
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 import UploadFileTwoToneIcon from "@mui/icons-material/UploadFileTwoTone";
-import Api from "../../../config/axiosClient";
 import { PostPago } from "../../../api/Post";
 import Spinner from "../../../components/Spinner/Spinner";
 import { GetOnePayment } from "../../../api/Get";
@@ -52,7 +51,7 @@ const CustomStack = (props) => {
 };
 /* PS_Status
  */
-function Add({AddButton, openAccount, setOpenAccount, redirect}) {
+function Add({ AddButton, openAccount, setOpenAccount, redirect }) {
   const [open, setOpen] = useState(false);
   const {
     paymentToEdit,
@@ -71,7 +70,7 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
   const [successMessage, setSuccessMessage] = useState("");
 
   const onFileChange = (e) => {
-    if (!e.target.files[0]?.size) return
+    if (!e.target.files[0]?.size) return;
     if (e.target.files[0].size / 1024 / 1024 > 16) {
       setErrorMessage("La imagen es demasiado grande");
       setTimeout(() => {
@@ -95,9 +94,9 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
 
   const handleClose = () => {
     setOpen(false);
-    if(setOpenAccount) setOpenAccount(false);
-    setPaymentToEdit("")
-    setOpenEditPayment(false)
+    if (setOpenAccount) setOpenAccount(false);
+    setPaymentToEdit("");
+    setOpenEditPayment(false);
     setPayment({});
   };
 
@@ -139,9 +138,9 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
     setSending(true);
   };
 
-  useEffect(() =>{
-    setOpen(openAccount)
-  }, [openAccount])
+  useEffect(() => {
+    setOpen(openAccount);
+  }, [openAccount]);
 
   useEffect(() => {
     if (!sending) return;
@@ -151,12 +150,16 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
           let form = new FormData();
           Object.keys(payment).forEach((key) => {
             if (key === "PS_ArchivoReferencia" && payment[key]?.name) {
-              form.append("PS_ArchivoReferencia", payment[key], payment[key].name);
+              form.append(
+                "PS_ArchivoReferencia",
+                payment[key],
+                payment[key].name
+              );
             } else {
               form.append(key, payment[key]);
             }
           });
-          const response = await PutPago(paymentToEdit, form,{
+          const response = await PutPago(paymentToEdit, form, {
             "Content-Type": "multipart/form-data",
           });
           if (response.status === 200) {
@@ -176,16 +179,14 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
         } catch (e) {
           console.debug(e);
           if (e) {
-            setErrorMessage(
-              "Hubo un error al enviar los datos"
-            );
+            setErrorMessage("Hubo un error al enviar los datos");
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
             setSending(false);
           }
         }
-      })(); 
+      })();
     } else {
       (async function () {
         try {
@@ -227,9 +228,10 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
       })();
     }
   }, [sending]);
-  
+
   useEffect(() => {
-    if (paymentToEdit || openEditPayment || Object.keys(payment).length > 0) return;
+    if (paymentToEdit || openEditPayment || Object.keys(payment).length > 0)
+      return;
     setPayment({
       ...payment,
       PS_SuscripcionId: logged_user?.Suscripcion_Id,
@@ -250,7 +252,7 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
       setTimeout(() => {
         setErrorMessage("");
         setOpenEditPayment(false);
-        setPaymentToEdit("")
+        setPaymentToEdit("");
         setLoading(false);
       }, 3000);
     }
@@ -258,9 +260,11 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
 
   return (
     <>
-      {AddButton && (<IconButton onClick={handleClickOpen}>
-        <AddCircleTwoToneIcon color="primary" />
-      </IconButton>)}
+      {AddButton && (
+        <IconButton onClick={handleClickOpen}>
+          <AddCircleTwoToneIcon color="primary" />
+        </IconButton>
+      )}
       <Dialog
         open={open || openEditPayment}
         TransitionComponent={Transition}
@@ -376,26 +380,26 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                     fullWidth
                   />
                   {view_type === "A" && (
-                  <TextField
-                    id="PS_Status"
-                    name="PS_Status"
-                    select
-                    label="Estatus"
-                    value={payment.PS_Status || ""}
-                    onChange={handlePaymentChange}
-                    variant="filled"
-                    fullWidth
-                  >
-                    {[
-                      { value: "P", name: "Pendiente" },
-                      { value: "A", name: "Aprobado" },
-                      { value: "R", name: "Rechazado" },
-                    ].map((Option) => (
-                      <MenuItem key={Option.value} value={Option.value}>
-                        {Option.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                    <TextField
+                      id="PS_Status"
+                      name="PS_Status"
+                      select
+                      label="Estatus"
+                      value={payment.PS_Status || ""}
+                      onChange={handlePaymentChange}
+                      variant="filled"
+                      fullWidth
+                    >
+                      {[
+                        { value: "P", name: "Pendiente" },
+                        { value: "A", name: "Aprobado" },
+                        { value: "R", name: "Rechazado" },
+                      ].map((Option) => (
+                        <MenuItem key={Option.value} value={Option.value}>
+                          {Option.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
                   )}
                   <TextField
                     value={payment.PS_SuscripcionId || ""}
@@ -407,17 +411,19 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                 </CustomStack>
                 <CustomStack>
                   {payment["PS_ArchivoReferencia"] && (
-                  <CardMedia
+                    <CardMedia
                       component="img"
                       height="140"
                       width="140"
-                      {...(payment["PS_ArchivoReferencia"].name ? {
-                        image: URL.createObjectURL(payment["PS_ArchivoReferencia"]),
-                        }
-                      : {
-                        src: `data:image/jpeg;base64,${payment.PS_ArchivoReferencia}`
-                      }
-                      )}
+                      {...(payment["PS_ArchivoReferencia"].name
+                        ? {
+                            image: URL.createObjectURL(
+                              payment["PS_ArchivoReferencia"]
+                            ),
+                          }
+                        : {
+                            src: `data:image/jpeg;base64,${payment.PS_ArchivoReferencia}`,
+                          })}
                       title="material"
                     />
                   )}
@@ -428,6 +434,7 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
                   display: "flex",
                   justifyContent: "center",
                   alignContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <Typography variant="h5">
@@ -465,7 +472,11 @@ function Add({AddButton, openAccount, setOpenAccount, redirect}) {
               <Button variant="outlined" onClick={handleClose}>
                 Cancelar
               </Button>
-              <LoadingButton loading={sending} variant="outlined" onClick={handleSubmitPayment}>
+              <LoadingButton
+                loading={sending}
+                variant="outlined"
+                onClick={handleSubmitPayment}
+              >
                 Guardar
               </LoadingButton>
             </Box>

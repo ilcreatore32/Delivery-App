@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 /* Material UI */
 import IconButton from "@mui/material/IconButton";
 
-/* Material UI Icons*/
+/* Material UI Icons */
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";

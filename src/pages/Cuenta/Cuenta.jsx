@@ -1,5 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 
+/* Context */
+import { OpenEditContext } from "../../context/openEditContext";
+import { UserContext as UserContextT } from "../../context/UserContextT";
+import { DeleteContext } from "../../context/deleteContext";
+
+/* Api */
+import { GetOneUser } from "../../api/Get";
+
 /* React-Router */
 import { Link, useParams } from "react-router-dom";
 
@@ -24,7 +32,6 @@ import {
 /* Material UI Icons */
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import FilePresentTwoToneIcon from "@mui/icons-material/FilePresentTwoTone";
 
 /* Material UI Icons*/
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
@@ -32,16 +39,10 @@ import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 
 /* Components */
-import AppTabs from "../../components/AppTabs/AppTabs";
-import { userContext } from "../../context/userContext";
-import { UserContext as UserContextT } from "../../context/UserContextT";
-import axios from "axios";
-import Api, { tokerAuth } from "../../config/axiosClient";
-import { GetOneUser } from "../../api/Get";
 import Add from "../Pagos/Add/Add";
-import { OpenEditContext } from "../../context/openEditContext";
 import Delete from "../Pagos/Delete/Delete";
-import { DeleteContext } from "../../context/deleteContext";
+import Spinner from "../../components/Spinner/Spinner";
+import AppTabs from "../../components/AppTabs/AppTabs";
 
 function Cuenta() {
   const { id } = useParams();
@@ -54,10 +55,8 @@ function Cuenta() {
   const { view_type, logged_user } = useContext(UserContextT);
   const { setOpenEditPayment, setPaymentToEdit } = useContext(OpenEditContext);
   const [openNewPayment, setOpenNewPayment] = useState(false);
-  const {
-    setPaymentToDelete,
-    setOpenDeletePayment,
-  } = useContext(DeleteContext);
+  const { setPaymentToDelete, setOpenDeletePayment } =
+    useContext(DeleteContext);
 
   const editFunction = (idEdit) => {
     if (!idEdit) return;
@@ -99,19 +98,21 @@ function Cuenta() {
     <>
       <AppTabs />
       {loading ? (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="100vh"
+        <Paper
+          variant="outlined"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            margin: ".3rem auto",
+          }}
         >
-          <CircularProgress />
-        </Box>
+          <Spinner loading={loading} />
+        </Paper>
       ) : (
         <Paper
-          elevation={3}
+          variant="outlined"
           sx={{
-            margin: "1rem",
+            margin: "1rem 3rem",
             padding: "1rem",
           }}
         >
@@ -254,90 +255,98 @@ function Cuenta() {
               )}
             </TableContainer>
           </Box>
-          {!id && (<Box sx={{ margin: ".5rem 0" }}>
-            <Typography align="center" variant="h4" component="h2">
-              Pagos de Mensualidad
-            </Typography>
-            <TableContainer
-              component={Paper}
-              variant="outlined"
-              sx={{ margin: "2rem 0" }}
-            >
-              {payments && (
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      {/* PS_Metodo, PS_Fecha, PS_Status */}
-                      <TableCell>#</TableCell>
-                      <TableCell>Metodo</TableCell>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Estado</TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {payments.map((p) => (
+          {!id && (
+            <Box sx={{ margin: ".5rem 0" }}>
+              <Typography align="center" variant="h4" component="h2">
+                Pagos de Mensualidad
+              </Typography>
+              <TableContainer
+                component={Paper}
+                variant="outlined"
+                sx={{ margin: "2rem 0" }}
+              >
+                {payments && (
+                  <Table>
+                    <TableHead>
                       <TableRow>
-                        <TableCell>{p.PS_Id}</TableCell>
-                        {p.PS_Metodo === "T" && (
-                          <TableCell>Transferencia</TableCell>
-                        )}
-                        {p.PS_Metodo === "E" && <TableCell>Efectivo</TableCell>}
-                        {p.PS_Metodo === "P" && (
-                          <TableCell>Pago Móvil</TableCell>
-                        )}
-                        <TableCell>{p.PS_Fecha.split("T")[0]}</TableCell>
-                        {p.PS_Status === "P" && (
-                          <TableCell>Pendiente</TableCell>
-                        )}
-                        {p.PS_Status === "A" && <TableCell>Aprobado</TableCell>}
-                        {p.PS_Status === "R" && (
-                          <TableCell>Rechazado</TableCell>
-                        )}
-                        <TableCell>
-                          <IconButton
-                            size="large"
-                            component={Link}
-                            to={`/Pagos/Detalles/${p.PS_Id}`}
-                          >
-                            <VisibilityTwoToneIcon />
-                          </IconButton>
-                        </TableCell>
-                        <TableCell>
-                          {((p.PS_Status !== "R" && p.PS_Status !== "A") ||
-                            view_type === "A") && (
+                        {/* PS_Metodo, PS_Fecha, PS_Status */}
+                        <TableCell>#</TableCell>
+                        <TableCell>Metodo</TableCell>
+                        <TableCell>Fecha</TableCell>
+                        <TableCell>Estado</TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {payments.map((p) => (
+                        <TableRow>
+                          <TableCell>{p.PS_Id}</TableCell>
+                          {p.PS_Metodo === "T" && (
+                            <TableCell>Transferencia</TableCell>
+                          )}
+                          {p.PS_Metodo === "E" && (
+                            <TableCell>Efectivo</TableCell>
+                          )}
+                          {p.PS_Metodo === "P" && (
+                            <TableCell>Pago Móvil</TableCell>
+                          )}
+                          <TableCell>{p.PS_Fecha.split("T")[0]}</TableCell>
+                          {p.PS_Status === "P" && (
+                            <TableCell>Pendiente</TableCell>
+                          )}
+                          {p.PS_Status === "A" && (
+                            <TableCell>Aprobado</TableCell>
+                          )}
+                          {p.PS_Status === "R" && (
+                            <TableCell>Rechazado</TableCell>
+                          )}
+                          <TableCell>
                             <IconButton
                               size="large"
-                              onClick={() => editFunction(p?.PS_Id)}
+                              component={Link}
+                              to={`/Pagos/Detalles/${p.PS_Id}`}
                             >
-                              <EditTwoToneIcon color="info" />
+                              <VisibilityTwoToneIcon />
                             </IconButton>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {((p.PS_Status !== "R" && p.PS_Status !== "A") ||
-                            view_type === "A") && (
-                            <IconButton size="large"
-                            onClick={() => deleteFunction(p?.PS_Id)}>
-                              <DeleteTwoToneIcon color="error" />
-                            </IconButton>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </TableContainer>
-          </Box>)}
+                          </TableCell>
+                          <TableCell>
+                            {((p.PS_Status !== "R" && p.PS_Status !== "A") ||
+                              view_type === "A") && (
+                              <IconButton
+                                size="large"
+                                onClick={() => editFunction(p?.PS_Id)}
+                              >
+                                <EditTwoToneIcon color="info" />
+                              </IconButton>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {((p.PS_Status !== "R" && p.PS_Status !== "A") ||
+                              view_type === "A") && (
+                              <IconButton
+                                size="large"
+                                onClick={() => deleteFunction(p?.PS_Id)}
+                              >
+                                <DeleteTwoToneIcon color="error" />
+                              </IconButton>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </TableContainer>
+            </Box>
+          )}
           <Add
             openAccount={openNewPayment}
             setOpenAccount={setOpenNewPayment}
             redirect={"/Cuenta"}
           />
-          <Delete redirect={"/Cuenta"}/>
+          <Delete redirect={"/Cuenta"} />
           <Box
             sx={{
               display: "flex",
@@ -348,7 +357,11 @@ function Cuenta() {
             <Button
               component={Link}
               variant="outlined"
-              to={ id ? `/Usuarios/Editar/${logged_user?.Usuario_Id}?adminView=true` :`/Cuenta/Editar/${logged_user?.Usuario_Id}`}
+              to={
+                id
+                  ? `/Usuarios/Editar/${logged_user?.Usuario_Id}?adminView=true`
+                  : `/Cuenta/Editar/${logged_user?.Usuario_Id}`
+              }
             >
               Editar Cuenta
             </Button>

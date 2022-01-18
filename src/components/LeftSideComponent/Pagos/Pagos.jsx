@@ -1,9 +1,7 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 
-/* Font-Awesome */
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
-import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
+/* Context */
+import { FilterContext } from "../../../context/FilterContext";
 
 /* Material UI */
 import {
@@ -23,7 +21,6 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
 /* React-Bootstrap */
 import Form from "react-bootstrap/Form";
-import { FilterContext } from "../../../context/FilterContext";
 
 function Pagos() {
   const { paymentFilter, setPaymentFilter } = useContext(FilterContext);
@@ -78,7 +75,7 @@ function Pagos() {
                 value={paymentFilter?.method || ""}
                 onChange={handleChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
               >
                 {paymentMethods.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -89,10 +86,11 @@ function Pagos() {
             </Box>
           </Paper>
           {/* 
-      view_option, // E.g 'admin', 'carrier'
-      person_id='', // E.g '123456789'
-      person_name='', // E.g 'John'
-      person_lastname='', // E.g 'Doe' */}
+            view_option, // E.g 'admin', 'carrier'
+            person_id='', // E.g '123456789'
+            person_name='', // E.g 'John'
+            person_lastname='', // E.g 'Doe' 
+          */}
           <Divider variant="middle" />
           <Paper variant="outlined" sx={{ padding: "1rem" }}>
             <Typography variant="h6" component="span">
@@ -111,7 +109,7 @@ function Pagos() {
                 label="Mínima"
                 type="date"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -131,7 +129,7 @@ function Pagos() {
                 label="Máxima"
                 type="date"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -175,7 +173,7 @@ function Pagos() {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={(paymentFilter && paymentFilter.min_amount) || ""}
               />
@@ -195,7 +193,7 @@ function Pagos() {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={(paymentFilter && paymentFilter.max_amount) || ""}
               />
@@ -248,7 +246,7 @@ function Pagos() {
                 name="reference"
                 label="Referencia"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={(paymentFilter && paymentFilter.reference) || ""}
                 {...(paymentFilter &&
@@ -278,7 +276,7 @@ function Pagos() {
                 name="person_name"
                 label="Nombres"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={(paymentFilter && paymentFilter.person_name) || ""}
                 {...(paymentFilter &&
@@ -293,7 +291,7 @@ function Pagos() {
                 name="person_lastname"
                 label="Apellidos"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={(paymentFilter && paymentFilter.person_lastname) || ""}
                 {...(paymentFilter &&
@@ -308,7 +306,7 @@ function Pagos() {
                 name="person_id"
                 label="Cedula"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 type="number"
                 value={(paymentFilter && paymentFilter.person_id) || ""}
                 onChange={handleChange}

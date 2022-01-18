@@ -14,18 +14,19 @@ import { EnviosColumns } from "../../../models/DataTableColums.jsx";
 
 /* Components */
 import Add from "../Add/Add";
+import Delete from "../Delete/Delete";
 import Spinner from "../../../components/Spinner/Spinner";
 import AppTabs from "../../../components/AppTabs/AppTabs";
 import RightSideComponent from "../../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../../components/LeftSideComponent/LeftSideComponent";
+
 /* Context */
 import { FilterContext } from "../../../context/FilterContext";
 import { UserContext } from "../../../context/UserContextT";
-import Delete from "../Delete/Delete";
 
-function EnviosTransportista(permissions) {
+function EnviosTransportista() {
   const { view_type, token } = useContext(UserContext);
-  const { shippmentFilter, setShippmentFilter } = useContext(FilterContext);
+  const { shippmentFilter } = useContext(FilterContext);
   const [shippments, setShippments] = useState(null);
   const [loading, setLoading] = useState(false);
   const FilterMenuContext = useContext(filterMenuContext);
@@ -74,7 +75,7 @@ function EnviosTransportista(permissions) {
   return (
     <>
       <AppTabs />
-      <Typography align="center" variant="h4" component="h2">
+      <Typography align="center" variant="h4" component="h2" sx={{marginTop:".5rem"}}>
         Descubrir Envíos
       </Typography>
       <div className="dashboard">

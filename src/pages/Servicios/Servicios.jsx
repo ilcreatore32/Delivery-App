@@ -2,6 +2,8 @@ import { useState, useEffect, useContext } from "react";
 
 /* Context */
 import { filterMenuContext } from "../../context/filterMenuContext";
+import { UserContext } from "../../context/UserContextT";
+import { FilterContext } from "../../context/FilterContext";
 
 /* Material UI */
 import { Typography, Grid, Paper } from "@mui/material";
@@ -14,27 +16,18 @@ import { ServiciosColumns } from "../../models/DataTableColums.jsx";
 
 /* Components */
 import Add from "./Add/Add";
+import Delete from "./Delete/Delete";
 import AppTabs from "../../components/AppTabs/AppTabs";
 import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
-import { UserContext } from "../../context/UserContextT";
-import { FilterContext } from "../../context/FilterContext";
-import Delete from "./Delete/Delete";
 
 function Servicios({ admin }) {
   const { view_type, token } = useContext(UserContext);
   const FilterMenuContext = useContext(filterMenuContext);
-  const { serviceFilter, setServiceFilter } = useContext(FilterContext);
+  const { serviceFilter } = useContext(FilterContext);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const fetchService = async () => {
-    await setLoading(true);
-    const response = await GetServices();
-    await setServices(response);
-    await setLoading(false);
-  };
 
   const fetchServices = async (view, params) => {
     if (view ==="T" || view ==="C" || view ==="A") return

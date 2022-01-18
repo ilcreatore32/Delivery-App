@@ -35,7 +35,14 @@ function RightSideComponent({ rowId, Columns, Data, children }) {
 
   return (
     <>
-      <Paper variant="outlined" sx={{ display: "flex", justifyContent: "space-between",margin: ".3rem auto" }}>
+      <Paper
+        variant="outlined"
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          margin: ".3rem auto",
+        }}
+      >
         <IconButton
           onClick={() =>
             FilterMenuContext.setFilterMenu(!FilterMenuContext.filterMenu)
@@ -49,7 +56,13 @@ function RightSideComponent({ rowId, Columns, Data, children }) {
         </IconButton>
         {children}
       </Paper>
-      <div style={{ display: "flex", height: "80vh" }}>
+      <Paper
+      variant="outlined"
+        sx={{
+          display: "flex",
+          height: "80vh",
+        }}
+      >
         <div style={{ height: "100%", flexGrow: 1 }}>
           <DataGrid
             rows={Data ? Data : rows}
@@ -58,19 +71,9 @@ function RightSideComponent({ rowId, Columns, Data, children }) {
             rowsPerPageOptions={[10]}
             autoWidth
             getRowId={(row) => getRowId(row, rowId)}
-
-            /* filterModel={{
-              items: [
-                {
-                  columnField: "SE_Id",
-                  operatorValue: "contains",
-                  value: "11",
-                },
-              ],
-            }} */
           />
         </div>
-      </div>
+      </Paper>
     </>
   );
 }

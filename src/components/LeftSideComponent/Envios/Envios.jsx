@@ -145,7 +145,7 @@ function Envios({ asumidos, admin }) {
                 }
                 onChange={handleFederalEntityChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 SelectProps={{
                   onOpen: getFederalEntities,
                 }}
@@ -176,7 +176,7 @@ function Envios({ asumidos, admin }) {
                 value={(shippmentFilter && shippmentFilter.municipality) || ""}
                 onChange={handleMunicipalityChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 SelectProps={{
                   onOpen: () =>
                     getMunicipities(shippmentFilter?.federal_entity),
@@ -213,7 +213,7 @@ function Envios({ asumidos, admin }) {
                 value={(shippmentFilter && shippmentFilter.parish) || ""}
                 onChange={handleChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 SelectProps={{
                   onOpen: () => getParishes(shippmentFilter?.municipality),
                 }}
@@ -261,7 +261,7 @@ function Envios({ asumidos, admin }) {
                 label="Mínima"
                 type="date"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -281,7 +281,7 @@ function Envios({ asumidos, admin }) {
                 label="Máxima"
                 type="date"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -325,7 +325,7 @@ function Envios({ asumidos, admin }) {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={shippmentFilter?.min_value}
               />
@@ -345,7 +345,7 @@ function Envios({ asumidos, admin }) {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={shippmentFilter?.max_value}
               />
@@ -379,7 +379,7 @@ function Envios({ asumidos, admin }) {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={shippmentFilter?.min_weight}
               />
@@ -399,7 +399,7 @@ function Envios({ asumidos, admin }) {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={shippmentFilter?.max_weight}
               />
@@ -424,7 +424,7 @@ function Envios({ asumidos, admin }) {
                   onChange={handleChange}
                   helperText="Selecciona el Estado"
                   variant="filled"
-                  color="secondary"
+                  color="primary"
                 >
                   {options &&
                     options.map(({ value, label }) => (
@@ -455,7 +455,7 @@ function Envios({ asumidos, admin }) {
                   onChange={handleChange}
                   helperText="Selecciona el Estado"
                   variant="filled"
-                  color="secondary"
+                  color="primary"
                 >
                   {options &&
                     options.map(({ value, label }) => (
@@ -482,7 +482,7 @@ function Envios({ asumidos, admin }) {
                     name="person_name"
                     label="Nombres"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     onChange={handleChange}
                     value={
                       (shippmentFilter && shippmentFilter.person_name) || ""
@@ -499,7 +499,7 @@ function Envios({ asumidos, admin }) {
                     name="person_lastname"
                     label="Apellidos"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     onChange={handleChange}
                     value={
                       (shippmentFilter && shippmentFilter.person_lastname) || ""
@@ -516,7 +516,7 @@ function Envios({ asumidos, admin }) {
                     name="person_id"
                     label="Cedula"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     type="number"
                     value={(shippmentFilter && shippmentFilter.person_id) || ""}
                     onChange={handleChange}

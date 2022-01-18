@@ -1,7 +1,6 @@
 import { useState, useContext, useEffect, useCallback } from "react";
 
 /* Context */
-/* import { authContext } from "../../context/authContext"; */
 import { UserContext } from "../../context/UserContextT";
 import { appMenuContext } from "../../context/appMenuContext";
 
@@ -27,11 +26,8 @@ import AppTabs from "../../components/AppTabs/AppTabs";
 import "./Home.css";
 
 function Home() {
-  /* const AuthContext = useContext(authContext); */
   const AppMenuContext = useContext(appMenuContext);
-  const {
-    token,
-  } = useContext(UserContext);
+  const { token } = useContext(UserContext);
 
   const welcome = useCallback(() => {
     let auth = token;
@@ -55,13 +51,14 @@ function Home() {
         .catch((error) => {
           console.log(error);
         });
-      await setUsers([user]);
-      await console.log(user);
+      await users.push(user);
+      await console.log(users);
+      await setUsers(users);
     });
   };
 
   useEffect(() => {
-    fetchUsers(["ilcreatore32"]);
+    fetchUsers(["ilcreatore32", "DeltaFrost25"]);
   }, []);
 
   return (

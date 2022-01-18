@@ -62,7 +62,6 @@ import { authContext } from "../../../context/authContext";
 import { UserContext } from "../../../context/UserContextT";
 import { format, parse } from "date-fns";
 import { PutEnvioStatus, PutOfertaStatus } from "../../../api/Put";
-import { faWindowRestore } from "@fortawesome/free-solid-svg-icons";
 import { AsociarServicio } from "../../../api/Post";
 import { DeleteAsociatedService } from "../../../api/Delete";
 
@@ -152,13 +151,6 @@ function Details() {
     setSelectedOffer(e.target.value);
   };
 
-  /*
-  const [TransportistaAccepted, setTransportistaAccepted] = useState(true);
-
-  const handleChange = (event) => {
-    setTransportistaAccepted(event.target.checked);
-  };
-  */
   const updateShippmentStatus = async (id, status) => {
     if (!id || !status) return;
     setLoadingStatus(true);
@@ -411,7 +403,7 @@ function Details() {
             </Alert>
           </Snackbar>
           <Stack
-            direction={{ xs: "column", sm: "row" }}
+            direction={{ xs: "column", sm: "column", md: "row" }}
             spacing={{ xs: 1, sm: 2, md: 2 }}
             sx={{
               margin: "1rem",
@@ -431,7 +423,7 @@ function Details() {
                     <TableRow>
                       <TableCell component="th">Fecha del Pedido</TableCell>
                       <TableCell align="center">
-                        {shippmentDetails.SE_Fecha}
+                        {shippmentDetails.SE_Fecha?.split("T")[0]}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -563,7 +555,7 @@ function Details() {
                       Servicios de Transporte Ofertados{" "}
                       <IconButton onClick={handleOffer}>
                         <BookmarkAddTwoToneIcon
-                          color="secondary"
+                          color="primary"
                           size="small"
                         />
                       </IconButton>
@@ -640,13 +632,13 @@ function Details() {
                                 <Button
                                   onClick={handleCloseOffer}
                                   variant="outlined"
-                                  color="secondary"
+                                  color="primary"
                                 >
                                   Cancelar
                                 </Button>
                                 <Button
                                   variant="outlined"
-                                  color="secondary"
+                                  color="primary"
                                   onClick={sendOffer}
                                 >
                                   Ofrecer Servicio
@@ -728,7 +720,7 @@ function Details() {
                             >
                               <ListItemButton role={undefined}>
                                 <ListItemIcon>
-                                  <BookmarkAddedTwoToneIcon color="secondary" />
+                                  <BookmarkAddedTwoToneIcon color="primary" />
                                 </ListItemIcon>
                                 <ListItemText
                                   primary={`${
@@ -756,7 +748,7 @@ function Details() {
                           >
                             <ListItemButton role={undefined}>
                               <ListItemIcon>
-                                <BookmarkAddedTwoToneIcon color="secondary" />
+                                <BookmarkAddedTwoToneIcon color="primary" />
                               </ListItemIcon>
                               <ListItemText
                                 primary={`${
@@ -855,8 +847,8 @@ function Details() {
                               disablePadding
                             >
                               <ListItemButton role={undefined}>
-                                <ListItemIcon>
-                                  <BookmarkAddedTwoToneIcon color="secondary" />
+                                <ListItemIcon color="primary">
+                                  <BookmarkAddedTwoToneIcon color="primary" />
                                 </ListItemIcon>
                                 <ListItemText
                                   primary={`${

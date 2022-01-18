@@ -58,7 +58,6 @@ function Add() {
   const [open, setOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [redirect, setRedirect] = useState(false);
 
   const [vehicle, setVehicle] = useState({});
 

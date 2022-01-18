@@ -23,7 +23,7 @@ import { UserContext } from "../../context/UserContextT";
 
 function Usuarios() {
   const { view_type, token } = useContext(UserContext);
-  const { userFilter, setUserFilter } = useContext(FilterContext);
+  const { userFilter } = useContext(FilterContext);
   const [users, setUsers] = useState(null);
   const [loading, setLoading] = useState(false);
   const FilterMenuContext = useContext(filterMenuContext);

@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 /* Formik */
 import { useFormik } from "formik";
 import * as yup from "yup";
-
-/* API */
 
 /* Material UI */
 import {
@@ -26,8 +24,6 @@ import {
   DialogActions,
   Tooltip,
   MenuItem,
-  CircularProgress,
-  Collapse,
   Alert,
   CardMedia,
   Snackbar,

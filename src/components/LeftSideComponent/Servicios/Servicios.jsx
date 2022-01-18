@@ -151,7 +151,7 @@ function Servicios({ admin }) {
                 value={(serviceFilter && serviceFilter.federal_entity) || ""}
                 onChange={handleFederalEntityChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 SelectProps={{
                   onOpen: getFederalEntities,
                 }}
@@ -182,7 +182,7 @@ function Servicios({ admin }) {
                 value={(serviceFilter && serviceFilter.municipality) || ""}
                 onChange={handleMunicipalityChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 SelectProps={{
                   onOpen: () => getMunicipities(serviceFilter?.federal_entity),
                 }}
@@ -218,7 +218,7 @@ function Servicios({ admin }) {
                 value={(serviceFilter && serviceFilter.parish) || ""}
                 onChange={handleChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 SelectProps={{
                   onOpen: () => getParishes(serviceFilter?.municipality),
                 }}
@@ -271,7 +271,7 @@ function Servicios({ admin }) {
                 }}
                 onChange={handleChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
               />
               <TextField
                 id="max_hour"
@@ -284,7 +284,7 @@ function Servicios({ admin }) {
                 }}
                 onChange={handleChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
               />
             </Box>
           </Paper>
@@ -317,7 +317,7 @@ function Servicios({ admin }) {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={serviceFilter?.min_value}
               />
@@ -337,7 +337,7 @@ function Servicios({ admin }) {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={serviceFilter?.max_value}
               />
@@ -405,7 +405,7 @@ function Servicios({ admin }) {
                 value={serviceFilter?.availability || ""}
                 onChange={handleChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
               >
                 {disponibilities.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -434,7 +434,7 @@ function Servicios({ admin }) {
                     name="person_name"
                     label="Nombres"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     onChange={handleChange}
                     value={(serviceFilter && serviceFilter.person_name) || ""}
                     {...(serviceFilter && serviceFilter.person_name && {
@@ -448,7 +448,7 @@ function Servicios({ admin }) {
                     name="person_lastname"
                     label="Apellidos"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     onChange={handleChange}
                     value={(serviceFilter && serviceFilter.person_lastname) || ""}
                     {...(serviceFilter && serviceFilter.person_lastname && {
@@ -462,7 +462,7 @@ function Servicios({ admin }) {
                     name="person_id"
                     label="Cedula"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     type="number"
                     value={(serviceFilter && serviceFilter.person_id) || ""}
                     onChange={handleChange}

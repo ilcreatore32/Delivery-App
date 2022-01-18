@@ -15,11 +15,10 @@ import {
 } from "@mui/material";
 
 /* Material UI Icons */
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import MapTwoToneIcon from "@mui/icons-material/MapTwoTone";
 
-export default function CustomProductsCell({ thisRow }) {
-  const products =
-    thisRow?.value?.split(",") || thisRow?.Productos_Envio?.split(",");
+export default function CustomAreasCell({ thisRow }) {
+  const areaoperacion = thisRow.row.areaoperacion.split(";");
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -32,28 +31,38 @@ export default function CustomProductsCell({ thisRow }) {
   return (
     <>
       <Chip
-        label="Listado de productos"
-        icon={<ShoppingCartIcon />}
+        label="Listado de areas"
+        icon={<MapTwoToneIcon />}
         color="primary"
         variant="outlined"
         size="small"
         onClick={handleClickOpen}
       />
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Listado de Productos</DialogTitle>
+        <DialogTitle>Listado de Areas de Operaciones</DialogTitle>
         <Divider />
         <DialogContent>
           <DialogContentText>
             <Typography variant="body2">
-              Estos son todos los productos que contiene este envío:
+              Estas son todas las areas que contiene este servicio:
             </Typography>
           </DialogContentText>
           <Typography variant="subtitle2" color="primary">
-            Total de productos: {products.length}
+            Total de areas: {areaoperacion.length}{" "}
           </Typography>
-          <Box sx={{ display: "flex", gap: ".3rem", marginTop: ".5rem" }}>
-            {products.map((product) => {
-              return <Chip label={product} />;
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: ".3rem",
+              marginTop: ".5rem",
+            }}
+          >
+            {areaoperacion.map((area) => {
+              area = area.replace("PARROQUIA: ", " ");
+              area = area.replace("MUNICIPIO: ", " ");
+              area = area.replace("ENTIDAD FEDERAL: ", " ");
+              return <Chip label={area} />;
             })}
           </Box>
         </DialogContent>

@@ -83,7 +83,7 @@ function Vehiculos({ admin }) {
                 select
                 label="Tipo"
                 onChange={handleChange}
-                color="secondary"
+                color="primary"
                 variant="filled"
                 SelectProps={{
                   onOpen: getConveyanceTypes,
@@ -115,7 +115,7 @@ function Vehiculos({ admin }) {
                 id="brand"
                 name="brand"
                 label="Marca"
-                color="secondary"
+                color="primary"
                 variant="filled"
                 fullWidth
                 value={(vehicleFilter && vehicleFilter.brand) || ""}
@@ -126,7 +126,7 @@ function Vehiculos({ admin }) {
                 name="model"
                 label="Modelo"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 fullWidth
                 value={(vehicleFilter && vehicleFilter.model) || ""}
                 onChange={handleChange}
@@ -149,7 +149,7 @@ function Vehiculos({ admin }) {
                 id="min_year"
                 name="min_year"
                 label="Mínimo"
-                color="secondary"
+                color="primary"
                 fullWidth
                 views={["year"]}
                 minDate={new Date("1951-01-01")}
@@ -175,7 +175,7 @@ function Vehiculos({ admin }) {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    color="secondary"
+                    color="primary"
                     variant="filled"
                     error={false}
                   />
@@ -210,7 +210,7 @@ function Vehiculos({ admin }) {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    color="secondary"
+                    color="primary"
                     variant="filled"
                     error={false}
                   />
@@ -245,7 +245,7 @@ function Vehiculos({ admin }) {
                 }}
                 onChange={handleChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
               />
               <TextField
                 id="max_passengers"
@@ -262,7 +262,7 @@ function Vehiculos({ admin }) {
                 }}
                 onChange={handleChange}
                 variant="filled"
-                color="secondary"
+                color="primary"
               />
             </Box>
           </Paper>
@@ -294,7 +294,7 @@ function Vehiculos({ admin }) {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={vehicleFilter?.min_weight}
               />
@@ -314,7 +314,7 @@ function Vehiculos({ admin }) {
                   ),
                 }}
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={vehicleFilter?.max_weight}
               />
@@ -335,7 +335,7 @@ function Vehiculos({ admin }) {
                 name="plate"
                 label="Matrícula"
                 variant="filled"
-                color="secondary"
+                color="primary"
                 onChange={handleChange}
                 value={(vehicleFilter && vehicleFilter.plate) || ""}
                 {...(vehicleFilter &&
@@ -366,7 +366,7 @@ function Vehiculos({ admin }) {
                     name="person_name"
                     label="Nombres"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     onChange={handleChange}
                     value={(vehicleFilter && vehicleFilter.person_name) || ""}
                     {...(vehicleFilter && vehicleFilter.person_name && {
@@ -380,7 +380,7 @@ function Vehiculos({ admin }) {
                     name="person_lastname"
                     label="Apellidos"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     onChange={handleChange}
                     value={(vehicleFilter && vehicleFilter.person_lastname) || ""}
                     {...(vehicleFilter && vehicleFilter.person_lastname && {
@@ -394,7 +394,7 @@ function Vehiculos({ admin }) {
                     name="person_id"
                     label="Cedula"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     type="number"
                     value={(vehicleFilter && vehicleFilter.person_id) || ""}
                     onChange={handleChange}

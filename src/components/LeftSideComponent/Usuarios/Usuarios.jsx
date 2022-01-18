@@ -88,7 +88,7 @@ function Usuarios({ admin }) {
                     name="email"
                     label="Correo"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     onChange={handleChange}
                     value={(userFilter && userFilter.email) || ""}
                     {...(userFilter &&
@@ -144,7 +144,7 @@ function Usuarios({ admin }) {
                     value={userFilter?.suscription_status || ""}
                     onChange={handleChange}
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                   >
                     {status.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -167,7 +167,7 @@ function Usuarios({ admin }) {
                     name="person_name"
                     label="Nombres"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     onChange={handleChange}
                     value={(userFilter && userFilter.person_name) || ""}
                     {...(userFilter &&
@@ -183,7 +183,7 @@ function Usuarios({ admin }) {
                     name="person_lastname"
                     label="Apellidos"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     onChange={handleChange}
                     value={(userFilter && userFilter.person_lastname) || ""}
                     {...(userFilter &&
@@ -199,7 +199,7 @@ function Usuarios({ admin }) {
                     name="person_id"
                     label="Cedula"
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                     type="number"
                     value={(userFilter && userFilter.person_id) || ""}
                     onChange={handleChange}
