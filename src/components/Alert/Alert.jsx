@@ -3,8 +3,8 @@ import Swal from "sweetalert2";
 const Alert = {
   loginSuccess: () => {
     Swal.fire({
-      title: "Great",
-      text: "Login Successful",
+      title: "Bienvenido",
+      text: "Inicio de sesión exitoso",
       icon: "success",
       showConfirmButton: false,
       timer: 2000,
@@ -15,7 +15,7 @@ const Alert = {
   loginError: () => {
     Swal.fire({
       title: "Error",
-      text: "Login Failed",
+      text: "Error de inicio de sesion",
       icon: "error",
       showConfirmButton: false,
       timer: 2000,

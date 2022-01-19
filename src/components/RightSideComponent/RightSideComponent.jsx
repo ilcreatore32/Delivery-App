@@ -11,10 +11,22 @@ import ManageSearch from "@mui/icons-material/ManageSearch";
 import CloseIcon from "@mui/icons-material/Close";
 
 /* React-Datatable */
-import { DataGrid } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@mui/x-data-grid";
 
 /* CSS */
 import "./RightSideComponent.css";
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport />
+    </GridToolbarContainer>
+  );
+}
 
 function RightSideComponent({ rowId, Columns, Data, children }) {
   const rows = [];
@@ -57,7 +69,7 @@ function RightSideComponent({ rowId, Columns, Data, children }) {
         {children}
       </Paper>
       <Paper
-      variant="outlined"
+        variant="outlined"
         sx={{
           display: "flex",
           height: "80vh",
@@ -71,6 +83,9 @@ function RightSideComponent({ rowId, Columns, Data, children }) {
             rowsPerPageOptions={[10]}
             autoWidth
             getRowId={(row) => getRowId(row, rowId)}
+            components={{
+              Toolbar: CustomToolbar,
+            }}
           />
         </div>
       </Paper>
