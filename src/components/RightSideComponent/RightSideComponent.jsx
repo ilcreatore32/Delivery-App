@@ -11,7 +11,7 @@ import ManageSearch from "@mui/icons-material/ManageSearch";
 import CloseIcon from "@mui/icons-material/Close";
 
 /* React-Datatable */
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, esES } from "@mui/x-data-grid";
 
 /* CSS */
 import "./RightSideComponent.css";
@@ -71,6 +71,7 @@ function RightSideComponent({ rowId, Columns, Data, children }) {
             rowsPerPageOptions={[10]}
             autoWidth
             getRowId={(row) => getRowId(row, rowId)}
+            localeText={esES.props.MuiDataGrid.localeText}
           />
         </div>
       </Paper>
