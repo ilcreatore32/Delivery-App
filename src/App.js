@@ -144,14 +144,19 @@ function App() {
                                 <>
                                   <Box sx={{ display: "flex", gap: "1rem" }}>
                                     <Button
-                                      component={Link}
                                       size="small"
                                       variant="text"
                                       color="primary"
-                                      to="/Envios"
                                       sx={{ padding: ".5rem" }}
                                     >
-                                      Dashboard
+                                      Bienvenido{" "}
+                                      {view_type === "C"
+                                        ? "Cliente"
+                                        : view_type === "T"
+                                        ? "Transportista"
+                                        : view_type === "A"
+                                        ? "Administrador"
+                                        : null}
                                     </Button>
                                     <Tooltip
                                       title={`Cambiar a ${
