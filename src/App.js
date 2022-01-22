@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { CssBaseline } from "@mui/material";
 
 /* React-Router */
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
@@ -80,6 +81,7 @@ function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
+        <CssBaseline enableColorScheme />
         <LocalizationProvider dateAdapter={DateAdapter}>
           <FilterProvider>
             <OpenEditProvider>
@@ -147,6 +149,7 @@ function App() {
                                       size="small"
                                       variant="text"
                                       color="primary"
+                                      disabled
                                       sx={{ padding: ".5rem" }}
                                     >
                                       Bienvenido{" "}

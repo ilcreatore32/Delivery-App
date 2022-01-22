@@ -76,7 +76,9 @@ function EnviosTransportista() {
     <>
       <AppTabs />
       <Typography align="center" variant="h4" component="h2" sx={{marginTop:".5rem"}}>
-        Descubrir Envíos
+        {view_type === "C" && "Sus Envíos"}
+        {view_type === "T" && "Envíos Disponibles"}
+        {view_type === "A" && "Envíos"}
       </Typography>
       <div className="dashboard">
         <Grid container spacing={3}>

@@ -186,10 +186,10 @@ function SignUp() {
             <Box>
               <img alt="Logo" src={logo} className="logo" />
               <Typography variant="h4" component="h2">
-                Welcome
+                Registro
               </Typography>
               <Typography variant="h6" component="h3">
-                Please, Sign Up
+                Por favor, ingrese su información
               </Typography>
             </Box>
           </DialogTitle>
@@ -410,7 +410,7 @@ function SignUp() {
                     </Table>
                   </TableContainer>
                 </Box>
-                <Box className="signup-links">
+                {/* <Box className="signup-links">
                   <Typography
                     className="signup-link"
                     variant="h4"
@@ -418,7 +418,7 @@ function SignUp() {
                   >
                     Already registered ? <Button>Sign In Here</Button>
                   </Typography>
-                </Box>
+                </Box> */}
               </DialogContentText>
             </DialogContent>
             <DialogActions

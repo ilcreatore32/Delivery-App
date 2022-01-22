@@ -197,6 +197,7 @@ export const getServices = async (req, res) => {
             ? `AND ST_Status = '${availability}'` 
             : ''
           }
+          GROUP BY ST_Id
           HAVING 1=1 
           ${
             parish
@@ -315,11 +316,13 @@ export const getOneService = async function (req, res) {
       /* if error in the query */
       if (errService) return res.status(400).json({error: "Error al consultar en la base de datos"})
       /* if there is no data */
+      console.log(serviceDetails)
       if (serviceDetails.length === 0 || serviceDetails[0].ST_Id === null) return res.status(404).json({error: "No posee servicios de transporte"})
       
       /* Get all service's areas */
       await pool.query(query_areas, serviceDetails[0].ST_Id, async function (errAreas, areas) {
         /* if error in the query */
+        console.log(areas)
         if (errAreas) return res.status(400).json({error: "Error al consultar en la base de datos"})
         /* if there is no data */
         if (areas.length === 0 || areas[0].AO_EFId === null) return res.status(404).json({error: "No posee servicios de transporte"})

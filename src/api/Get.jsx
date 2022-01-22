@@ -62,10 +62,10 @@ export async function GetServices(view_option, params) {
   return service;
 }
 
-export async function GetOneService(id) {
+export async function GetOneService(id, view_option) {
   const service = await Api.get(`/service/${id}`, {
     params: {
-      view_option: "admin",
+      view_option,
     },
   })
     .then((result) => {

@@ -64,6 +64,8 @@ import { format, parse } from "date-fns";
 import { PutEnvioStatus, PutOfertaStatus } from "../../../api/Put";
 import { AsociarServicio } from "../../../api/Post";
 import { DeleteAsociatedService } from "../../../api/Delete";
+import { Link } from "react-router-dom";
+import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -141,15 +143,15 @@ function Details() {
 
   const handleOffer = () => {
     if (!logged_user) {
-      setErrorMessage("No se pudo obtener información del usuario")
+      setErrorMessage("No se pudo obtener información del usuario");
       return;
     }
     if (logged_user?.Usuario_Status !== "A") {
-      setErrorMessage("El usuario no esta activo")
+      setErrorMessage("El usuario no esta activo");
       return;
     }
     if (logged_user?.Suscripcion_Status !== "S") {
-      setErrorMessage("El usuario no tiene suscripcion activa")
+      setErrorMessage("El usuario no tiene suscripcion activa");
       return;
     }
     setOffer(true);
@@ -441,13 +443,19 @@ function Details() {
                     <TableRow>
                       <TableCell component="th">Estado</TableCell>
                       <TableCell align="center">
-                      {shippmentDetails.SE_Status === "E" && "Eliminado"}
-                      {shippmentDetails.SE_Status === "P" && "Pendiente de servicio transporte"}
-                      {shippmentDetails.SE_Status === "S" && "Servicio de transporte activo"}
-                      {shippmentDetails.SE_Status === "T" && "Producto entregado al transportista"}
-                      {shippmentDetails.SE_Status === "C" && "Producto entregado al cliente"}
-                      {shippmentDetails.SE_Status === "F" && "Transporte finalizado con exito"}
-                      {shippmentDetails.SE_Status === "X" && "Problemas con el transporte"}
+                        {shippmentDetails.SE_Status === "E" && "Eliminado"}
+                        {shippmentDetails.SE_Status === "P" &&
+                          "Pendiente de servicio transporte"}
+                        {shippmentDetails.SE_Status === "S" &&
+                          "Servicio de transporte activo"}
+                        {shippmentDetails.SE_Status === "T" &&
+                          "Producto entregado al transportista"}
+                        {shippmentDetails.SE_Status === "C" &&
+                          "Producto entregado al cliente"}
+                        {shippmentDetails.SE_Status === "F" &&
+                          "Transporte finalizado con exito"}
+                        {shippmentDetails.SE_Status === "X" &&
+                          "Problemas con el transporte"}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -566,10 +574,7 @@ function Details() {
                     >
                       Servicios de Transporte Ofertados{" "}
                       <IconButton onClick={handleOffer}>
-                        <BookmarkAddTwoToneIcon
-                          color="primary"
-                          size="small"
-                        />
+                        <BookmarkAddTwoToneIcon color="primary" size="small" />
                       </IconButton>
                     </ListSubheader>
                     {Offer ? (
@@ -820,6 +825,9 @@ function Details() {
                                   </IconButton>
                                 ) : (
                                   <>
+                                    <IconButton component={Link} to={`/Servicios/Detalles/${service.ST_Id}`}>
+                                      <VisibilityTwoToneIcon />
+                                    </IconButton>
                                     <IconButton
                                       edge="end"
                                       aria-label="Aceptar Ofrecer"
@@ -1124,7 +1132,8 @@ function Details() {
                       </Table>
                     </TableContainer>
                     <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      {(shippmentDetails.SE_Status === "S" || view_type === "A") ? (
+                      {shippmentDetails.SE_Status === "S" ||
+                      view_type === "A" ? (
                         <ConfirmationDialog
                           title="¿Estas Seguro?"
                           buttonText="Cancelar Servicio"
@@ -1132,10 +1141,12 @@ function Details() {
                         >
                           <Button
                             variant="text"
-                            onClick={() => acceptRejectOffer(shippmentDetails.SE_Id, {
-                              status: "P",
-                              serviceId: serviceDetails.ST_Id,
-                            })}
+                            onClick={() =>
+                              acceptRejectOffer(shippmentDetails.SE_Id, {
+                                status: "P",
+                                serviceId: serviceDetails.ST_Id,
+                              })
+                            }
                           >
                             Confirmar
                           </Button>

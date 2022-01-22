@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 
 /* React-Router */
 import { Link, useParams } from "react-router-dom";
@@ -28,18 +28,20 @@ import AppTabs from "../../../components/AppTabs/AppTabs";
 import Spinner from "../../../components/Spinner/Spinner";
 import CustomProductsCell from "../../../models/CustomProductsCell";
 import { format, parse } from "date-fns";
+import { UserContext } from "../../../context/UserContextT";
 
 function Details() {
+  const { view_type } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [service, setService] = useState({});
   const [areas, setAreas] = useState([]);
   const [shippments, setShippments] = useState([]);
   const { id } = useParams();
 
-  const fetchService = useCallback(async () => {
+  const fetchService = async (id, view) => {
     await setLoading(true);
     try {
-      const response = await GetOneService(id);
+      const response = await GetOneService(id, view === "C" ? "client" : "admin");
       await setService(response.serviceDetails);
       await setAreas(response.areas);
       setShippments(response.shippments);
@@ -47,11 +49,12 @@ function Details() {
       console.log(error);
     }
     await setLoading(false);
-  }, [id]);
+  };
 
   useEffect(() => {
-    fetchService();
-  }, [fetchService]);
+    if (!id || !view_type) return;
+    fetchService(id, view_type);
+  }, [id, view_type]);
 
   return (
     <>
@@ -221,7 +224,7 @@ function Details() {
                 </Table>
               </TableContainer>
             </Box>
-            {shippments.length > 0 && (
+            {shippments?.length > 0 && (
               <Box
                 sx={{
                   padding: "1rem",

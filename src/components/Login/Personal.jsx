@@ -45,13 +45,13 @@ import { UserContext } from "../../context/UserContextT";
 
 const validationSchema = yup.object({
   email: yup
-    .string("Enter your email")
-    .email("Enter a valid email")
-    .required("Email is required"),
+    .string("Ingresa tu correo")
+    .email("Ingresa un correo valido")
+    .required("El correo es requerido"),
   password: yup
-    .string("Enter your password")
-    .min(4, "Minimum 4 characters")
-    .required("Password is required"),
+    .string("Ingresa tu contraseña")
+    .min(4, "Mínimo 4 caracteres")
+    .required("La contraseña es requerida"),
 });
 
 function Login({ shop }) {
@@ -127,12 +127,12 @@ function Login({ shop }) {
                 <Box>
                   <img alt="Logo" src={logo} className="logo" />
                   <Typography variant="h4" component="h2">
-                    Welcome
+                    Usuario
                   </Typography>
                 </Box>
                 <Grid>
                   <Typography variant="h6" component="h3">
-                    Please, Sign In
+                  Por favor, Ingrese sus datos
                   </Typography>
                   <Box
                     className="login-inputs"
@@ -209,20 +209,13 @@ function Login({ shop }) {
                     </Box>
                   </Box>
                   <Box className="login-links">
-                    <Typography
-                      className="login-link"
-                      variant="h4"
-                      component="h4"
-                    >
-                      Forgot Password ? <Button>Password Recover</Button>
-                    </Typography>
-                    <Typography
+                    {/* <Typography
                       className="login-link"
                       variant="h4"
                       component="h4"
                     >
                       Don't have an account ? <Button>Sign Up Here</Button>
-                    </Typography>
+                    </Typography> */}
                   </Box>
 
                   <Box

@@ -73,6 +73,9 @@ export const Dark = createTheme({
   },
   palette: {
     type: "dark",
+    background: {
+      default: "#0c0d0f"
+    },
     primary: {
       main: "#2aebc9",
     },
