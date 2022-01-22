@@ -106,14 +106,14 @@ function Home() {
                   Bienvenido a
                 </Typography>
                 <Typography variant="h2" component="h1">
-                  Delivery App
+                  Delivery PA
                 </Typography>
                 <Typography
                   variant="subtitle2"
                   component="p"
                   sx={{ margin: "2rem 0" }}
                 >
-                  Un Sistema Web de Auto-gestión de envíos a nivel nacional,
+                  Un Sistema Web prototipo de Auto-gestión de envíos a nivel nacional,
                   usando el modelo de negocio Crowdshipping.
                 </Typography>
                 <Box
@@ -143,7 +143,7 @@ function Home() {
         }}
       >
         <Typography variant="h4" color="primary" component="h2">
-          Quienes Somos?
+          ¿Quienes Somos?
         </Typography>
         <Paper
           variant="outlined"
@@ -153,10 +153,10 @@ function Home() {
           }}
         >
           <Typography variant="body1" component="p">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Repudiandae explicabo dolores quisquam ipsum eos sapiente
-            repellendus? Voluptate velit dignissimos quia sequi, in quisquam
-            provident reiciendis nemo temporibus qui nostrum sunt?
+            Delivery PA (Prototype App) es una plataforma web prototipo de un sistema de gestión 
+            de envíos a nivel nacional, para que los clientes puedan controlar la entrega de sus 
+            pedidos y a su vez, para que los transportistas puedan ofrecer sus servicios y 
+            encargarse de los envíos a los clientes.
           </Typography>
         </Paper>
       </Box>
@@ -181,10 +181,11 @@ function Home() {
             Clientes
           </Typography>
           <Typography variant="body1" component="p">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Repudiandae explicabo dolores quisquam ipsum eos sapiente
-            repellendus? Voluptate velit dignissimos quia sequi, in quisquam
-            provident reiciendis nemo temporibus qui nostrum sunt?
+            Les ofrecemos la oportunidad de que puedan ver todas las 
+            ofertas de servicios de transporte que hay para el envío de sus productos.
+            Además tiene la posibilidad de escoger el servicio que mejor se adecue a
+            sus necesidades y llevar un control del estado de la entrega de dichos 
+            productos.
           </Typography>
         </Paper>
         <Paper
@@ -198,14 +199,15 @@ function Home() {
             Transportistas
           </Typography>
           <Typography variant="body1" component="p">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Repudiandae explicabo dolores quisquam ipsum eos sapiente
-            repellendus? Voluptate velit dignissimos quia sequi, in quisquam
-            provident reiciendis nemo temporibus qui nostrum sunt?
+            Pueden utilizar nuestra plataforma para darse a conocer y tener una fuente 
+            constante de nuevos clientes, además de poder ofrecer sus servicios de 
+            transporte. Una vez hayan verificado su cuenta y se hayan suscrito a uno 
+            de nuestros planes, podrán ofertar sus servicios de transporte dentro de 
+            cualquiera de las solcitudes de envío de los clientes.
           </Typography>
         </Paper>
       </Box>
-      <Paper
+      {/* <Paper
         variant="outlined"
         sx={{
           margin: "2rem",
@@ -276,7 +278,7 @@ function Home() {
             );
           })}
         </Box>
-      </Paper>
+      </Paper> */}
     </>
   );
 }
