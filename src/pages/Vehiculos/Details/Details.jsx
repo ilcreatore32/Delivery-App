@@ -50,7 +50,7 @@ function Details() {
           sx={{
             display: "flex",
             justifyContent: "center",
-            margin: "1rem",
+            margin: "1rem 3rem",
             padding: "1rem",
           }}
         >
@@ -60,7 +60,7 @@ function Details() {
         <Paper
           variant="outlined"
           sx={{
-            margin: "1rem",
+            margin: "1rem 3rem",
             padding: "1rem",
           }}
         >

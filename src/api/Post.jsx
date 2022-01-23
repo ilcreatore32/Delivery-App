@@ -47,15 +47,14 @@ export async function PostServicio(serviceDetails) {
 }
 
 /* Vehiculos */
-export async function PostVehiculo(vehicleDetails) {
+export async function PostVehiculo(vehicleDetails) { 
   const vehicleResults = await Api.post(`/vehicle/`, vehicleDetails)
     .then((result) => {
       return result;
     })
     .catch((error) => {
-      return error;
+      return error.response;
     });
-  console.log(vehicleResults);
   return vehicleResults;
 }
 

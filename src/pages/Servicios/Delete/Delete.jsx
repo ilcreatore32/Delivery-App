@@ -428,7 +428,7 @@ function Delete() {
         <DialogTitle>
           {openDeleteService && serviceToDelete && "¿Deseas eliminar el siguiente Servicio?"}
         </DialogTitle>
-        {loading ? (
+        {(loading || sending) ? (
           <Box
             sx={{
               width: "auto",
@@ -505,7 +505,7 @@ function Delete() {
                     id="ST_VehiculoId"
                     name="ST_VehiculoId"
                     select
-                    label="Vehiculos"
+                    label="Vehículos"
                     value={service && service.ST_VehiculoId}
                     onChange={handleServiceChange}
                     variant="filled"
@@ -538,7 +538,7 @@ function Delete() {
                       </MenuItem>
                     ) : (
                       <MenuItem value={0}>
-                        No se pudieron obtener vehiculos de este usuario
+                        No se pudieron obtener vehículos de este usuario
                       </MenuItem>
                     )}
                   </TextField>

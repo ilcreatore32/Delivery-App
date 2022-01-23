@@ -371,7 +371,7 @@ function Cuenta() {
             >
               Editar Cuenta
             </Button>
-            {view_type !== "A" && (
+            {view_type !== "A" && user?.Suscripcion_Id && (
               <Button
                 onClick={() => setOpenNewPayment(true)}
                 variant="outlined"

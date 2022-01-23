@@ -44,7 +44,7 @@ const validationSchema = yup.object({
   type_id: yup
     .string("Ingrese el tipo de cédula")
     .required("Complete este Campo"),
-  person_id: yup.number("Ingrese solo numeros").required("Complete este Campo"),
+  person_id: yup.number("Ingrese solo números").positive("Cédula invalida").min(1, "Cédula invalida").required("Complete este Campo"),
   name: yup
     .string("Introduzca Nombre")
     .matches(

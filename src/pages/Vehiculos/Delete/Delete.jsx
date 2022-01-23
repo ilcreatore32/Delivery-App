@@ -30,6 +30,8 @@ import { PostVehiculo } from "../../../api/Post";
 import { OpenEditContext } from "../../../context/openEditContext";
 import { PutVehiculo } from "../../../api/Put";
 import { UserContext } from "../../../context/UserContextT";
+import { DeleteContext } from "../../../context/deleteContext";
+import { DeleteOneVehiculo } from "../../../api/Delete";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -47,13 +49,14 @@ const CustomStack = (props) => {
     </Stack>
   );
 };
-function Add() {
+function Delete() {
   const {
-    vehicleToEdit,
-    openEditVehicle,
-    setVehicleToEdit,
-    setOpenEditVehicle,
-  } = useContext(OpenEditContext);
+    vehicleToDelete,
+    openDeleteVehicle,
+    setVehicleToDelete,
+    setOpenDeleteVehicle
+  } = useContext(DeleteContext);
+
   const { view_type } = useContext(UserContext);
 
   const history = useHistory();
@@ -76,8 +79,8 @@ function Add() {
 
   const handleClose = () => {
     setOpen(false);
-    setVehicleToEdit("")
-    setOpenEditVehicle(false)
+    setVehicleToDelete("")
+    setOpenDeleteVehicle(false)
     setVehicle({});
   };
 
@@ -93,7 +96,7 @@ function Add() {
     setVehicle({ ...vehicle, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitVehicle = (e) => {
+  const handleDeleteVehicle = (e) => {
     e.preventDefault();
     if (!vehicle["Vehiculo_MTId"]) {
       setErrorMessage("Debe ingresar el tipo de vehículo");
@@ -151,64 +154,26 @@ function Add() {
 
   useEffect(() => {
     if (!sending) return;
-    if (openEditVehicle && vehicleToEdit) {
+    if (openDeleteVehicle && vehicleToDelete) {
       (async function () {
         try {
-          const response = await PutVehiculo(vehicleToEdit, vehicle);
+          const response = await DeleteOneVehiculo(vehicleToDelete);
           if (response.status === 200) {
-            setSuccessMessage("Vehículo editado correctamente");
+            setSuccessMessage("Vehículo eliminado correctamente");
+            setSending(false);
             setTimeout(() => {
               setSuccessMessage("");
-              history.go(0);
-            }, 2000);
-            setSending(false);
-          } else if (response.errno === 1062) {
-            setErrorMessage("Error matrícula ya registrada en el sistema");
-            setTimeout(() => {
-              setErrorMessage("");
+              window.location.href = "/Vehiculos";
             }, 2000);
             setSending(false);
           } else {
-            setErrorMessage("Error al guardar el vehículo");
+            setErrorMessage(
+              "Error al eliminar el Vehículo"
+            );
+            setSending(false);
             setTimeout(() => {
               setErrorMessage("");
             }, 2000);
-            setSending(false);
-          }
-        } catch (e) {
-          if (e) {
-            setErrorMessage("Hubo un error al enviar los datos");
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 2000);
-            setSending(false);
-          }
-        }
-      })();
-    } else {
-      (async function () {
-        try {
-          const response = await PostVehiculo(vehicle);
-          if (response.status === 200) {
-            setSuccessMessage("Vehículo creado correctamente");
-            setTimeout(() => {
-              setSuccessMessage("");
-              history.go(0);
-            }, 2000);
-            setSending(false);
-          } else if (response.errno === 1062 || response?.data?.errno === 1062) {
-            setErrorMessage("Error matrícula ya registrada en el sistema");
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 2000);
-            setSending(false);
-          } else {
-            console.debug(response)
-            setErrorMessage("Error al guardar el vehículo");
-            setTimeout(() => {
-              setErrorMessage("");
-            }, 2000);
-            setSending(false);
           }
         } catch (e) {
           if (e) {
@@ -224,10 +189,10 @@ function Add() {
   }, [sending, vehicle]);
 
   useEffect(async () => {
-    if (!vehicleToEdit || !openEditVehicle) return;
+    if (!vehicleToDelete || !openDeleteVehicle) return;
     try {
       setLoading(true);
-      let vehicleDetails = await GetOneVehicle(vehicleToEdit);
+      let vehicleDetails = await GetOneVehicle(vehicleToDelete);
       await setVehicle(() => vehicleDetails);
       await getConveyanceTypes();
       setTimeout(() => {
@@ -237,20 +202,17 @@ function Add() {
       setErrorMessage("Hubo un error al obtener los datos del vehículo");
       setTimeout(() => {
         setErrorMessage("");
-        setOpenEditVehicle(false);
-        setVehicleToEdit("")
+        setOpenDeleteVehicle(false);
+        setVehicleToDelete("")
         setLoading(false);
       }, 3000);
     }
-  }, [vehicleToEdit, openEditVehicle]);
+  }, [vehicleToDelete, openDeleteVehicle]);
 
   return (
     <>
-      <IconButton onClick={handleClickOpen}>
-        <AddCircleTwoToneIcon color="primary" />
-      </IconButton>
       <Dialog
-        open={open || openEditVehicle}
+        open={openDeleteVehicle}
         TransitionComponent={Transition}
         keepMounted
         maxWidth="md"
@@ -269,12 +231,10 @@ function Add() {
           </Alert>
         </Collapse>
         <DialogTitle>
-          {openEditVehicle && vehicleToEdit
-            ? "Edición del Vehículo"
-            : "Creación de Vehículo"}
+        {openDeleteVehicle && vehicleToDelete && "¿Deseas eliminar el siguiente Vehículo?"}
         </DialogTitle>
 
-        {loading ? (
+        {(loading || sending) ? (
           <Box
             sx={{
               width: "auto",
@@ -303,7 +263,7 @@ function Add() {
                   component="h2"
                   sx={{ flexGrow: 1 }}
                 >
-                  Por favor, ingrese los datos del Vehículo.
+                  Datos del vehículo a eliminar.
                 </Typography>
               </DialogContentText>
               <Grid>
@@ -317,6 +277,10 @@ function Add() {
                     variant="filled"
                     SelectProps={{
                       onOpen: getConveyanceTypes,
+                    }}
+                    
+                    InputProps={{
+                      disabled: true
                     }}
                     value={(vehicle && vehicle.Vehiculo_MTId) || ""}
                     sx={{ minWidth: "40%" }}
@@ -349,6 +313,10 @@ function Add() {
                     fullWidth
                     value={(vehicle && vehicle.Vehiculo_Marca) || ""}
                     onChange={handleVehicleChange}
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                   />
                   <TextField
                     id="Vehiculo_Modelo"
@@ -358,6 +326,10 @@ function Add() {
                     fullWidth
                     value={(vehicle && vehicle.Vehiculo_Modelo) || ""}
                     onChange={handleVehicleChange}
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                   />
                 </CustomStack>
                 <CustomStack>
@@ -390,6 +362,7 @@ function Add() {
                     renderInput={(params) => (
                       <TextField {...params} variant="filled" error={false} />
                     )}
+                    disabled
                   />
                   <TextField
                     id="Vehiculo_Matricula"
@@ -401,6 +374,10 @@ function Add() {
                     onChange={handleVehicleChange}
                     inputProps={{
                       maxLength: 7,
+                    }}
+                    
+                    InputProps={{
+                      disabled: true
                     }}
                   />
                 </CustomStack>
@@ -414,6 +391,10 @@ function Add() {
                     value={(vehicle && vehicle.Vehiculo_Pasajeros) || ""}
                     onChange={handleVehicleChange}
                     fullWidth
+                    
+                    InputProps={{
+                      disabled: true
+                    }}
                   />
                   <TextField
                     id="Vehiculo_CapacidadCarga"
@@ -428,9 +409,10 @@ function Add() {
                       startAdornment: (
                         <InputAdornment position="start">kg</InputAdornment>
                       ),
+                      disabled: true
                     }}
                   />
-                  {openEditVehicle && vehicleToEdit && view_type === "A"&& <TextField
+                  {openDeleteVehicle && vehicleToDelete && view_type === "A"&& <TextField
                     id="Vehiculo_PersonaId"
                     name="Vehiculo_PersonaId"
                     type="number"
@@ -458,9 +440,9 @@ function Add() {
               <LoadingButton
                 loading={sending}
                 variant="outlined"
-                onClick={handleSubmitVehicle}
+                onClick={handleDeleteVehicle}
               >
-                Guardar
+                Confirmar
               </LoadingButton>
             </Box>
           </>
@@ -470,4 +452,4 @@ function Add() {
   );
 }
 
-export default Add;
+export default Delete;

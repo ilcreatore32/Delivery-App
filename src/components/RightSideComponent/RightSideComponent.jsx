@@ -15,7 +15,7 @@ import {
   DataGrid,
   GridToolbarContainer,
   GridToolbarExport,
-  esES
+  esES,
 } from "@mui/x-data-grid";
 
 /* CSS */
@@ -78,6 +78,7 @@ function RightSideComponent({ rowId, Columns, Data, children }) {
       >
         <div style={{ height: "100%", flexGrow: 1 }}>
           <DataGrid
+            disableColumnMenu={true}
             rows={Data ? Data : rows}
             columns={Columns ? Columns : columns}
             pageSize={10}

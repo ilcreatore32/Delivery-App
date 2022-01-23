@@ -22,8 +22,10 @@ import Form from "react-bootstrap/Form";
 import { FilterContext } from "../../../context/FilterContext";
 import { GetConveyances, GetUbication } from "../../../api/Get";
 import Spinner from "../../Spinner/Spinner";
+import { UserContext } from "../../../context/UserContextT";
 
 function Servicios({ admin }) {
+  const { view_type } = useContext(UserContext);
   const { serviceFilter, setServiceFilter } = useContext(FilterContext);
 
   const [federalEntities, setFederalEntities] = useState([]);
@@ -150,14 +152,17 @@ function Servicios({ admin }) {
                 fullWidth
               >
                 {federalEntities ? (
-                  federalEntities.map((federalEntity) => (
-                    <MenuItem
-                      key={federalEntity.EF_Id}
-                      value={federalEntity.EF_Id}
-                    >
-                      {federalEntity.EF_Nombre}
-                    </MenuItem>
-                  ))
+                  federalEntities.map(
+                    (federalEntity) =>
+                      federalEntity.EF_Id && (
+                        <MenuItem
+                          key={federalEntity.EF_Id}
+                          value={federalEntity.EF_Id}
+                        >
+                          {federalEntity.EF_Nombre}
+                        </MenuItem>
+                      )
+                  )
                 ) : loadingFederalEntities ? (
                   <MenuItem>
                     <Spinner loading={loadingFederalEntities} />
@@ -352,7 +357,9 @@ function Servicios({ admin }) {
                 select
                 label="Medio de transporte"
                 value={
-                  (serviceFilter && conveyanceTypes.length > 0 && serviceFilter.conveyance) ||
+                  (serviceFilter &&
+                    conveyanceTypes.length > 0 &&
+                    serviceFilter.conveyance) ||
                   ""
                 }
                 onChange={handleChange}
@@ -399,11 +406,12 @@ function Servicios({ admin }) {
                 variant="filled"
                 color="primary"
               >
-                {disponibilities.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
+                {disponibilities.map((option) => {
+                  if (view_type !== "A" && option.value === "E") return;
+                  return <MenuItem key={option.value} value={option.value}>
                     {option.label}
-                  </MenuItem>
-                ))}
+                  </MenuItem>;
+                })}
               </TextField>
             </Box>
           </Paper>
@@ -429,7 +437,8 @@ function Servicios({ admin }) {
                     color="primary"
                     onChange={handleChange}
                     value={(serviceFilter && serviceFilter.person_name) || ""}
-                    {...(serviceFilter && serviceFilter.person_name && {
+                    {...(serviceFilter &&
+                      serviceFilter.person_name && {
                         InputLabelProps: {
                           shrink: true,
                         },
@@ -442,12 +451,15 @@ function Servicios({ admin }) {
                     variant="filled"
                     color="primary"
                     onChange={handleChange}
-                    value={(serviceFilter && serviceFilter.person_lastname) || ""}
-                    {...(serviceFilter && serviceFilter.person_lastname && {
-                      InputLabelProps: {
-                        shrink: true,
-                      },
-                    })}
+                    value={
+                      (serviceFilter && serviceFilter.person_lastname) || ""
+                    }
+                    {...(serviceFilter &&
+                      serviceFilter.person_lastname && {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      })}
                   />
                   <TextField
                     id="person_id"
@@ -458,34 +470,35 @@ function Servicios({ admin }) {
                     type="number"
                     value={(serviceFilter && serviceFilter.person_id) || ""}
                     onChange={handleChange}
-                    {...(serviceFilter && serviceFilter.person_id && {
-                      InputLabelProps: {
-                        shrink: true,
-                      },
-                    })}
+                    {...(serviceFilter &&
+                      serviceFilter.person_id && {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      })}
                   />
                 </Box>
               </Paper>
             </>
           ) : null}
           {serviceFilter && Object.keys(serviceFilter).length !== 0 && (
-                <Stack
-                  direction="row"
-                  justifyContent="center"
-                  alignItems="center"
-                  sx={{
-                    paddingTop: 3,
-                  }}
-                >
-                  <Button
-                    variant="filled"
-                    color="info"
-                    onClick={() => setServiceFilter({})}
-                  >
-                    Limpiar
-                  </Button>
-                </Stack>
-              )}
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              sx={{
+                paddingTop: 3,
+              }}
+            >
+              <Button
+                variant="filled"
+                color="info"
+                onClick={() => setServiceFilter({})}
+              >
+                Limpiar
+              </Button>
+            </Stack>
+          )}
         </Box>
       </Form>
     </>

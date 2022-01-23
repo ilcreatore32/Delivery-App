@@ -239,7 +239,7 @@ export const getServicesOffer = async (req, res) => {
 	LEFT JOIN vehiculos
 		ON ST_VehiculoId = Vehiculo_Id
 	
-	WHERE ST_PersonaId = ?
+	WHERE ST_PersonaId = ? AND ST_Status <> 'E' AND ST_Status <> 'N'
 
   GROUP BY ST_Id`;
 

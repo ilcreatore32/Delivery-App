@@ -41,12 +41,13 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 /* Components */
 import Spinner from "../../../components/Spinner/Spinner";
 import { AreasColumns } from "../../../models/DataTableColums";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, esES } from "@mui/x-data-grid";
 import { DeleteContext } from "../../../context/deleteContext";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { PostServicio } from "../../../api/Post";
 import { OpenEditContext } from "../../../context/openEditContext";
 import { PutServicio } from "../../../api/Put";
+import { UserContext } from "../../../context/UserContextT";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -67,6 +68,7 @@ const CustomStack = (props) => {
 
 function Add() {
   const { removeAreaService, setRemoveAreaService } = useContext(DeleteContext);
+  const { view_type } = useContext(UserContext);
   const {
     serviceToEdit,
     openEditService,
@@ -353,8 +355,8 @@ function Add() {
       setSending(false);
       return;
     }
-    if (!service["ST_Precio"]) {
-      setErrorMessage("Debe ingresar un precio");
+    if (!service["ST_Precio"] || service["ST_Precio"] < 1) {
+      setErrorMessage("Debe ingresar un precio válido");
       setTimeout(() => {
         setErrorMessage("");
       }, 1500);
@@ -609,7 +611,7 @@ function Add() {
                     id="ST_VehiculoId"
                     name="ST_VehiculoId"
                     select
-                    label="Vehiculos"
+                    label="Vehículos"
                     value={service && service.ST_VehiculoId}
                     onChange={handleServiceChange}
                     variant="filled"
@@ -617,7 +619,7 @@ function Add() {
                       onOpen: getVehicles,
                     }}
                     fullWidth
-                    {...(service.ST_MTId !== 1
+                    {...(service?.ST_MTId && service.ST_MTId !== 1
                       ? {
                           disabled: false,
                         }
@@ -638,7 +640,7 @@ function Add() {
                       </MenuItem>
                     ) : (
                       <MenuItem value={0}>
-                        No se pudieron obtener vehiculos de este usuario
+                        No se pudieron obtener vehículos de este usuario
                       </MenuItem>
                     )}
                   </TextField>
@@ -648,7 +650,7 @@ function Add() {
                     id="ST_Status"
                     name="ST_Status"
                     select
-                    label="Status"
+                    label="Estatus"
                     value={service && service.ST_Status}
                     onChange={handleServiceChange}
                     variant="filled"
@@ -658,11 +660,14 @@ function Add() {
                       { value: "D", name: "Disponible" },
                       { value: "N", name: "No Disponible" },
                       { value: "E", name: "Eliminado" },
-                    ].map((Option) => (
-                      <MenuItem key={Option.value} value={Option.value}>
-                        {Option.name}
-                      </MenuItem>
-                    ))}
+                    ].map((Option) => {
+                      if (view_type !== "A" && Option.value === "E") return;
+                      return (
+                        <MenuItem key={Option.value} value={Option.value}>
+                          {Option.name}
+                        </MenuItem>
+                      );
+                    })}
                   </TextField>
                   <TextField
                     id="ST_Horarioini"
@@ -742,7 +747,7 @@ function Add() {
                     fullWidth
                   >
                     {federalEntities ? (
-                      federalEntities.map((federalEntity) => (
+                      federalEntities.map((federalEntity) => federalEntity.EF_Id && (
                         <MenuItem
                           key={federalEntity.EF_Id}
                           value={federalEntity.EF_Id}
@@ -839,11 +844,13 @@ function Add() {
                 <CustomStack>
                   <Box sx={{ display: "flex", flex: 1, height: 600 }}>
                     <DataGrid
+                      disableColumnMenu={true}
                       rows={areas && areas}
                       columns={AreasColumns && AreasColumns}
                       pageSize={10}
                       rowsPerPageOptions={[10]}
                       autoWidth
+                      localeText={esES.props.MuiDataGrid.localeText}
                       getRowId={(row) => {
                         return `${row.EF_Id}-${row.Municipio_Id}-${row.Parroquia_Id}`;
                       }}

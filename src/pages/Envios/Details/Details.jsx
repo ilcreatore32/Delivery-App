@@ -1046,7 +1046,7 @@ function Details() {
                             <>
                               <TableRow>
                                 <TableCell component="th">
-                                  Nombre del Vehiculo
+                                  Nombre del Vehículo
                                 </TableCell>
                                 <TableCell align="center">
                                   {serviceDetails?.DatosMedio}

@@ -68,7 +68,7 @@ function Vehiculos({ admin }) {
         >
           <Paper variant="outlined" sx={{ padding: "1rem" }}>
             <Typography variant="h6" component="span">
-              Vehiculo
+              Vehículo
             </Typography>
             <Box
               sx={{

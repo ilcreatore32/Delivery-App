@@ -49,12 +49,13 @@ export async function DeleteOnePago(id) {
 }
 
 /* Vehiculos */
-export function DeleteOneVehiculo(id) {
-  Api.delete(`/Vehiculos/${id}`)
+export async function DeleteOneVehiculo(id) {
+  const result = await Api.delete(`/vehicle/${id}`)
     .then((result) => {
-      console.log(result);
+      return result;
     })
     .catch((error) => {
-      console.log(error);
+      return error;
     });
+  return result;
 }

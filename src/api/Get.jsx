@@ -182,10 +182,10 @@ export async function GetOneUser(id) {
   return user;
 }
 
-export async function GetUserEdit(id) {
+export async function GetUserEdit(id, view_option) {
   const user = await Api.get(`/user/edit/${id}`,{
     params: {
-      view_option: "admin",
+      view_option
     },
   })
     .then((result) => {

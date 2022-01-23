@@ -49,7 +49,7 @@ export async function PutServicio(id, service) {
 }
 
 /* Vehiculos */
-export function PutVehiculo(id, vehicle) {
+export function PutVehiculo(id, vehicle) { 
   const serviceResult = Api.put(`/vehicle/${id}`, vehicle)
   .then((result) => {
     return result;

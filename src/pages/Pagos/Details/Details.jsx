@@ -60,7 +60,7 @@ function Details() {
       <Paper
         elevation={3}
         sx={{
-          margin: "1rem",
+          margin: "1rem 3rem",
           padding: "1rem",
         }}
       >

@@ -43,6 +43,7 @@ import { areaCodes } from "../../../areaCodes";
 import { PostEnvio } from "../../../api/Post";
 import { OpenEditContext } from "../../../context/openEditContext";
 import { PutEnvio } from "../../../api/Put";
+import { UserContext } from "../../../context/UserContextT";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Fade in={true} ref={ref} {...props} />;
@@ -99,6 +100,7 @@ function Add() {
     shippmentToEdit,
     setShippmentToEdit,
   } = useContext(OpenEditContext);
+  const { view_type } = useContext(UserContext);
 
   const [open, setOpen] = useState(false);
   const [openFile, setOpenFile] = useState(false);
@@ -377,8 +379,8 @@ function Add() {
       setSending(false);
       return;
     }
-    if (!shippmentDetails["Persona_Id"]) {
-      setErrorMessage("Debe ingresar la cédula");
+    if (!shippmentDetails["Persona_Id"] || shippmentDetails["Persona_Id"] < 500000) {
+      setErrorMessage("Debe ingresar una cédula válida");
       setTimeout(() => {
         setErrorMessage("");
       }, 1500);
@@ -401,8 +403,8 @@ function Add() {
       setSending(false);
       return;
     }
-    if (!shippmentDetails["SE_Id"]) {
-      setErrorMessage("Debe ingresar el número del envío");
+    if (!shippmentDetails["SE_Id"] || shippmentDetails["SE_Id"] < 1) {
+      setErrorMessage("Debe ingresar un número del envío válido");
       setTimeout(() => {
         setErrorMessage("");
       }, 1500);
@@ -594,9 +596,9 @@ function Add() {
 
   return (
     <>
-      <IconButton onClick={handleClickOpen}>
+      { view_type === "A" && (<IconButton onClick={handleClickOpen}>
         <AddCircleTwoToneIcon color="primary" />
-      </IconButton>
+      </IconButton>)}
       <Dialog
         open={open || openEditShippment}
         TransitionComponent={Transition}
@@ -925,7 +927,7 @@ function Add() {
                   fullWidth
                 >
                   {federalEntities ? (
-                    federalEntities.map((federalEntity) => (
+                    federalEntities.map((federalEntity) => federalEntity.EF_Id && (
                       <MenuItem
                         key={federalEntity.EF_Id}
                         value={federalEntity.EF_Id}

@@ -79,7 +79,7 @@ function AppTabs() {
               ) : null}
               {view_type === "T" || view_type === "A" ? (
                 <Tab
-                  label="Vehiculos"
+                  label="Vehículos"
                   value={`/Vehiculos`}
                   to={`/Vehiculos`}
                   icon={<CommuteIcon />}

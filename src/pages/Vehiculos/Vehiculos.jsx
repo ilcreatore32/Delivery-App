@@ -20,6 +20,7 @@ import AppTabs from "../../components/AppTabs/AppTabs";
 import Spinner from "../../components/Spinner/Spinner";
 import RightSideComponent from "../../components/RightSideComponent/RightSideComponent";
 import LeftSideComponent from "../../components/LeftSideComponent/LeftSideComponent";
+import Delete from "./Delete/Delete";
 
 function Vehiculos() {
   const { view_type, token } = useContext(UserContext);
@@ -68,7 +69,7 @@ function Vehiculos() {
     <>
       <AppTabs />
       <Typography align="center" variant="h4" component="h2">
-        Sus Vehiculos
+        Sus Vehículos
       </Typography>
       <div className="dashboard">
         <Grid container spacing={3}>
@@ -102,6 +103,7 @@ function Vehiculos() {
                 Data={vehicles}
               > 
                 <Add />
+                <Delete />
               </RightSideComponent>
             )}
           </Grid>

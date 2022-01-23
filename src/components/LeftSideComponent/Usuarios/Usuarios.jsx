@@ -182,7 +182,7 @@ function Usuarios({ admin }) {
                     value={userFilter?.user_status || ""}
                     onChange={handleChange}
                     variant="filled"
-                    color="secondary"
+                    color="primary"
                   >
                     {statusUser.map((option) => (
                       <MenuItem key={option.value} value={option.value}>

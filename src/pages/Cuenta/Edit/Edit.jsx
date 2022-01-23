@@ -117,7 +117,14 @@ const statusOptions = [
 function Edit() {
   const { id } = useParams();
   const query = useQuery();
-  const { view_type } = useContext(UserContext);
+  const {
+    view_type,
+    token,
+    logged_user,
+    setLogged_user,
+    setToken,
+    setView_type,
+  } = useContext(UserContext);
   const [open, setOpen] = useState(false);
   const [add, setAdd] = useState(false);
 
@@ -141,7 +148,7 @@ function Edit() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleSuscriptionChange = (e) => {
     setSelectedTSId(e.target.value);
@@ -239,8 +246,8 @@ function Edit() {
       setErrorMessage("Debe ingresar el tipo de cédula");
       return;
     }
-    if (!user["Persona_Id"]) {
-      setErrorMessage("Debe ingresar la cédula");
+    if (!user["Persona_Id"] || user["Persona_Id"] < 500000) {
+      setErrorMessage("Debe ingresar una cédula valida");
       return;
     }
     if (!user["Persona_Nombre"]) {
@@ -261,47 +268,52 @@ function Edit() {
     setSending(true);
   };
 
-  useEffect(() => {
-    if (!id) return;
-    (async () => {
-      setLoading(true);
-      let data = await GetUserEdit(id);
-      if (!data) {
-        setLoading(false);
-        return;
-      }
-      setUser(data.user);
-      setContacts(data.contact);
-      data?.user?.TS_Id && setOldTSId(data.user.TS_Id);
-      if (!data?.user?.Suscripcion_Id) {
-        setUpdateSuscriptionMessage(
-          `No se encuentra suscripto a un plan, seleccione uno en la opción "Cambiar Suscripcion"`
-        );
-        setSeverity("error");
-        setLoading(false);
-        return;
-      }
-      if (data?.user?.Suscripcion_FechaV) {
-        let dateV = new Date(data.user.Suscripcion_FechaV);
-        let today = new Date();
-        if (dateV < today) {
-          setUpdateSuscriptionMessage(
-            `La suscripción esta vencida, presione "Renovar" para renovarla`
-          );
-          setSeverity("warning");
-        }
-      }
+  const getUserData = async (user, view) => {
+    let data = await GetUserEdit(user, view);
+    if (!data) {
+      return;
+    }
+    setUser(data.user);
+    setContacts(data.contact);
+    data?.user?.TS_Id && setOldTSId(data.user.TS_Id);
+    if (!data?.user?.Suscripcion_Id) {
+      setUpdateSuscriptionMessage(
+        `No se encuentra suscrito a un plan, seleccione uno en la opción "Cambiar Suscripcion"`
+      );
+      setSeverity("error");
       setLoading(false);
-    })();
-  }, [id]);
+      return;
+    }
+    if (data?.user?.Suscripcion_FechaV) {
+      let dateV = new Date(data.user.Suscripcion_FechaV);
+      let today = new Date();
+      if (dateV < today) {
+        setUpdateSuscriptionMessage(
+          `La suscripción esta vencida, presione "Renovar" para renovarla`
+        );
+        setSeverity("warning");
+        setLoading(false);
+        return;
+      }
+    }
+    setLoading(false);
+  };
+
+  const getSuscriptionsData = async () => {
+    let data = await GetSuscriptions();
+    if (!data) return;
+    setSuscriptionTypesList(data);
+  };
 
   useEffect(() => {
-    (async () => {
-      let data = await GetSuscriptions();
-      if (!data) return;
-      setSuscriptionTypesList(data);
-    })();
-  }, []);
+    if (!id || !logged_user) return;
+    try {
+      getUserData(id, "admin");
+      getSuscriptionsData();
+    } catch (err) {
+      setErrorMessage("Hubo un error al obtenerl los datos");
+    }
+  }, [id, logged_user]);
 
   useEffect(() => {
     if (!changePlan || !selectedTSId || !openSuscriptionTypeList) return;
@@ -352,12 +364,17 @@ function Edit() {
         });
         const response = await PutUser(id, form);
         if (response.status === 200) {
-          setSuccessMessage("Usuario editado correctamente");
+          setSuccessMessage(
+            "Usuario editado correctamente, vuelva a iniciar sesión"
+          );
           setTimeout(() => {
             setSuccessMessage("");
-            window.location.href = query.get("adminView")
-              ? "/Usuarios"
-              : "/Cuenta";
+            if (query.get("adminView"))
+              return (window.location.href = "/Usuarios");
+
+            setLogged_user({});
+            setToken("");
+            setView_type("C");
           }, 2000);
           setSending(false);
         } else {
@@ -383,7 +400,12 @@ function Edit() {
     <>
       <AppTabs />
       <Grid className="account-page">
-        <Grid align="center">
+        <Paper
+          variant="outlined"
+          sx={{
+            margin: "1rem 3rem",
+            padding: "1rem",
+          }} align="center">
           <Box sx={{ margin: ".5rem 0" }}>
             {loading || sending ? (
               <Paper
@@ -443,6 +465,12 @@ function Edit() {
                               onChange={handleUserChange}
                               variant="filled"
                               sx={{ marginRight: 1 }}
+                              {...(user?.Usuario_Status === "A" &&
+                              view_type !== "A"
+                                ? {
+                                    disabled: true,
+                                  }
+                                : { disabled: false })}
                             >
                               {["V", "E", "J"].map((tipo) => (
                                 <MenuItem key={tipo} value={tipo}>
@@ -457,6 +485,12 @@ function Edit() {
                               name="Persona_Id"
                               value={user.Persona_Id || ""}
                               onChange={handleUserChange}
+                              {...(user?.Usuario_Status === "A" &&
+                              view_type !== "A"
+                                ? {
+                                    disabled: true,
+                                  }
+                                : { disabled: false })}
                             />
                           </TableCell>
                         </TableRow>
@@ -545,7 +579,8 @@ function Edit() {
                                 title="material"
                               />
                             )}
-                            <label htmlFor="icon-button-file">
+                            {(user?.Usuario_Status !== "A" ||
+                              view_type === "A") && (<label htmlFor="icon-button-file">
                               <Input
                                 id="icon-button-file"
                                 type="file"
@@ -562,7 +597,8 @@ function Edit() {
                               >
                                 <UploadFileTwoToneIcon size="large" />
                               </IconButton>
-                            </label>
+                            </label>)}
+                            
                           </TableCell>
                         </TableRow>
                         <TableRow>
@@ -791,13 +827,15 @@ function Edit() {
                           mt={2}
                           sx={{ display: "flex", justifyContent: "center" }}
                         >
-                          <Button
-                            sx={{ marginRight: 1 }}
-                            variant="outlined"
-                            onClick={renewSuscription}
-                          >
-                            Renovar Suscripción
-                          </Button>
+                          {user && user?.Suscripcion_Status === "V" && (
+                            <Button
+                              sx={{ marginRight: 1 }}
+                              variant="outlined"
+                              onClick={renewSuscription}
+                            >
+                              Renovar Suscripción
+                            </Button>
+                          )}
                           <Button
                             sx={{ marginLeft: 1 }}
                             variant="outlined"
@@ -868,7 +906,7 @@ function Edit() {
               </>
             )}
           </Box>
-        </Grid>
+        </Paper>
       </Grid>
     </>
   );

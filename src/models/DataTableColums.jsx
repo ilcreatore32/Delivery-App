@@ -401,7 +401,7 @@ export const UsuariosColumns = [
     field: "Usuario_Status",
     headerAlign: "center",
     align: "center",
-    width: 130,
+    width: 200,
     sortable: true,
     renderCell: (thisRow) => {
       switch (thisRow.row.Usuario_Status) {
@@ -437,12 +437,6 @@ export const UsuariosColumns = [
             to={`/Usuarios/Editar/${thisRow.row.Persona_Id}?adminView=true`}
           >
             <EditTwoToneIcon color="info" />
-          </IconButton>
-          <IconButton
-            component={Link}
-            to={`/Usuarios/Eliminar/${thisRow.row.Persona_Id}`}
-          >
-            <DeleteTwoToneIcon color="error" />
           </IconButton>
         </>
       );

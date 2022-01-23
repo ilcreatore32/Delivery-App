@@ -41,7 +41,10 @@ function Details() {
   const fetchService = async (id, view) => {
     await setLoading(true);
     try {
-      const response = await GetOneService(id, view === "C" ? "client" : "admin");
+      const response = await GetOneService(
+        id,
+        view === "C" ? "client" : "admin"
+      );
       await setService(response.serviceDetails);
       await setAreas(response.areas);
       setShippments(response.shippments);
@@ -75,7 +78,7 @@ function Details() {
           <Paper
             variant="outlined"
             sx={{
-              margin: "1rem",
+              margin: "1rem 3rem",
               padding: "1rem",
             }}
           >
@@ -192,7 +195,7 @@ function Details() {
                 padding: "1rem",
               }}
             >
-              <Typography align="center" variant="h6" component="h3">
+              <Typography align="center" variant="h6" component="h3" sx={{paddingBottom: "1.5rem"}}>
                 Áreas de Operaciones
               </Typography>
               <TableContainer component={Paper} variant="outlined">
@@ -230,7 +233,7 @@ function Details() {
                   padding: "1rem",
                 }}
               >
-                <Typography align="center" variant="h6" component="h3">
+                <Typography align="center" variant="h6" component="h3" sx={{paddingBottom: "1.5rem"}}>
                   Envíos Asumidos
                 </Typography>
                 <TableContainer component={Paper} variant="outlined">
@@ -267,7 +270,21 @@ function Details() {
                           <TableCell align="center">
                             {s?.SE_Fecha.split("T")[0]}
                           </TableCell>
-                          <TableCell align="center">{s?.SE_Status}</TableCell>
+                          <TableCell align="center">
+                            {s?.SE_Status === "E" && "Eliminado"}
+                            {s?.SE_Status === "P" &&
+                              "Pendiente de servicio transporte"}
+                            {s?.SE_Status === "S" &&
+                              "Servicio de transporte activo"}
+                            {s?.SE_Status === "T" &&
+                              "Producto entregado al transportista"}
+                            {s?.SE_Status === "C" &&
+                              "Producto entregado al cliente"}
+                            {s?.SE_Status === "F" &&
+                              "Transporte finalizado con exito"}
+                            {s?.SE_Status === "X" &&
+                              "Problemas con el transporte"}
+                          </TableCell>
                           <TableCell align="center">
                             <IconButton
                               component={Link}

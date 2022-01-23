@@ -694,7 +694,7 @@ function Delete() {
                   fullWidth
                 >
                   {federalEntities ? (
-                    federalEntities.map((federalEntity) => (
+                    federalEntities.map((federalEntity) => federalEntity.EF_Id && (
                       <MenuItem
                         key={federalEntity.EF_Id}
                         value={federalEntity.EF_Id}

@@ -139,11 +139,6 @@ export const editUser = async function (req, res) {
   const { id } = req.params;
   /* extract the request query */
   const { view_option } = req.query;
-  if (view_option === "admin" && req.user.permission !== "A") {
-    return res.status(403).json({
-      message: "No autorizado",
-    });
-  }
 
   /* extract the query params */
   let queryUserDetails = `

@@ -126,8 +126,8 @@ function Add({ AddButton, openAccount, setOpenAccount, redirect }) {
       setSending(false);
       return;
     }
-    if (!payment["PS_Monto"]) {
-      setErrorMessage("Debe ingresar el monto pagado");
+    if (!payment["PS_Monto"] || payment["PS_Monto"] < 1) {
+      setErrorMessage("Debe ingresar un monto válido");
       setTimeout(() => {
         setErrorMessage("");
       }, 1500);
@@ -260,7 +260,7 @@ function Add({ AddButton, openAccount, setOpenAccount, redirect }) {
 
   return (
     <>
-      {AddButton && (
+      {AddButton && view_type !== "A" && (
         <IconButton onClick={handleClickOpen}>
           <AddCircleTwoToneIcon color="primary" />
         </IconButton>
@@ -401,13 +401,13 @@ function Add({ AddButton, openAccount, setOpenAccount, redirect }) {
                       ))}
                     </TextField>
                   )}
-                  <TextField
+                  {/* <TextField
                     value={payment.PS_SuscripcionId || ""}
                     disabled={true && true}
                     label="Suscripción"
                     variant="filled"
                     fullWidth
-                  />
+                  /> */}
                 </CustomStack>
                 <CustomStack>
                   {payment["PS_ArchivoReferencia"] && (
