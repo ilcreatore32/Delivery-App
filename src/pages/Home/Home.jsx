@@ -105,7 +105,7 @@ function Home() {
                 <Typography variant="h6" color="primary" component="span">
                   Bienvenido a
                 </Typography>
-                <Typography variant="h2" component="h1">
+                <Typography variant="h2" component="h1" >
                   Delivery PA
                 </Typography>
                 <Typography
@@ -125,7 +125,7 @@ function Home() {
                     gap: "1rem",
                   }}
                 >
-                  <Button variant="outlined">Comenzar</Button>
+                  <Button disabled variant="text">Ingrese o registrese dando clic en los botones arriba a la izquierda</Button>
                 </Box>
               </>
             )}
