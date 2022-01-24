@@ -435,6 +435,14 @@ function Add() {
       setSending(false);
       return;
     }
+    if (!shippmentDetails["SE_DireccionDetalles"]) {
+      setErrorMessage("Debe ingresar los detalles de la dirección del envío");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 1500);
+      setSending(false);
+      return;
+    }
 
     let productsList = [];
 
@@ -1012,6 +1020,19 @@ function Add() {
                     <MenuItem value={0}>Hubo un error</MenuItem>
                   )}
                 </TextField>
+              </CustomStack>
+              <CustomStack>
+                <TextField
+                  id="SE_DireccionDetalles"
+                  name="SE_DireccionDetalles"
+                  label="Dirección detallada"
+                  multiline
+                  value={(shippmentDetails && shippmentDetails.SE_DireccionDetalles) || ""}
+                  onChange={handleShippmentChange}
+                  variant="filled"
+                  fullWidth
+          rows={4}
+                />
               </CustomStack>
               <CustomStack
                 direction={{ xs: "column", sm: "row" }}

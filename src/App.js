@@ -57,7 +57,7 @@ import "./styles/Responsive.css";
 import logo from "./assets/logo.png";
 
 function App() {
-  const { token, view_type, setToken, setView_type, setLogged_user } =
+  const { token, logged_user,view_type, setToken, setView_type, setLogged_user } =
     useContext(UserContextT);
   const [anchorEl, setAnchorEl] = useState(null);
   const [mode, setMode] = useState(true);
@@ -154,12 +154,13 @@ function App() {
                                     >
                                       Bienvenido{" "}
                                       {view_type === "C"
-                                        ? "Cliente"
+                                        ? "Cliente "
                                         : view_type === "T"
-                                        ? "Transportista"
+                                        ? "Transportista "
                                         : view_type === "A"
-                                        ? "Administrador"
-                                        : null}
+                                        ? "Administrador "
+                                        : null }
+                                        {logged_user?.Usuario_Correo}
                                     </Button>
                                     <Tooltip
                                       title={`Cambiar a ${

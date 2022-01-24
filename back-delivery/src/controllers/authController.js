@@ -47,7 +47,7 @@ export const authenticateUser = async (req, res) => {
 export const getAuthenticatedUser = async (req, res) => {
   try {
     /* get user */
-    pool.query(`SELECT Usuario_Id, Usuario_Permisos, Usuario_Status, Suscripcion_Id, Suscripcion_Status FROM usuarios
+    pool.query(`SELECT Usuario_Id, Usuario_Permisos,Usuario_Correo, Usuario_Status, Suscripcion_Id, Suscripcion_Status FROM usuarios
     LEFT JOIN suscripcion ON Suscripcion_PersonaId = Usuario_Id
     WHERE Usuario_Id = ? ORDER BY Suscripcion_Id DESC LIMIT 1
     `, [req.user.id], (error, results, fields) => {

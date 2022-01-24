@@ -27,7 +27,7 @@ import "./Home.css";
 
 function Home() {
   const AppMenuContext = useContext(appMenuContext);
-  const { token } = useContext(UserContext);
+  const { token, view_type } = useContext(UserContext);
 
   const welcome = useCallback(() => {
     let auth = token;
@@ -81,8 +81,15 @@ function Home() {
           >
             {token ? (
               <>
-                <Typography variant="h6" color="primary" component="span">
-                  Bienvenido
+                <Typography variant="h6" color="primary" component="span" >
+                  Bienvenido{" "}
+                  {view_type === "C"
+                    ? "Cliente"
+                    : view_type === "T"
+                    ? "Transportista"
+                    : view_type === "A"
+                    ? "Administrador"
+                    : null}
                 </Typography>
                 {AppMenuContext.appMenu ? (
                   <Typography
@@ -91,11 +98,12 @@ function Home() {
                     sx={{
                       display: "flex",
                       margin: "0",
+                      marginTop: 1,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
                   >
-                    A donde te diriges?
+                    ¿A dónde te diriges?
                   </Typography>
                 ) : null}
                 <AppTabs />
@@ -105,7 +113,7 @@ function Home() {
                 <Typography variant="h6" color="primary" component="span">
                   Bienvenido a
                 </Typography>
-                <Typography variant="h2" component="h1" >
+                <Typography variant="h2" component="h1">
                   Delivery PA
                 </Typography>
                 <Typography
@@ -113,8 +121,8 @@ function Home() {
                   component="p"
                   sx={{ margin: "2rem 0" }}
                 >
-                  Un Sistema Web prototipo de Auto-gestión de envíos a nivel nacional,
-                  usando el modelo de negocio Crowdshipping.
+                  Un Sistema Web prototipo de Auto-gestión de envíos a nivel
+                  nacional, usando el modelo de negocio Crowdshipping.
                 </Typography>
                 <Box
                   sx={{
@@ -125,7 +133,10 @@ function Home() {
                     gap: "1rem",
                   }}
                 >
-                  <Button disabled variant="text">Ingrese o registrese dando clic en los botones arriba a la izquierda</Button>
+                  <Button disabled variant="text">
+                    Ingrese o regístrese dando clic en los botones arriba a la
+                    derecha
+                  </Button>
                 </Box>
               </>
             )}
@@ -153,10 +164,11 @@ function Home() {
           }}
         >
           <Typography variant="body1" component="p">
-            Delivery PA (Prototype App) es una plataforma web prototipo de un sistema de gestión 
-            de envíos a nivel nacional, para que los clientes puedan controlar la entrega de sus 
-            pedidos y a su vez, para que los transportistas puedan ofrecer sus servicios y 
-            encargarse de los envíos a los clientes.
+            Delivery PA (Prototype App) es una plataforma web prototipo de un
+            sistema de gestión de envíos a nivel nacional, para que los clientes
+            puedan controlar la entrega de sus pedidos y a su vez, para que los
+            transportistas puedan ofrecer sus servicios y encargarse de los
+            envíos a los clientes.
           </Typography>
         </Paper>
       </Box>
@@ -181,11 +193,11 @@ function Home() {
             Clientes
           </Typography>
           <Typography variant="body1" component="p">
-            Les ofrecemos la oportunidad de que puedan ver todas las 
-            ofertas de servicios de transporte que hay para el envío de sus productos.
-            Además tiene la posibilidad de escoger el servicio que mejor se adecue a
-            sus necesidades y llevar un control del estado de la entrega de dichos 
-            productos.
+            Les ofrecemos la oportunidad de que puedan ver todas las ofertas de
+            servicios de transporte que hay para el envío de sus productos.
+            Además tiene la posibilidad de escoger el servicio que mejor se
+            adecue a sus necesidades y llevar un control del estado de la
+            entrega de dichos productos.
           </Typography>
         </Paper>
         <Paper
@@ -199,11 +211,12 @@ function Home() {
             Transportistas
           </Typography>
           <Typography variant="body1" component="p">
-            Pueden utilizar nuestra plataforma para darse a conocer y tener una fuente 
-            constante de nuevos clientes, además de poder ofrecer sus servicios de 
-            transporte. Una vez hayan verificado su cuenta y se hayan suscrito a uno 
-            de nuestros planes, podrán ofertar sus servicios de transporte dentro de 
-            cualquiera de las solcitudes de envío de los clientes.
+            Pueden utilizar nuestra plataforma para darse a conocer y tener una
+            fuente constante de nuevos clientes, además de poder ofrecer sus
+            servicios de transporte. Una vez hayan verificado su cuenta y se
+            hayan suscrito a uno de nuestros planes, podrán ofertar sus
+            servicios de transporte dentro de cualquiera de las solcitudes de
+            envío de los clientes.
           </Typography>
         </Paper>
       </Box>
