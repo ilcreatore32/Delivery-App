@@ -69,7 +69,7 @@ function Vehiculos() {
     <>
       <AppTabs />
       <Typography align="center" variant="h4" component="h2">
-        Sus Vehículos
+        {view_type === "A" ? "Vehículos" : "Sus Vehículos"}
       </Typography>
       <div className="dashboard">
         <Grid container spacing={3}>

@@ -15,12 +15,11 @@ export const getVehicles = async (req, res) => {
       min_weight='', // 10.00
       max_weight='', // 50.00
       plate='', // ABC123
-      person_id=req.user.id || '', // 20000000
+      person_id=  '', // 20000000
       person_name='', // John
       person_lastname='', // Doe
     } = req.query;
     let queryVehicles = "";
-    
     /* Depending of the view option, the query will be different */
     switch (view_option) {
         /* Admin all vehicles data */
@@ -122,7 +121,7 @@ export const getVehicles = async (req, res) => {
           JOIN personas ON 
             Persona_Id = Vehiculo_PersonaId
             
-          WHERE Vehiculo_PersonaId = ${person_id} 
+          WHERE Vehiculo_PersonaId = ${req.user.id} 
           ${
             conveyance 
             ? `AND MT_Id = ${conveyance}` 
