@@ -850,7 +850,7 @@ function Add() {
                       pageSize={10}
                       rowsPerPageOptions={[10]}
                       autoWidth
-                      localeText={esES.props.MuiDataGrid.localeText}
+                      localeText={esES.components.MuiDataGrid.defaultProps.localeText}
                       getRowId={(row) => {
                         return `${row.EF_Id}-${row.Municipio_Id}-${row.Parroquia_Id}`;
                       }}

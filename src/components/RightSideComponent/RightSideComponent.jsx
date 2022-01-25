@@ -84,8 +84,12 @@ function RightSideComponent({ rowId, Columns, Data, children }) {
             pageSize={10}
             rowsPerPageOptions={[10]}
             autoWidth
+            sortModel={[
+              { field: "SE_Fecha", sort: "desc" },
+              { field: "PS_Fecha", sort: "desc" },
+            ]}
             getRowId={(row) => getRowId(row, rowId)}
-            localeText={esES.props.MuiDataGrid.localeText}
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
             components={{
               Toolbar: CustomToolbar,
             }}
