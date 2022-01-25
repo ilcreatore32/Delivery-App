@@ -154,7 +154,7 @@ function Home() {
         }}
       >
         <Typography variant="h4" color="primary" component="h2">
-          ¿Quienes Somos?
+          ¿Quiénes Somos?
         </Typography>
         <Paper
           variant="outlined"
