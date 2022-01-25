@@ -640,7 +640,7 @@ function Add() {
                       </MenuItem>
                     ) : (
                       <MenuItem value={0}>
-                        No se pudieron obtener vehículos de este usuario
+                        No se pudieron obtener vehículos de este tipo.
                       </MenuItem>
                     )}
                   </TextField>

@@ -15,6 +15,8 @@ import {
   Divider,
   Paper,
   Typography,
+  Stack,
+  Button,
 } from "@mui/material";
 
 /* React-Bootstrap */
@@ -408,6 +410,24 @@ function Vehiculos({ admin }) {
               </Paper>
             </>
           ) : null}
+          {vehicleFilter && Object.keys(vehicleFilter).length !== 0 && (
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              sx={{
+                paddingTop: 3,
+              }}
+            >
+              <Button
+                variant="filled"
+                color="info"
+                onClick={() => setVehicleFilter({})}
+              >
+                Limpiar
+              </Button>
+            </Stack>
+          )}
         </Box>
       </Form>
     </>

@@ -59,7 +59,7 @@ export default function CustomAreasCell({ thisRow }) {
             }}
           >
             {areaoperacion.map((area) => {
-              area = area.replace("PARROQUIA: ", " ");
+              area = area.replace(/PARROQUIA: |NAN,/gi, " ");
               area = area.replace("MUNICIPIO: ", " ");
               area = area.replace("ENTIDAD FEDERAL: ", " ");
               return <Chip label={area} />;

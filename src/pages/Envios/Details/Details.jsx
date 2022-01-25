@@ -488,6 +488,12 @@ function Details() {
                         {shippmentDetails.Parroquia_Nombre}
                       </TableCell>
                     </TableRow>
+                    <TableRow>
+                      <TableCell component="th">Dirección Detallada</TableCell>
+                      <TableCell align="center">
+                        {shippmentDetails.SE_DireccionDetalles}
+                      </TableCell>
+                    </TableRow>
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -604,7 +610,7 @@ function Details() {
                                   onChange={handleSelectedOffer}
                                   onOpen={getOffers}
                                 >
-                                  {offers &&
+                                  {offers.length > 0 ? (
                                     offers.map((offer) => {
                                       let {
                                         ST_Id,
@@ -634,7 +640,12 @@ function Details() {
                                           {DatosMedio && ` || ${DatosMedio}`}{" "}
                                         </MenuItem>
                                       );
-                                    })}
+                                    })
+                                  ) : (
+                                    <MenuItem value="">
+                                      No hay servicios disponibles
+                                    </MenuItem>
+                                  )}
                                 </Select>
                               </FormControl>
                               <Box
@@ -701,6 +712,10 @@ function Details() {
                     ) : (
                       servicesAvailable &&
                       servicesAvailable.map((service) => {
+                        if (
+                          view_type === "T" &&
+                          service.ST_PersonaId !== logged_user.Usuario_Id
+                        ) return;
                         if (
                           view_type === "T" &&
                           service.ST_PersonaId === logged_user.Usuario_Id
@@ -825,7 +840,10 @@ function Details() {
                                   </IconButton>
                                 ) : (
                                   <>
-                                    <IconButton component={Link} to={`/Servicios/Detalles/${service.ST_Id}`}>
+                                    <IconButton
+                                      component={Link}
+                                      to={`/Servicios/Detalles/${service.ST_Id}`}
+                                    >
                                       <VisibilityTwoToneIcon />
                                     </IconButton>
                                     <IconButton
@@ -1009,7 +1027,7 @@ function Details() {
                       </TableRow>
                     ) : (
                       <TableRow>
-                        <TableCell component="th">Telefonos</TableCell>
+                        <TableCell component="th">Contacto</TableCell>
                         <TableCell align="center">No hay registro</TableCell>
                       </TableRow>
                     )}
@@ -1096,7 +1114,7 @@ function Details() {
                             </TableCell>
                           </TableRow>
                           <TableRow>
-                            <TableCell component="th">Telefonos</TableCell>
+                            <TableCell component="th">Contacto</TableCell>
                             <TableCell align="center">
                               <IconButton
                                 size="small"

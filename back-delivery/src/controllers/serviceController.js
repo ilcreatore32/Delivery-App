@@ -243,7 +243,7 @@ export const getOneService = async function (req, res) {
   const { id } = req.params;
   /* extract the query params */
   let { 
-    view_option, // E.g. 'Client' 'Admin' or 'Carrier'
+    view_option, // E.g. 'client' 'admin' or 'carrier'
   } = req.query;
 
   /* query to get all service's details */
@@ -264,7 +264,7 @@ export const getOneService = async function (req, res) {
   LEFT JOIN mediotransporte
     ON ST_MTId = MT_Id
   
-  WHERE ST_Id = ${id} AND ST_Status <> 'E'
+  WHERE ST_Id = ${id} ${view_option !== 'admin' ? `AND ST_Status <> 'E'` : ''} 
   
   `;
   /* query to get all service's areas */
@@ -305,14 +305,15 @@ export const getOneService = async function (req, res) {
   JOIN se_has_st
     ON SEST_SEId = SE_Id 
   JOIN (SELECT ST_Id FROM serviciotransporte WHERE ST_PersonaId = ?) ST
-    ON SEST_STId = ST.ST_id
-  
+    ON SEST_STId = ST.ST_Id
+    WHERE ST_Id = ?
   GROUP BY SE_Id
   `
 
   try {
     /* Get all service's details */
     await pool.query(query_service, async function (errService, serviceDetails) {
+      console.log(errService)
       /* if error in the query */
       if (errService) return res.status(400).json({error: "Error al consultar en la base de datos"})
       /* if there is no data */
@@ -333,7 +334,7 @@ export const getOneService = async function (req, res) {
           res.status(200).json( {serviceDetails: serviceDetails[0], areas: areas}  )
         } else {
           /* Get all service's shippments */
-          await pool.query(query_shippments, serviceDetails[0].Persona_Id, function (errShippment, shippments){
+          await pool.query(query_shippments, [serviceDetails[0].Persona_Id, id], function (errShippment, shippments){
             /* if error in the query */
             if (errShippment) return res.status(400).json({error: "Error al consultar en la base de datos"})
             /* send results */

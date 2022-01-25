@@ -357,7 +357,7 @@ export const getOneShippment = async function (req, res) {
   const { id } = req.params;
   /* query to get all shippment's details */
   let query_shippment = `
-  SELECT SE_Id, SE_Fecha, SE_Status, SE_ValorTotal, SE_PesoTotal, SE_PersonaId, Persona_Nombre, 
+  SELECT SE_Id, SE_Fecha, SE_Status, SE_ValorTotal, SE_PesoTotal,SE_DireccionDetalles, SE_PersonaId, Persona_Nombre, 
   Persona_Apellido, GROUP_CONCAT(Contacto_Info SEPARATOR ';') Contacto_Persona, Parroquia_Nombre,
   Municipio_Nombre, EF_Nombre, SEST_STId
   
@@ -537,7 +537,7 @@ export const editShippment = async function (req, res) {
   console.log(id);
   /* Query to get shippment's details */
   let query_shippment = `
-  SELECT SE_Id, SE_Fecha, SE_Status, SE_ValorTotal, SE_PesoTotal, EF_Id, 
+  SELECT SE_Id, SE_Fecha, SE_Status, SE_ValorTotal, SE_PesoTotal, SE_DireccionDetalles, EF_Id, 
   EF_Nombre, Municipio_Id, Municipio_Nombre, SE_ParroquiaId, Parroquia_Nombre, SEST_Status,
   SEST_STId, Persona_Id, Persona_TipoId, Persona_Nombre, Persona_Apellido
   
@@ -650,6 +650,7 @@ export const saveShippment = async function (req, res) {
     SE_Status, // 'D'
     SE_ValorTotal, // 20.00
     SE_PesoTotal, // 20.00
+    SE_DireccionDetalles,
     SE_ParroquiaId, // 1
     productsList, // [ [1,1,1],[1,1,1] ]  ProductoId, SEId, Cantidad
     Persona_Id, // 20000000
@@ -668,6 +669,7 @@ export const saveShippment = async function (req, res) {
     SE_Status,
     SE_ValorTotal,
     SE_PesoTotal,
+    SE_DireccionDetalles,
     SE_ParroquiaId,
     SE_PersonaId: Persona_Id,
   };
@@ -746,6 +748,10 @@ export const saveShippment = async function (req, res) {
     INSERT INTO producto_has_se (ProductoSE_ProductoId, ProductoSE_SEId, ProductoSE_Cantidad) VALUES ?
   `;
 
+  let queryUpdateStatusOffers = `
+  UPDATE se_has_st SET SEST_Status = 'P' WHERE SEST_SEId = ? AND SEST_Status = 'A';
+  `;
+
   try {
     let transactionResult;
     if (req.method === "POST") {
@@ -774,6 +780,9 @@ export const saveShippment = async function (req, res) {
       transactionResult = await withTransaction(connection, res, async () => {
         if (queryPerson)
           await connection.query(queryPerson, [person, Persona_Id]);
+          
+        if (shippmentDetails.SE_Status === "P") 
+        await pool.query(queryUpdateStatusOffers, [shippmentDetails.SE_Id]);
         if (queryDeleteContactInfo)
           await connection.query(queryDeleteContactInfo, [Persona_Id]);
         if (queryContactInfo)
