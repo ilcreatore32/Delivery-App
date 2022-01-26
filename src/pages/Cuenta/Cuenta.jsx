@@ -117,7 +117,7 @@ function Cuenta() {
           }}
         >
           <Typography align="center" variant="h4" component="h2">
-            Detalles de su Cuenta
+            Detalles de {id ? "la cuenta" : "su cuenta"}
           </Typography>
           <Box sx={{ margin: ".5rem 0" }}>
             <TableContainer

@@ -65,11 +65,11 @@ const validationSchema = yup.object({
     .required("Complete este Campo"),
   password: yup
     .string("Ingrese su contraseña")
-    .min(4, "Mínimo 4 caracteres")
+    .min(8, "Mínimo 8 caracteres")
     .required("Complete este Campo"),
   passwordConfirm: yup
     .string("Confirme su contraseña")
-    .min(4, "Mínimo 4 caracteres")
+    .min(8, "Mínimo 8 caracteres")
     .oneOf([yup.ref("password"), null], "Las contraseña deben coincidir")
     .required("Complete este Campo"),
   file: yup.string("Enter your file"),

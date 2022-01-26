@@ -44,7 +44,7 @@ const validationSchema = yup.object({
     .required("El correo es requerido"),
   password: yup
     .string("Ingresa tu contraseña")
-    .min(4, "Mínimo 4 caracteres")
+    .min(8, "Mínimo 8 caracteres")
     .required("La contraseña es requerida"),
 });
 
